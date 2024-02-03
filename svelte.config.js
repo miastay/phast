@@ -13,10 +13,10 @@ const config = {
         }),
         paths: {
             // change below to your repo name
-            base: dev ? """ : "/your-repo-name",
+            base: dev ? "" : "/phast-frontend",
         },
         // hydrate the <div id="svelte"> element in src/app.html
-        target: "#svelte"
+        //target: "#svelte"
     },
     preprocess: preprocess({ })
 };
