@@ -1,10 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
     import { FillLayer, LineLayer, MapLibre, GeoJSON } from 'svelte-maplibre';
-	//import GeoJson from 'svelte-maplibre/dist/GeoJSON.svelte';
+    import geojsonExtent from '@mapbox/geojson-extent';
 
     let hexagonFetchResolution = 6;
-    const centerOfCalifornia = [37.166111, -119.449444]
+    const centerOfCalifornia = [37.166111, -119.449444];
 
     let map;//: maplibregl.Map | undefined;
     let loaded = false//: boolean;
@@ -30,7 +30,12 @@
             .then((data) => data.json())
             .then((hex) => hexagons = hex)
             .then(() => {
-                console.log(map.getLayer())
+                let hexBounds = geojsonExtent(hexagons)
+                let rightPadding = (window.innerWidth) / 3;
+                console.log(hexBounds)
+                map.fitBounds(hexBounds, {
+                    padding: { top: 50, left: 10, bottom: 50, right: rightPadding }
+                })
             })
     });
 
