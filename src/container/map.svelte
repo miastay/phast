@@ -2,6 +2,11 @@
 	import { onMount } from 'svelte';
     import { FillLayer, LineLayer, MapLibre, GeoJSON } from 'svelte-maplibre';
     import geojsonExtent from '@mapbox/geojson-extent';
+    import * as h3 from 'h3-js';
+
+    import { populateFeatures } from '../populate_hexbins';
+
+
 
     let hexagonFetchResolution = 6;
     const centerOfCalifornia = [37.166111, -119.449444];
@@ -11,6 +16,7 @@
     let textLayers;//: maplibregl.LayerSpecification[] = [];
     $: if (map && loaded) {
         textLayers = map.getStyle().layers.filter((layer) => layer['source-layer'] === 'place');
+        console.log(textLayers)
         //map.flyTo(centerOfCalifornia)
     }
 
@@ -24,18 +30,89 @@
     const showBorder = true;
     const showFill = true;
     let hexagons;
+    let hexdata = {};
+
+    const mapPalette = [
+        "#0af574",
+        "#00dda5",
+        "#00c1d4",
+        "#00a2f5",
+        "#007ffc",
+        "#0056e3",
+        "#3517ab",
+    ]
+
+    function generatePalette() {
+        const len = mapPalette.length
+        let colors = mapPalette.map((color, i) => [color, i / len])
+        colors[colors.length - 1] = colors[colors.length - 1][0]
+        colors = colors.flat()
+        console.log(colors)
+        return [
+            "step",
+            ["get", "pd"],
+            ...colors
+        ]
+    }
+
+    export let update;
 
     onMount(() => {
-        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}.json`)
+        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_populated.json`)
             .then((data) => data.json())
             .then((hex) => hexagons = hex)
             .then(() => {
+
+                console.log(generatePalette())
+
+                map.addSource('hexlayer', {
+                    'type': 'geojson',
+                    'data': hexagons
+                });
+                map.addLayer({
+                    'id': 'hex',
+                    'type': 'fill',
+                    'source': 'hexlayer',
+                    'layout': {},
+                    'paint': {
+                        "fill-color": generatePalette(),
+                        'fill-opacity': 0.8
+                    }
+                });
+
+
                 let hexBounds = geojsonExtent(hexagons)
                 let rightPadding = (window.innerWidth) / 3;
+
+                //populateFeatures(hexagons).then((featurec) => console.log(featurec))
+
                 console.log(hexBounds)
                 map.fitBounds(hexBounds, {
                     padding: { top: 50, left: 10, bottom: 50, right: rightPadding }
                 })
+                
+                map.on('click', 'hex', (e) => {
+                    let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, hexagonFetchResolution)
+                    console.log(cell)
+                    update({
+                        latlng: e.lngLat,
+                        hex: cell,
+                        properties: e.features[0].properties
+                    })
+                });
+
+                map.on('mouseenter', 'hex', () => {
+                    map.getCanvas().style.cursor = 'pointer';
+                });
+
+                // Change it back to a pointer when it leaves.
+                map.on('mouseleave', 'hex', () => {
+                    map.getCanvas().style.cursor = '';
+                });
+
+
+
+
             })
     });
 
@@ -50,7 +127,7 @@
   center={[-98.137, 40.137]}
   zoom={4}
 >
-{#if hexagons}
+<!-- {#if hexagons}
   <GeoJSON id="hexagons" data={hexagons}>
       <FillLayer
         id="hex-fill"
@@ -59,7 +136,7 @@
           'fill-opacity': 0.5,
         }}
         beforeLayerType="symbol"
-        manageHoverState
+        on:click={(e) => console.log(e)}
       />
       <LineLayer
         layout={{ 
@@ -73,7 +150,7 @@
         beforeLayerType="symbol"
       />
   </GeoJSON>
-{/if}
+{/if} -->
 </MapLibre>
 
 <style>

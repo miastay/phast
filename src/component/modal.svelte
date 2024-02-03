@@ -1,11 +1,13 @@
 <script>
 
-    export let selectedCoordinates;
+    export let selectionData;
 
 </script>
 
 <div class={'modal'}>
-    <h1>{`${selectedCoordinates.lat}, ${selectedCoordinates.lng}`}</h1>
+    <h1>{`${selectionData.hex}`}</h1>
+    <h3>{`${selectionData.latlng.lat}, ${selectionData.latlng.lng}`}</h3>
+    <span>{JSON.stringify(selectionData.properties)}</span>
 </div>
 
 <style>

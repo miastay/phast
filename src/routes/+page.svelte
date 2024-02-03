@@ -4,18 +4,18 @@
     import Map from "../container/map.svelte";
 	import Mapbox from "../container/mapbox.svelte";
 
-    let selectedCoordinates = {
-        lat: 0,
-        lng: 0
+    let selectionData = {
+        latlng: {lat: 0, lng: 0},
+        hex: ""
     };
 
-    function updateSelectedCoordinates(latlng) {
+    function updateSelectionData(data) {
         console.log("updating!!")
-        selectedCoordinates = latlng
+        selectionData = data
     }
 
 </script>
 
-<Map />
+<Map update={updateSelectionData}/>
 
-<Modal selectedCoordinates={selectedCoordinates}/>
+<Modal selectionData={selectionData}/>
