@@ -1,6 +1,6 @@
 # phast
 
-This is the frontend repository for PHAST (**PH**ylogenetic **A**nalysis **A**t **S**peedy **T**ime) at the [Alfaro Lab](https://michaelalfaro.github.io/alfaro-lab/) at UCLA!
+This is the frontend repository for PHAST (**PH**ylogenetic **A**nalysis at **S**peedy **T**ime) at the [Alfaro Lab](https://michaelalfaro.github.io/alfaro-lab/) at UCLA!
 
 You can view the project at <https://miastay.github.io/phast-frontend>.
 
