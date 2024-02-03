@@ -13,7 +13,7 @@ const config = {
         }),
         paths: {
             // change below to your repo name
-            base: dev ? "" : "/phast-frontend",
+            base: dev ? "" : "/phast",
         },
         // hydrate the <div id="svelte"> element in src/app.html
         //target: "#svelte"
