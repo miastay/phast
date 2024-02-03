@@ -1,4 +1,12 @@
 <script>
+
+    /**
+     * 
+     *      Mapbox integration
+     * 
+    */
+
+
     //import { Map } from "mapbox-gl";
     import pkg from 'mapbox-gl';
     const { Map } = pkg;
