@@ -16,6 +16,6 @@
 
 </script>
 
-<Leaflet update={updateSelectedCoordinates}/>
+<Map />
 
 <Modal selectedCoordinates={selectedCoordinates}/>

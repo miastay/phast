@@ -1,96 +1,81 @@
-<head>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet">
-    <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
-</head>
-
 <script>
+	import { onMount } from 'svelte';
+    import { FillLayer, LineLayer, MapLibre, GeoJSON } from 'svelte-maplibre';
+	//import GeoJson from 'svelte-maplibre/dist/GeoJSON.svelte';
 
-    import * as h3 from 'h3-js';
-    import * as geojson2h3 from 'geojson2h3';
+    let hexagonFetchResolution = 6;
+    const centerOfCalifornia = [37.166111, -119.449444]
 
-    let map = this;
-    
-    if (!map) {
-        map = new mapboxgl.Map({
-            container: mapContainer,
-            center: [
-                config.lng,
-                config.lat,
-            ],
-            zoom: config.zoom,
-            style: 'mapbox://styles/mapbox/light-v9'
-        });
+    let map;//: maplibregl.Map | undefined;
+    let loaded = false//: boolean;
+    let textLayers;//: maplibregl.LayerSpecification[] = [];
+    $: if (map && loaded) {
+        textLayers = map.getStyle().layers.filter((layer) => layer['source-layer'] === 'place');
+        //map.flyTo(centerOfCalifornia)
     }
-    
-    // Wait until the map loads, then yield the container again.
-    // yield new Promise(resolve => {
-    //     if (map.loaded()) resolve(map);
-    //     else map.on('load', () => resolve(map));
-    // });
-    
 
+    // $: if (map && loaded) {
+    // for (let layer of textLayers) {
+    //     map.setPaintProperty(layer.id, 'text-color', colors.textColor);
+    //     map.setPaintProperty(layer.id, 'text-halo-color', colors.textOutlineColor);
+    // }
+    // }
 
-    const centerHex = h3.geoToH3(config.lat, config.lng, 8);
-    const kRing = h3.kRing(centerHex, 3);
-    // Reduce hexagon list to a map with random values
-    let hexagons = kRing.reduce((res, hexagon) => ({...res, [hexagon]: Math.random()}), {});
+    const showBorder = true;
+    const showFill = true;
+    let hexagons;
 
-    renderHexes(map, hexagons);
+    onMount(() => {
+        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}.json`)
+            .then((data) => data.json())
+            .then((hex) => hexagons = hex)
+            .then(() => {
+                console.log(map.getLayer())
+            })
+    });
 
-    function renderHexes(map, hexagons) {
-        
-        // Transform the current hexagon map into a GeoJSON object
-        const geojson = geojson2h3.h3SetToFeatureCollection(
-            Object.keys(hexagons),
-            hex => ({value: hexagons[hex]})
-        );
-        
-        const sourceId = 'h3-hexes';
-        const layerId = `${sourceId}-layer`;
-        let source = map.getSource(sourceId);
-        
-        // Add the source and layer if we haven't created them yet
-        if (!source) {
-            map.addSource(sourceId, {
-            type: 'geojson',
-            data: geojson
-            });
-            map.addLayer({
-            id: layerId,
-            source: sourceId,
-            type: 'fill',
-            interactive: false,
-            paint: {
-                'fill-outline-color': 'rgba(0,0,0,0)',
-            }
-            });
-            source = map.getSource(sourceId);
-        }
-
-        // Update the geojson data
-        source.setData(geojson);
-        
-        // Update the layer paint properties, using the current config values
-        map.setPaintProperty(layerId, 'fill-color', {
-            property: 'value',
-            stops: [
-            [0, config.colorScale[0]],
-            [0.5, config.colorScale[1]],
-            [1, config.colorScale[2]]
-            ]
-        });
-        
-        map.setPaintProperty(layerId, 'fill-opacity', config.fillOpacity);
-    }
 
 </script>
 
-<div>
-    <h1><div>phast</div></h1>
-</div>
+<MapLibre
+  bind:map
+  bind:loaded
+  style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+  standardControls
+  center={[-98.137, 40.137]}
+  zoom={4}
+>
+{#if hexagons}
+  <GeoJSON id="hexagons" data={hexagons}>
+      <FillLayer
+        id="hex-fill"
+        paint={{
+          'fill-color': '#00ffff',
+          'fill-opacity': 0.5,
+        }}
+        beforeLayerType="symbol"
+        manageHoverState
+      />
+      <LineLayer
+        layout={{ 
+            'line-cap': 'round', 
+            'line-join': 'round' 
+        }}
+        paint={{ 
+            'line-color': '#0000ff', 
+            'line-width': 1 
+        }}
+        beforeLayerType="symbol"
+      />
+  </GeoJSON>
+{/if}
+</MapLibre>
 
-<style lang="scss">
-    h1 {
-        color: blue;
+<style>
+    :global(.map) {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
     }
 </style>
