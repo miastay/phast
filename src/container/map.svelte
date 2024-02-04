@@ -33,23 +33,23 @@
     let hexdata = {};
 
     const mapPalette = [
-        "#0af574",
-        "#00dda5",
-        "#00c1d4",
-        "#00a2f5",
-        "#007ffc",
-        "#0056e3",
-        "#3517ab",
+        "#ff0000",
+        "#ffff00",
+        "#00ff00",
+        "#00ffff",
+        "#0000ff",
+        "#ff00ff",
     ]
 
     function generatePalette() {
         const len = mapPalette.length
-        let colors = mapPalette.map((color, i) => [color, i / len])
-        colors[colors.length - 1] = colors[colors.length - 1][0]
+        let colors = mapPalette.map((color, i) => [i / len, color])
+        //colors[colors.length - 1] = colors[colors.length - 1][0]
         colors = colors.flat()
         console.log(colors)
         return [
-            "step",
+            "interpolate",
+            ["linear"],
             ["get", "pd"],
             ...colors
         ]
