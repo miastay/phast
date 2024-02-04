@@ -28,6 +28,9 @@
         width: 35vw;
         padding: 2rem;
         box-sizing: border-box;
+        h1 {
+            margin-block: 0;
+        }
         &:hover {
             //opacity: 0.5;
         }
