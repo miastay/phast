@@ -33,9 +33,9 @@
     let hexdata = {};
 
     const mapPalette = [
-        [0.94, "#fc8d59"],
-        [0.96, "#ffffbf"],
-        [1, "#91bfdb"],
+        [0.2, "#EAE1DF"],
+        [0.94, "#33ce76"],
+        [1, "#214E34"],
     ]
 
     function generatePalette() {
@@ -55,7 +55,7 @@
     export let update;
 
     onMount(() => {
-        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_populated_ordered.json`)
+        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_populated.json`)
             .then((data) => data.json())
             .then((hex) => hexagons = hex)
             .then(() => {

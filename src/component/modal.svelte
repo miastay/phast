@@ -36,4 +36,7 @@
         }
         transition: opacity 0.3s ease;
     }
+    .logo {
+        width: 50px;
+    }
 </style>
