@@ -33,12 +33,10 @@
     let hexdata = {};
 
     const mapPalette = [
-        "#ff0000",
-        "#ffff00",
-        "#00ff00",
-        "#00ffff",
-        "#0000ff",
-        "#ff00ff",
+        
+        "#ffff00ee",
+        "#00ff00ee",
+        "#ff0000cc",
     ]
 
     function generatePalette() {
