@@ -27,6 +27,7 @@
     // }
     // }
 
+    let rightPadding;
     const showBorder = true;
     const showFill = true;
     let hexagons;
@@ -87,7 +88,7 @@
 
                 map.on('load', () => {
                     let hexBounds = geojsonExtent(hexagons)
-                    let rightPadding = (window.innerWidth) / 3;
+                    rightPadding = (window.innerWidth) / 3;
 
                     //populateFeatures(hexagons).then((featurec) => console.log(featurec))
 
@@ -103,7 +104,15 @@
 
                 
                 map.on('click', 'hex', (e) => {
+
+
                     let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, hexagonFetchResolution)
+                    // map.fitBounds([
+                    //     [32.958984, -5.353521],
+                    //     [43.50585, 5.615985]
+                    // ]);
+                    zoomToHexagon(cell, map)
+
                     console.log(cell)
                     update({
                         latlng: e.lngLat,
@@ -126,6 +135,27 @@
 
             })
     });
+
+    function zoomToHexagon(index, map) {
+        let minLat, maxLat, minLon, maxLon;
+        let vertices = h3.cellToBoundary(index).flat();
+        let lats = vertices.filter(function(x, i) { return i % 2 == 0; });
+        let lngs = vertices.filter(function(x, i) { return i % 2 == 1; });
+
+        console.log(lats)
+        console.log(lngs)
+
+        minLat = Math.min(...lats); maxLat = Math.max(...lats);
+        minLon = Math.min(...lngs); maxLon = Math.max(...lngs);
+        map.fitBounds([
+            [minLon, minLat],
+            [maxLon, maxLat]
+        ], {
+            padding: { top: 100, left: 50, bottom: 100, right: rightPadding},
+            duration: 750
+        });
+    }
+
 
     const darkMode = false;
     let source = darkMode ? 'dark-matter' : 'positron';
