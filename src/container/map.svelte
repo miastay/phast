@@ -5,11 +5,11 @@
     import * as h3 from 'h3-js';
 
     import { populateFeatures } from '../populate_hexbins';
-
+    import { getPalette } from '../util/colors';
 
 
     let hexagonFetchResolution = 6;
-    const centerOfCalifornia = [37.166111, -119.449444];
+    const centerOfCalifornia = [-119.449444, 37.166111];
 
     let map;//: maplibregl.Map | undefined;
     let loaded = false//: boolean;
@@ -32,11 +32,7 @@
     let hexagons;
     let hexdata = {};
 
-    const mapPalette = [
-        [0.2, "#EAE1DF"],
-        [0.94, "#33ce76"],
-        [1, "#214E34"],
-    ]
+    const mapPalette = getPalette();
 
     function generatePalette() {
         const len = mapPalette.length
@@ -62,6 +58,17 @@
 
                 console.log(generatePalette())
 
+                const layers = map.getStyle().layers;
+                // Find the index of the first symbol layer in the map style
+                let firstSymbolId;
+                for (let i = 0; i < layers.length; i++) {
+                    if (layers[i].type === 'symbol') {
+                        firstSymbolId = layers[i].id;
+                        break;
+                    }
+                }
+
+
                 map.addSource('hexlayer', {
                     'type': 'geojson',
                     'data': hexagons
@@ -73,20 +80,27 @@
                     'layout': {},
                     'paint': {
                         "fill-color": generatePalette(),
-                        'fill-opacity': 0.8
+                        'fill-opacity': 1
                     }
-                });
+                }, firstSymbolId);
 
 
-                let hexBounds = geojsonExtent(hexagons)
-                let rightPadding = (window.innerWidth) / 3;
+                map.on('load', () => {
+                    let hexBounds = geojsonExtent(hexagons)
+                    let rightPadding = (window.innerWidth) / 3;
 
-                //populateFeatures(hexagons).then((featurec) => console.log(featurec))
+                    //populateFeatures(hexagons).then((featurec) => console.log(featurec))
 
-                console.log(hexBounds)
-                map.fitBounds(hexBounds, {
-                    padding: { top: 50, left: 10, bottom: 50, right: rightPadding }
+                    console.log(hexBounds)
+                    map.fitBounds(hexBounds, {
+                        padding: { top: 50, left: 10, bottom: 50, right: rightPadding }
+                    })
+
+                    console.log()
+                    map._canvas.style.filter = "none";
+
                 })
+
                 
                 map.on('click', 'hex', (e) => {
                     let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, hexagonFetchResolution)
@@ -113,15 +127,20 @@
             })
     });
 
+    const darkMode = false;
+    let source = darkMode ? 'dark-matter' : 'positron';
+
+    //https://basemaps.cartocdn.com/gl/{source}-gl-style/style.json
+    ///phast/osm_liberty.json
 
 </script>
 
 <MapLibre
   bind:map
   bind:loaded
-  style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+  style="https://basemaps.cartocdn.com/gl/{source}-gl-style/style.json"  
   standardControls
-  center={[-98.137, 40.137]}
+  center={centerOfCalifornia}
   zoom={4}
 >
 <!-- {#if hexagons}
@@ -156,5 +175,9 @@
         width: 100%;
         height: 100%;
         z-index: 0;
+    }
+    :global(canvas) {
+        filter: blur(30px);
+        transition: filter 0.5s ease;
     }
 </style>

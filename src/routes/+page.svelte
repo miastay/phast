@@ -1,6 +1,7 @@
 <script>
-	import Logo from '../component/logo.svelte';
-import Modal from '../component/modal.svelte';
+	import Legend from '../component/legend.svelte';
+    import Logo from '../component/logo.svelte';
+    import Modal from '../component/modal.svelte';
     import Map from "../container/map.svelte";
 
     let selectionData = {
@@ -17,4 +18,4 @@ import Modal from '../component/modal.svelte';
 
 <Map update={updateSelectionData}/>
 <Modal selectionData={selectionData}/>
-<Logo />
+<Legend />

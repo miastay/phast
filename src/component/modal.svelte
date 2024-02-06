@@ -17,9 +17,12 @@
 </div>
 
 <style lang="scss">
+
+    @import '../style/frames.scss';
     .modal {
-        background: white;
-        border-radius: 15px;
+
+        @include container;
+
         box-shadow: 0px 0px 20px #00000055;
         position: absolute;
         top: 8vh;
@@ -28,6 +31,7 @@
         width: 35vw;
         padding: 2rem;
         box-sizing: border-box;
+        flex-direction: column;
         h1 {
             margin-block: 0;
         }

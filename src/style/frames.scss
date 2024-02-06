@@ -1,0 +1,10 @@
+@mixin container {
+    background: #ffffffbb;
+    backdrop-filter: blur(20px);
+    border-radius: 10px;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    box-shadow: 0px 0px 4px #00000055;
+}
