@@ -8,11 +8,13 @@ export async function populateFeatures(geo, res) {
         pd: Number.MIN_VALUE,
         mpd: Number.MIN_VALUE,
         mntd: Number.MIN_VALUE,
+        tree_size: Number.MIN_VALUE,
     }
     let mins = {
         pd: Number.MAX_VALUE,
         mpd: Number.MAX_VALUE,
-        mntd: Number.MAX_VALUE
+        mntd: Number.MAX_VALUE,
+        tree_size: Number.MAX_VALUE,
     }
 
     //fetch feature data in dict format

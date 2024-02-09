@@ -5,7 +5,7 @@
     import * as h3 from 'h3-js';
 
     import { objToDict, populateFeatures } from '../util/populate_hexbins';
-    import { getPalette } from '../util/colors';
+    import { getPalette, getDiscretePalette } from '../util/colors';
 
     let hexagonFetchResolution = 6;
     const centerOfCalifornia = [-119.449444, 37.166111];
@@ -33,13 +33,26 @@
         console.log(textLayers)
         //map.flyTo(centerOfCalifornia)
     }
-    $: if(map && loaded) map.setPaintProperty('hex', 'fill-color', generatePalette(metric, colorScheme))
+    $: if(map && loaded) updateMetricPaintLayer(metric)
+    //$: if(map && loaded) map.setPaintProperty('hex', 'fill-color', generatePalette(metric, colorScheme, true))
     // $: if (map && loaded) {
     // for (let layer of textLayers) {
     //     map.setPaintProperty(layer.id, 'text-color', colors.textColor);
     //     map.setPaintProperty(layer.id, 'text-halo-color', colors.textOutlineColor);
     // }
     // }
+
+    function updateMetricPaintLayer(met) {
+
+        // we try to find a workaround to transitions not firing on feature-state changes, see: https://github.com/mapbox/mapbox-gl-js/issues/11748
+
+        let pal = generatePalette(met, colorScheme, true)
+        map.setPaintProperty('hex', 'fill-color', pal)
+        map.setPaintProperty('hex', 'fill-color-transition', { duration: 500, delay: 0})
+        //map.setPaintProperty('hex', 'fill-color', `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`)
+    }
+
+
 
     let rightPadding;
     const showBorder = true;
@@ -50,21 +63,47 @@
     let maxes, mins;
     let mapPalette = getPalette(0, 5000, colorScheme);
 
-    function generatePalette(m, scheme) {
+    function generatePalette(m, scheme, interp = true) {
         if(!maxes || !mins) return;
-        mapPalette = getPalette(mins[m], maxes[m], scheme);
-        console.log(mapPalette)
-        const len = mapPalette.length
-        let colors = mapPalette.map((color, i) => [color[0], color[1]])
-        //colors[colors.length - 1] = colors[colors.length - 1][0]
-        colors = colors.flat()
-        console.log(colors)
-        return [
-            "interpolate",
-            ["linear"],
-            ["get", m],
-            ...colors
-        ]
+
+        if(interp) {
+
+            mapPalette = getPalette(mins[m], maxes[m], scheme);
+            console.log(mapPalette)
+            const len = mapPalette.length
+            let colors = mapPalette.map((color, i) => [color[0], color[1]])
+            //colors[colors.length - 1] = colors[colors.length - 1][0]
+            colors = colors.flat()
+            console.log(colors)
+            
+            return [
+                "interpolate",
+                ["linear"],
+                ["get", m],
+                ...colors
+            ]
+        }
+        else {
+
+            // mapPalette = getDiscretePalette(mins[m], maxes[m], scheme);
+            // let colors = mapPalette.map((color, i) => [color[0], color[1]])
+            // colors[colors.length - 1] = colors[colors.length - 1][0]
+            // colors = colors.flat()
+            // colors = colors.slice(1)
+            // console.log(colors)
+            return [
+                "step",
+                ["get", m],
+                "#ccc", 0,
+                "#fc4e2a", 600,
+                "#00E676", 1300,
+                "#2a4e9b"
+                //"#ffeda0",10,"#ffeda0",20,"#fed976",50,"#feb24c",100,"#fd8d3c",200,"#fc4e2a",500,"#e31a1c"
+            ]
+
+
+            return ["step",["get",m],"#ffeda0",10,"#ffeda0",20,"#fed976",50,"#feb24c",100,"#fd8d3c",200,"#fc4e2a",500,"#e31a1c",750,"hsl(348, 100%, 37%)",1000,"#bd0026"]
+        }
     }
 
     export let update;
@@ -108,7 +147,7 @@
                     'source': 'hexlayer',
                     'layout': {},
                     'paint': {
-                        "fill-color": generatePalette(metric ?? "pd", colorScheme),
+                        "fill-color": generatePalette(metric ?? "pd", colorScheme, false),
                         "fill-opacity": 0.75,
                         "fill-color-transition": {
                             "duration": 1000,
@@ -130,6 +169,10 @@
 
                     map._canvas.style.filter = "none";
 
+                    setInterval(() => {
+                        }, 1000);
+
+
                 })
 
                 // backup in case the load event doesn't fire properly
@@ -139,7 +182,6 @@
 
                 
                 map.on('click', 'hex', (e) => {
-
 
                     let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, hexagonFetchResolution)
                     

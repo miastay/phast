@@ -1,5 +1,6 @@
 export const schemes = {
     "rdYlGr": rdYlGr,
+    "rdYlGr_discrete": rdYlGr_discrete,
     "orGrBlu": orGrBlu,
     "blGr": blGr,
     "grYlRd": grYlRd,
@@ -8,6 +9,11 @@ export const schemes = {
 
 export function getPalette(min, max, scheme = "rdYlGr") {
     let palette = schemes[scheme](min, max)
+    return palette
+}
+
+export function getDiscretePalette(min, max, scheme = "rdYlGr") {
+    let palette = schemes['rdYlGr_discrete'](min, max)
     return palette
 }
 
@@ -50,6 +56,14 @@ function rdYlGr(min, max) {
     return [
         [-1, "#ddd", "Missing"],
         [min, "#ff3300cc", "Very low biodiversity"],
+        [getQuant(min, max, 0.5), "#ffff33cc", "Normal biodiversity"],
+        [max, "#00ff33cc", "Very high biodiversity"],
+    ]
+}
+function rdYlGr_discrete(min, max) {
+    return [
+        [-1, "#ddd", "Missing"],
+        [0, "#ff3300cc", "Very low biodiversity"],
         [getQuant(min, max, 0.5), "#ffff33cc", "Normal biodiversity"],
         [max, "#00ff33cc", "Very high biodiversity"],
     ]
