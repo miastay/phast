@@ -24,7 +24,7 @@
         }
     }
 
-    let map;//: maplibregl.Map | undefined;
+    var map;//: maplibregl.Map | undefined;
     let loaded = false//: boolean;
     let textLayers;//: maplibregl.LayerSpecification[] = [];
     $: if (map && loaded) {
@@ -74,6 +74,8 @@
             .then((hex) => hexagons = hex)
             .then(() => {
 
+                document.map = map;
+
                 maxes = hexagons.properties?.maxes
                 mins = hexagons.properties?.mins
                 //populateFeatures(hexagons, hexagonFetchResolution).then((pop) => console.log(pop));
@@ -112,7 +114,7 @@
                         "fill-color": generatePalette(metric ?? "pd"),
                         "fill-opacity": 0.75,
                         "fill-color-transition": {
-                            "duration": 1000,
+                            "duration": 300,
                             "delay": 0
                         },
                     },

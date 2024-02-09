@@ -3,6 +3,7 @@
 import Legend from '../component/legend.svelte';
     import Logo from '../component/logo.svelte';
     import Modal from '../component/modal.svelte';
+	import Settings from '../component/settings.svelte';
     import Map from "../container/map.svelte";
 
     let selectionData = {
@@ -26,3 +27,4 @@ import Legend from '../component/legend.svelte';
 <Modal selectionData={selectionData} metric={metricLayer}/>
 <Legend />
 <Controls updateMetricLayer={updateMetricLayer}/>
+<Settings />
