@@ -10,7 +10,7 @@
         <h1>{`${selectionData.hex}`}</h1>
         <h3>{`${selectionData.latlng.lat}, ${selectionData.latlng.lng}`}</h3>
         <span>{selectionData.properties[metric]}</span>
-        <Graph data={[0.4, 0.7, 0.8, 0.9, 1]} point={[[1.2, selectionData.properties.pd]]}/>
+        <Graph metric={metric} data={[0.4, 0.7, 0.8, 0.9, 1]} point={[[1.2, selectionData.properties[metric]]]}/>
         <Phylo />
     {/if}
     {#if !selectionData.properties}

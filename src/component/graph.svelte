@@ -11,6 +11,8 @@
     export let marginRight = 20;
     export let marginBottom = 30;
     export let marginLeft = 40;
+
+    export let metric;
   
     let gx;
     let gy;
@@ -18,6 +20,8 @@
     let interval = null;
     let yAxis = [0, 10];
     let xAxis = [0, 10];
+    let xAxisLabel = "";
+    let yAxisLabel = "";
 
     let x, y, line;
 
@@ -28,12 +32,20 @@
     //     {x: 2, y: 0.55, ci_minus: 0.65, ci_plus: 0.7},
     //     {x: 3, y: 0.65, ci_minus: 0.6, ci_plus: 0.75},
     // ]
-    const model = buildModel("pd")
 
-    console.log(model)
-    interval = model.confidence;
-    yAxis = model.yAxis
-    xAxis = model.xAxis;
+    let model;
+
+    function redrawModel(metric) {
+        model = buildModel(metric)
+        console.log(model)
+        interval = model.confidence;
+        yAxis = model.yAxis;
+        xAxis = model.xAxis;
+        xAxisLabel = model.xAxisLabel;
+        yAxisLabel = model.yAxisLabel;
+    }
+
+    $: model = redrawModel(metric);
 
     $: x = d3.scaleLinear(d3.extent(xAxis), [marginLeft, width - marginRight]);
     $: y = d3.scaleLinear(d3.extent(yAxis), [height - marginBottom, marginTop]);
@@ -51,9 +63,17 @@
         //class to make it responsive
         .classed("svg-content-responsive", true); 
 
+    $: d3.select("svg").append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "end")
+            .attr("x", width)
+            .attr("y", height)
+            .text("income per capita, inflation-adjusted (dollars)");
+
 
     const area = d3.area().x((d) => x(d.x)).y0((d) => y(d.low)).y1((d) => y(d.high))
     const li = d3.line((d) => x(d.x), (d) => y(d.y));
+    const curveFunc = d3.line((d) => x(d.x), (d) => y(d.y)).curve(d3.curveBasis)//.x(function(d) { return d.x }).y(function(d) { return d.y })
 
 </script>
 
@@ -71,7 +91,10 @@
             </g>
 
             <path class="area" fill="#0000ff44" stroke="currentColor" stroke-width="0" d={area(interval)} />
-            <path class="line" fill="none" stroke="currentColor" stroke-width="1.5" d={li(interval)} />
+            <path class="line" fill="none" stroke="currentColor" stroke-width="1.5" d={curveFunc(interval)} />
+
+            <text text-anchor="center" x={width/2.2} y={height + 15}>{xAxisLabel}</text>
+            <text text-anchor="center" x={-width / 2.2} y={-20} transform="rotate(-90)">{yAxisLabel}</text>
 
         </svg>
     </div>
@@ -87,7 +110,7 @@
         > svg {
             overflow: visible;
             g.scale {
-                font-size: 1rem;
+                font-size: 0.7rem;
             }
             g.point circle {
                 fill: red;

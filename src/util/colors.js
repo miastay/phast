@@ -20,6 +20,7 @@ function orGrBlu(min, max) {
 
 function blGr(min, max) {
     return [
+        [-1, "#555"],
         [min, "#000000", "Very low biodiversity"],
         [max, "#00ff00", "Very high biodiversity"],
     ]

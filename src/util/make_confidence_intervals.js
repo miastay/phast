@@ -25,14 +25,15 @@ export function buildModel(type) {
     let d = data.d;
     let b = data.b;
     let e = data.e;
+    let c = data.c;
     let ll3 = data.ll3;
     let minY = data.minY;
     let maxY = data.maxY;
     for(let i = 0; i < resolution; i++) {
         points[i] = {
             "x": i * delta,
-            "high": ll3(i, d.high, b.high, e.high),
-            "low": ll3(i, d.low, b.low, e.low)
+            "high": ll3(i, b.high, c.high, d.high, e.high),
+            "low": ll3(i, b.low, c.low, d.low, e.low)
         }
     }
 
@@ -41,7 +42,9 @@ export function buildModel(type) {
     return {
         confidence: points,
         yAxis: yAxis,
-        xAxis: xAxis
+        xAxis: xAxis,
+        xAxisLabel: "Tree Size",
+        yAxisLabel: data.yAxisLabel
     };
 }
 
@@ -66,7 +69,8 @@ const pd = {
     },
     "minY": 0,
     "maxY": 5000,
-    "ll3": (x,d,b,e) => (d) / (1 + Math.exp(b * (Math.log(x) - Math.log(e))))
+    "yAxisLabel": "Phylogenetic Diversity (pd)",
+    "ll3": (x,b,c,d,e) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))))
 }
 
 const mpd = {
@@ -87,8 +91,9 @@ const mpd = {
         "high": 4.49962992132698
     },
     "minY": 0,
-    "maxY": 200,
-    "ll3": (x,d,b,e) => (d) / (1 + Math.exp(b * (Math.log(x) - e)))
+    "maxY": 500,
+    "yAxisLabel": "M Phylogenetic Diversity (mpd)",
+    "ll3": (x,b,c,d,e) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))))
 }
 
 const mntd = {
@@ -108,6 +113,8 @@ const mntd = {
         "low": 12.7584223154993,
         "high": 3.26410875351594
     },
-    "minY": 50,
-    "maxY": 175
+    "minY": 0,
+    "maxY": 500,
+    "yAxisLabel": "MN Tree Diversity (mntd)",
+    "ll3": (x,b,c,d,e) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))))
 }

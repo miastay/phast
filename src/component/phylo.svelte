@@ -34,9 +34,5 @@
 
 <style lang="scss">
     #tree_container {
-        width: 100%;
-        svg {
-            height: 50%;
-        }
     }
 </style>

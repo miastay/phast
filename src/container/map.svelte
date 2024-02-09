@@ -12,6 +12,18 @@
 
     export let metric;
 
+    let selectedFeature, selectedId;
+    let selectedHexStyle = {
+        "layout": {
+            "line-join": "round",
+            "line-cap": "round"
+        },
+        "paint": {
+            "line-color": "red",
+            "line-width": 5
+        }
+    }
+
     let map;//: maplibregl.Map | undefined;
     let loaded = false//: boolean;
     let textLayers;//: maplibregl.LayerSpecification[] = [];
@@ -73,14 +85,15 @@
                 console.log(generatePalette())
 
                 const layers = map.getStyle().layers;
+                console.log(layers)
                 // Find the index of the first symbol layer in the map style
-                let firstSymbolId;
-                for (let i = 0; i < layers.length; i++) {
-                    if (layers[i].type === 'symbol') {
-                        firstSymbolId = layers[i].id;
-                        break;
-                    }
-                }
+                let firstSymbolId = layers[71].id;
+                // for (let i = 0; i < layers.length; i++) {
+                //     if (layers[i].id === 'symbol') {
+                //         firstSymbolId = layers[i].id;
+                //         break;
+                //     }
+                // }
 
                 map.addSource('hexlayer', {
                     'type': 'geojson',
@@ -100,7 +113,6 @@
                         },
                     },
                 }, firstSymbolId);
-
 
                 map.on('load', () => {
                     let hexBounds = geojsonExtent(hexagons)
@@ -128,12 +140,42 @@
 
 
                     let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, hexagonFetchResolution)
+                    
                     // map.fitBounds([
                     //     [32.958984, -5.353521],
                     //     [43.50585, 5.615985]
                     // ]);
                     //zoomToHexagon(cell, map)
                     map.flyTo([e.lngLat.lat, e.lngLat.lng])
+
+                    // highlight hexagon clicked with new line layer
+
+                    let features = map.queryRenderedFeatures(e.point, { layers: ['hex'] });
+                    if (!features.length) {
+                        return;
+                    }
+                    if (typeof map.getLayer('selected-hex') !== "undefined"){         
+                        map.removeLayer('selected-hex')
+                        map.removeSource('selected-hex');  
+                    }
+                    if(cell == selectedId) {
+                        map.removeLayer('selected-hex')
+                        map.removeSource('selected-hex');  
+                        return;
+                    } 
+                    selectedFeature = features[0];
+                    selectedId = cell;
+                    map.addSource('selected-hex', {
+                        "type":"geojson",
+                        "data": selectedFeature.toJSON()
+                    });
+                    map.addLayer({
+                        "id": "selected-hex",
+                        "type": "line",
+                        "source": "selected-hex",
+                        ...selectedHexStyle
+                    });
+
 
                     console.log(cell)
                     update({
