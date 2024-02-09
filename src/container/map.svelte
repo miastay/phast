@@ -95,6 +95,10 @@
                 //     }
                 // }
 
+                console.log(map)
+                map.doubleClickZoom._clickZoom._enabled = false;
+                map.doubleClickZoom._tapZoom._enabled = false;
+
                 map.addSource('hexlayer', {
                     'type': 'geojson',
                     'data': hexagons
@@ -121,11 +125,12 @@
                     //populateFeatures(hexagons).then((featurec) => console.log(featurec))
 
                     console.log(hexBounds)
+                    map.setMaxBounds([[-130, 30], [-100, 45]])
                     map.fitBounds(hexBounds, {
                         padding: { top: 50, left: 10, bottom: 50, right: rightPadding }
                     })
+                    
 
-                    console.log()
                     map._canvas.style.filter = "none";
 
                 })

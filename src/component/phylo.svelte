@@ -26,6 +26,7 @@
         tree_svg.setAttribute("height", "100%"); 
         console.log(tree_svg)
         treeref.appendChild(tree_svg)
+        //tree_svg.style = "fill: none; stroke: black;"
     })
 
 </script>
@@ -33,6 +34,8 @@
 <div id="tree_container" bind:this={treeref}/>
 
 <style lang="scss">
-    #tree_container {
+    :global(path.branch) {
+        fill: none;
+        stroke: black;
     }
 </style>
