@@ -93,7 +93,7 @@
                     'layout': {},
                     'paint': {
                         "fill-color": generatePalette(metric ?? "pd"),
-                        'fill-opacity': 1,
+                        'fill-opacity': 0.75,
                         "fill-color-transition": {
                             "duration": 300,
                             "delay": 0
@@ -121,7 +121,7 @@
                 // backup in case the load event doesn't fire properly
                 setTimeout(() => {
                     map._canvas.style.filter = "none";
-                }, 5000)
+                }, 3000)
 
                 
                 map.on('click', 'hex', (e) => {

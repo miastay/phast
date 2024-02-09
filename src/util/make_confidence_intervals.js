@@ -7,8 +7,6 @@ export function buildModel(type) {
     let points = new Array(resolution);
     let yAxis = [0, 1]
 
-    const ll3 = (x,d,b,e) => (d) / (1 + Math.exp(b * (Math.log(x) - Math.log(e))))
-
     const delta = (xAxis[1] / resolution)
 
     let data;
@@ -27,6 +25,7 @@ export function buildModel(type) {
     let d = data.d;
     let b = data.b;
     let e = data.e;
+    let ll3 = data.ll3;
     let minY = data.minY;
     let maxY = data.maxY;
     for(let i = 0; i < resolution; i++) {
@@ -66,7 +65,8 @@ const pd = {
         "high": 161.518693290759
     },
     "minY": 0,
-    "maxY": 5000
+    "maxY": 5000,
+    "ll3": (x,d,b,e) => (d) / (1 + Math.exp(b * (Math.log(x) - Math.log(e))))
 }
 
 const mpd = {
@@ -86,8 +86,9 @@ const mpd = {
         "low": 2.95718871003758,
         "high": 4.49962992132698
     },
-    "minY": 240,
-    "maxY": 320
+    "minY": 0,
+    "maxY": 200,
+    "ll3": (x,d,b,e) => (d) / (1 + Math.exp(b * (Math.log(x) - e)))
 }
 
 const mntd = {

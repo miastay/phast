@@ -1,5 +1,6 @@
 <script>
 	import Graph from "./graph.svelte";
+	import Phylo from "./phylo.svelte";
     export let selectionData;
     export let metric;
 </script>
@@ -10,6 +11,7 @@
         <h3>{`${selectionData.latlng.lat}, ${selectionData.latlng.lng}`}</h3>
         <span>{selectionData.properties[metric]}</span>
         <Graph data={[0.4, 0.7, 0.8, 0.9, 1]} point={[[1.2, selectionData.properties.pd]]}/>
+        <Phylo />
     {/if}
     {#if !selectionData.properties}
     <h3>Click on a hexagon to see data</h3>

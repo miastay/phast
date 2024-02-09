@@ -1,4 +1,13 @@
 export function getPalette(min, max) {
+    return blGr(min, max)
+    //return orGrBlu(min, max);
+}
+
+function getQuant(min, max, quant) {
+    return  (quant * (max - min));
+}
+
+function orGrBlu(min, max) {
     return [
         [min, "#F9A825", "Very low biodiversity"],
         [getQuant(min, max, 0.35), "#e8f4c4"],
@@ -9,8 +18,11 @@ export function getPalette(min, max) {
     ];
 }
 
-function getQuant(min, max, quant) {
-    return  (quant * (max - min));
+function blGr(min, max) {
+    return [
+        [min, "#000000", "Very low biodiversity"],
+        [max, "#00ff00", "Very high biodiversity"],
+    ]
 }
 
 /**
