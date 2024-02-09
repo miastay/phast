@@ -10,6 +10,8 @@
     let hexagonFetchResolution = 6;
     const centerOfCalifornia = [-119.449444, 37.166111];
 
+    export let metric;
+
     let map;//: maplibregl.Map | undefined;
     let loaded = false//: boolean;
     let textLayers;//: maplibregl.LayerSpecification[] = [];
@@ -18,7 +20,7 @@
         console.log(textLayers)
         //map.flyTo(centerOfCalifornia)
     }
-
+    $: if(map && loaded) map.setPaintProperty('hex', 'fill-color', generatePalette(metric))
     // $: if (map && loaded) {
     // for (let layer of textLayers) {
     //     map.setPaintProperty(layer.id, 'text-color', colors.textColor);
@@ -32,9 +34,15 @@
     let hexagons;
     let hexdata = {};
 
-    const mapPalette = getPalette(0, 5000);
+    let mapPalette = getPalette(0, 5000);
 
-    function generatePalette() {
+    function generatePalette(m) {
+        if(m == "pd")
+            mapPalette = getPalette(0, 2000);
+        if(m == "mntd")
+            mapPalette = getPalette(0, 100);
+        if(m == "mpd")
+            mapPalette = getPalette(0, 300);
         const len = mapPalette.length
         let colors = mapPalette.map((color, i) => [color[0], color[1]])
         //colors[colors.length - 1] = colors[colors.length - 1][0]
@@ -43,7 +51,7 @@
         return [
             "interpolate",
             ["linear"],
-            ["get", "pd"],
+            ["get", m],
             ...colors
         ]
     }
@@ -84,9 +92,13 @@
                     'source': 'hexlayer',
                     'layout': {},
                     'paint': {
-                        "fill-color": generatePalette(),
-                        'fill-opacity': 1
-                    }
+                        "fill-color": generatePalette(metric ?? "pd"),
+                        'fill-opacity': 1,
+                        "fill-color-transition": {
+                            "duration": 300,
+                            "delay": 0
+                        },
+                    },
                 }, firstSymbolId);
 
 
@@ -120,7 +132,8 @@
                     //     [32.958984, -5.353521],
                     //     [43.50585, 5.615985]
                     // ]);
-                    zoomToHexagon(cell, map)
+                    //zoomToHexagon(cell, map)
+                    map.flyTo([e.lngLat.lat, e.lngLat.lng])
 
                     console.log(cell)
                     update({
@@ -138,9 +151,6 @@
                 map.on('mouseleave', 'hex', () => {
                     map.getCanvas().style.cursor = '';
                 });
-
-
-
 
             })
     });
@@ -164,7 +174,6 @@
             duration: 750
         });
     }
-
 
     const darkMode = false;
     let source = darkMode ? 'dark-matter' : 'positron';
