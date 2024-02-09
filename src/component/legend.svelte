@@ -26,7 +26,7 @@
         position: absolute;
         left: 10px;
         bottom: 50px;
-        flex-direction: column;
+        flex-direction: column-reverse;
         gap: 0.75rem;
 
         .item {
