@@ -4,9 +4,8 @@
     import geojsonExtent from '@mapbox/geojson-extent';
     import * as h3 from 'h3-js';
 
-    import { populateFeatures } from '../populate_hexbins';
+    import { objToDict, populateFeatures } from '../util/populate_hexbins';
     import { getPalette } from '../util/colors';
-
 
     let hexagonFetchResolution = 6;
     const centerOfCalifornia = [-119.449444, 37.166111];
@@ -33,7 +32,7 @@
     let hexagons;
     let hexdata = {};
 
-    const mapPalette = getPalette();
+    const mapPalette = getPalette(0, 5000);
 
     function generatePalette() {
         const len = mapPalette.length
@@ -52,10 +51,16 @@
     export let update;
 
     onMount(() => {
-        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_populated.json`)
+        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_birds.json`)
             .then((data) => data.json())
             .then((hex) => hexagons = hex)
             .then(() => {
+
+                //populateFeatures(hexagons, hexagonFetchResolution).then((pop) => console.log(pop));
+
+                // fetch('/phast/data/initial_poly_bird_data.json')
+                // .then((data) => data.json())
+                // .then((obj) => console.log(objToDict(obj)));
 
                 console.log(generatePalette())
 
@@ -68,7 +73,6 @@
                         break;
                     }
                 }
-
 
                 map.addSource('hexlayer', {
                     'type': 'geojson',
@@ -101,6 +105,11 @@
                     map._canvas.style.filter = "none";
 
                 })
+
+                // backup in case the load event doesn't fire properly
+                setTimeout(() => {
+                    map._canvas.style.filter = "none";
+                }, 5000)
 
                 
                 map.on('click', 'hex', (e) => {
