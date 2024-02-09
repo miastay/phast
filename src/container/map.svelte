@@ -7,51 +7,52 @@
     import { objToDict, populateFeatures } from '../util/populate_hexbins';
     import { getPalette, getDiscretePalette } from '../util/colors';
 
+    import { metrics } from "../util/make_confidence_intervals";
+
     let hexagonFetchResolution = 6;
     const centerOfCalifornia = [-119.449444, 37.166111];
 
     export let metric;
     export let colorScheme;
 
-    let selectedFeature, selectedId;
-    let selectedHexStyle = {
-        // "layout": {
-        //     "line-join": "round",
-        //     "line-cap": "round"
-        // },
-        "paint": {
-            "line-color": "#00ffff",
-            "line-width": 5
-        }
-    }
+    const layerTransitionTime = 500;
 
     let map;//: maplibregl.Map | undefined;
     let loaded = false//: boolean;
     let textLayers;//: maplibregl.LayerSpecification[] = [];
+    let firstSymbolId;
     $: if (map && loaded) {
         textLayers = map.getStyle().layers.filter((layer) => layer['source-layer'] === 'place');
         console.log(textLayers)
-        //map.flyTo(centerOfCalifornia)
     }
     $: if(map && loaded) updateMetricPaintLayer(metric)
-    //$: if(map && loaded) map.setPaintProperty('hex', 'fill-color', generatePalette(metric, colorScheme, true))
-    // $: if (map && loaded) {
-    // for (let layer of textLayers) {
-    //     map.setPaintProperty(layer.id, 'text-color', colors.textColor);
-    //     map.setPaintProperty(layer.id, 'text-halo-color', colors.textOutlineColor);
-    // }
-    // }
+    $: if(map && loaded) updateLayerPalettes(colorScheme)
 
     function updateMetricPaintLayer(met) {
 
         // we try to find a workaround to transitions not firing on feature-state changes, see: https://github.com/mapbox/mapbox-gl-js/issues/11748
+        map.moveLayer(`hex-${met}`, firstSymbolId);
 
-        let pal = generatePalette(met, colorScheme, true)
-        map.setPaintProperty('hex', 'fill-color', pal)
-        map.setPaintProperty('hex', 'fill-color-transition', { duration: 500, delay: 0})
-        //map.setPaintProperty('hex', 'fill-color', `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`)
+        setTimeout(() => {
+            clearHexLayers([`hex-${met}`])
+        }, layerTransitionTime / 4);
+
+        map.setPaintProperty(`hex-${met}`, 'fill-opacity', 1)
     }
 
+    function clearHexLayers(exclude = []) {
+        let layersToClear = map.getStyle().layers.filter((layer) => layer.source === "hexlayer" && !(exclude.includes(layer.id)))
+        for(let layer of layersToClear) {
+            map.setPaintProperty(layer.id, 'fill-opacity', 0)
+        }
+    }
+    function updateLayerPalettes(colors) {
+        let hexLayers = map.getStyle().layers.filter((layer) => layer.source === "hexlayer")
+        for(let layer of hexLayers) {
+            let layerMetric = layer.id.split('-')[1]
+            map.setPaintProperty(layer.id, 'fill-color', generatePalette(layerMetric, colors, true))
+        }
+    }
 
 
     let rightPadding;
@@ -85,12 +86,6 @@
         }
         else {
 
-            // mapPalette = getDiscretePalette(mins[m], maxes[m], scheme);
-            // let colors = mapPalette.map((color, i) => [color[0], color[1]])
-            // colors[colors.length - 1] = colors[colors.length - 1][0]
-            // colors = colors.flat()
-            // colors = colors.slice(1)
-            // console.log(colors)
             return [
                 "step",
                 ["get", m],
@@ -98,11 +93,8 @@
                 "#fc4e2a", 600,
                 "#00E676", 1300,
                 "#2a4e9b"
-                //"#ffeda0",10,"#ffeda0",20,"#fed976",50,"#feb24c",100,"#fd8d3c",200,"#fc4e2a",500,"#e31a1c"
             ]
 
-
-            return ["step",["get",m],"#ffeda0",10,"#ffeda0",20,"#fed976",50,"#feb24c",100,"#fd8d3c",200,"#fc4e2a",500,"#e31a1c",750,"hsl(348, 100%, 37%)",1000,"#bd0026"]
         }
     }
 
@@ -116,112 +108,46 @@
 
                 maxes = hexagons.properties?.maxes
                 mins = hexagons.properties?.mins
-                //populateFeatures(hexagons, hexagonFetchResolution).then((pop) => console.log(pop));
 
-                // fetch('/phast/data/initial_poly_bird_data.json')
-                // .then((data) => data.json())
-                // .then((obj) => console.log(objToDict(obj)));
-
-                const layers = map.getStyle().layers;
-                console.log(layers)
+                
                 // Find the index of the first symbol layer in the map style
+                const layers = map.getStyle().layers;
                 let firstSymbolId = layers[71].id;
-                // for (let i = 0; i < layers.length; i++) {
-                //     if (layers[i].id === 'symbol') {
-                //         firstSymbolId = layers[i].id;
-                //         break;
-                //     }
-                // }
 
                 console.log(map)
                 map.doubleClickZoom._clickZoom._enabled = false;
                 map.doubleClickZoom._tapZoom._enabled = false;
 
+
+                // generate one layer per metric, we fade opacity rather than feature-state switching
+
                 map.addSource('hexlayer', {
                     'type': 'geojson',
                     'data': hexagons
                 });
-                map.addLayer({
-                    'id': 'hex',
-                    'type': 'fill',
-                    'source': 'hexlayer',
-                    'layout': {},
-                    'paint': {
-                        "fill-color": generatePalette(metric ?? "pd", colorScheme, false),
-                        "fill-opacity": 0.75,
-                        "fill-color-transition": {
-                            "duration": 1000,
-                            "delay": 0
-                        },
-                    },
-                }, firstSymbolId);
-
-                map.on('load', () => {
-                    let hexBounds = geojsonExtent(hexagons)
-                    rightPadding = (window.innerWidth) / 3;
-
-                    console.log(hexBounds)
-                    map.setMaxBounds([[-130, 30], [-100, 45]])
-                    map.fitBounds(hexBounds, {
-                        padding: { top: 50, left: 10, bottom: 50, right: rightPadding }
-                    })
-                    
-
-                    map._canvas.style.filter = "none";
-
-                    setInterval(() => {
-                        }, 1000);
-
-
-                })
-
-                // backup in case the load event doesn't fire properly
-                setTimeout(() => {
-                    map._canvas.style.filter = "none";
-                }, 3000)
-
-                
-                map.on('click', 'hex', (e) => {
-
-                    let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, hexagonFetchResolution)
-                    
-                    // map.fitBounds([
-                    //     [32.958984, -5.353521],
-                    //     [43.50585, 5.615985]
-                    // ]);
-                    //zoomToHexagon(cell, map)
-                    map.flyTo([e.lngLat.lat, e.lngLat.lng])
-
-                    // highlight hexagon clicked with new line layer
-
-                    /*
-                    let features = map.queryRenderedFeatures(e.point, { layers: ['hex'] });
-                    if (!features.length) {
-                        return;
-                    }
-                    if (typeof map.getLayer('selected-hex') !== "undefined"){         
-                        map.removeLayer('selected-hex')
-                        map.removeSource('selected-hex');  
-                        if(cell == selectedId) {
-                            update({});
-                            return;
-                        } 
-                    }
-                    
-                    selectedFeature = features[0];
-                    selectedId = cell;
-                    map.addSource('selected-hex', {
-                        "type":"geojson",
-                        "data": selectedFeature.toJSON()
-                    });
+                for(let mt of metrics) {
+                    let id = `hex-${mt}`
                     map.addLayer({
-                        "id": "selected-hex",
-                        "type": "line",
-                        "source": "selected-hex",
-                        ...selectedHexStyle
-                    });
-
-                    */
+                        'id': id,
+                        'type': 'fill',
+                        'source': 'hexlayer',
+                        'layout': {},
+                        'paint': {
+                            "fill-color": generatePalette(mt, colorScheme, true),
+                            "fill-opacity": 0.75,
+                            "fill-color-transition": {
+                                "duration": 500,
+                                "delay": 0
+                            },
+                        },
+                    }, firstSymbolId);
+                }
+                let firstMetricId = `hex-${metrics[0]}`;
+                map.on('click', firstMetricId, (e) => {
+                    console.log(e)
+                    e.originalEvent.stopPropagation();
+                    let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, hexagonFetchResolution)
+                    //zoomToHexagon(cell, map)
                     console.log(cell)
                     update({
                         latlng: e.lngLat,
@@ -229,15 +155,33 @@
                         properties: e.features[0].properties
                     })
                 });
-
-                map.on('mouseenter', 'hex', () => {
+                map.on('mouseenter', firstMetricId, () => {
                     map.getCanvas().style.cursor = 'pointer';
                 });
-
-                // Change it back to a pointer when it leaves.
-                map.on('mouseleave', 'hex', () => {
+                map.on('mouseleave', firstMetricId, () => {
                     map.getCanvas().style.cursor = '';
                 });
+
+
+                map.on('load', () => {
+                    let hexBounds = geojsonExtent(hexagons)
+                    rightPadding = (window.innerWidth) / 3;
+
+                    map.setMaxBounds([[-130, 30], [-100, 45]])
+                    map.fitBounds(hexBounds, {
+                        padding: { top: 50, left: 10, bottom: 50, right: rightPadding }
+                    })
+
+                    map._canvas.style.filter = "none";
+
+                    setInterval(() => {
+                        }, 1000);
+                })
+
+                // backup in case the load event doesn't fire properly
+                setTimeout(() => {
+                    map._canvas.style.filter = "none";
+                }, 3000)
 
             })
     });

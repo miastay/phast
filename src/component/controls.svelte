@@ -1,12 +1,12 @@
 <script>
     import Select from "@smui/select";
 	import { Option } from "@smui/select";
+    import { metrics } from "../util/make_confidence_intervals";
 
     export let updateMetricLayer;
     export let updateColorScheme;
 
     let metric;
-    const options = ["pd", "mpd", "mntd"]
 
     let colorScheme;
 
@@ -17,7 +17,7 @@
 
 <div class='controls'>
     <select bind:value={metric} on:change={() => updateMetricLayer(metric)} label="Diversity Metric">
-        {#each options as opt}
+        {#each metrics as opt}
           <option value={opt}>{opt}</option>
         {/each}
     </select>

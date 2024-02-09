@@ -2,6 +2,8 @@
 const LL4 = ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))));
 const MM3 = ({x,c,d,e}) => c + ((d-c) / (1 + (e/x)));
 
+export const metrics = ["pd", "mpd", "mntd"]
+
 export function buildModel(type) {
 
     const types = ["pd", "mpd", "mntd"];
