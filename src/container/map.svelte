@@ -11,6 +11,7 @@
     const centerOfCalifornia = [-119.449444, 37.166111];
 
     export let metric;
+    export let colorScheme;
 
     let selectedFeature, selectedId;
     let selectedHexStyle = {
@@ -32,7 +33,7 @@
         console.log(textLayers)
         //map.flyTo(centerOfCalifornia)
     }
-    $: if(map && loaded) map.setPaintProperty('hex', 'fill-color', generatePalette(metric))
+    $: if(map && loaded) map.setPaintProperty('hex', 'fill-color', generatePalette(metric, colorScheme))
     // $: if (map && loaded) {
     // for (let layer of textLayers) {
     //     map.setPaintProperty(layer.id, 'text-color', colors.textColor);
@@ -47,11 +48,11 @@
     let hexdata = {};
 
     let maxes, mins;
-    let mapPalette = getPalette(0, 5000);
+    let mapPalette = getPalette(0, 5000, colorScheme);
 
-    function generatePalette(m) {
+    function generatePalette(m, scheme) {
         if(!maxes || !mins) return;
-        mapPalette = getPalette(mins[m], maxes[m]);
+        mapPalette = getPalette(mins[m], maxes[m], scheme);
         console.log(mapPalette)
         const len = mapPalette.length
         let colors = mapPalette.map((color, i) => [color[0], color[1]])
@@ -82,8 +83,6 @@
                 // .then((data) => data.json())
                 // .then((obj) => console.log(objToDict(obj)));
 
-                console.log(generatePalette())
-
                 const layers = map.getStyle().layers;
                 console.log(layers)
                 // Find the index of the first symbol layer in the map style
@@ -109,7 +108,7 @@
                     'source': 'hexlayer',
                     'layout': {},
                     'paint': {
-                        "fill-color": generatePalette(metric ?? "pd"),
+                        "fill-color": generatePalette(metric ?? "pd", colorScheme),
                         "fill-opacity": 0.75,
                         "fill-color-transition": {
                             "duration": 1000,

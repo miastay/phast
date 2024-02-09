@@ -63,14 +63,6 @@
         //class to make it responsive
         .classed("svg-content-responsive", true); 
 
-    $: d3.select("svg").append("text")
-            .attr("class", "x label")
-            .attr("text-anchor", "end")
-            .attr("x", width)
-            .attr("y", height)
-            .text("income per capita, inflation-adjusted (dollars)");
-
-
     const area = d3.area().x((d) => x(d.x)).y0((d) => y(d.low)).y1((d) => y(d.high))
     const li = d3.line((d) => x(d.x), (d) => y(d.y));
     const curveFunc = d3.line((d) => x(d.x), (d) => y(d.y)).curve(d3.curveBasis)//.x(function(d) { return d.x }).y(function(d) { return d.y })
@@ -84,14 +76,15 @@
             <g class="scale y" bind:this={gy} transform="translate({marginLeft},0)" />
 
             <!-- <path class="line" fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} /> -->
+
+            <path class="area" fill="#00ffff44" stroke="currentColor" stroke-width="0" d={area(interval)} />
+            <path class="line" fill="none" stroke="currentColor" stroke-width="1.5" d={curveFunc(interval)} />
+
             <g class="point" fill="white" stroke="currentColor" stroke-width="1.5">
                 {#each point as p, i}
                     <circle key={i} cx={x(p[0])} cy={y(p[1])} r="5" fill="white" />
                 {/each}
             </g>
-
-            <path class="area" fill="#0000ff44" stroke="currentColor" stroke-width="0" d={area(interval)} />
-            <path class="line" fill="none" stroke="currentColor" stroke-width="1.5" d={curveFunc(interval)} />
 
             <text text-anchor="center" x={width/2.2} y={height + 15}>{xAxisLabel}</text>
             <text text-anchor="center" x={-width / 2.2} y={-20} transform="rotate(-90)">{yAxisLabel}</text>

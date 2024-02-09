@@ -20,9 +20,14 @@ import Legend from '../component/legend.svelte';
         metricLayer = layer;
     }
 
+    let colorScheme = "rdYlGr";
+    function updateColorScheme(colors) {
+        colorScheme = colors;
+    }
+
 </script>
 
-<Map update={updateSelectionData} metric={metricLayer}/>
+<Map update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme}/>
 <Modal selectionData={selectionData} metric={metricLayer}/>
 <Legend />
-<Controls updateMetricLayer={updateMetricLayer}/>
+<Controls updateMetricLayer={updateMetricLayer} updateColorScheme={updateColorScheme}/>

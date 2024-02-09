@@ -32,6 +32,7 @@ export async function populateFeatures(geo, res) {
                 "pd": -1,
                 "mpd": -1,
                 "mntd": -1,
+                "tree_sizes": 0
             },
             "geometry": {
                 "type": "Polygon",
@@ -77,6 +78,6 @@ export async function populateFeatures(geo, res) {
 }
 
 export function objToDict(obj) {
-    let dictionary = Object.fromEntries(obj.map(x => [x.id, {"pd": x.pd, "mpd": x.mpd, "mntd": x.mntd}]));
+    let dictionary = Object.fromEntries(obj.map(x => [x.id, {"pd": x.pd, "mpd": x.mpd, "mntd": x.mntd, "tree_sizes": x.tree_sizes}]));
     return dictionary;
 }

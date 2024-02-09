@@ -3,14 +3,24 @@
 	import { Option } from "@smui/select";
 
     export let updateMetricLayer;
+    export let updateColorScheme;
+
     let metric;
     const options = ["pd", "mpd", "mntd"]
+
+    let colorScheme;
+    const colors = ["rdYlGr", "blGr", "orGrBlu", "grYlRdpal"]
     
 </script>
 
 <div class='controls'>
     <select bind:value={metric} on:change={() => updateMetricLayer(metric)} label="Diversity Metric">
         {#each options as opt}
+          <option value={opt}>{opt}</option>
+        {/each}
+    </select>
+    <select bind:value={colorScheme} on:change={() => updateColorScheme(colorScheme)} label="Color Scheme">
+        {#each colors as opt}
           <option value={opt}>{opt}</option>
         {/each}
     </select>

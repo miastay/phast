@@ -1,5 +1,13 @@
-export function getPalette(min, max) {
-    return rdYlGr(min, max)
+const schemes = {
+    "rdYlGr": rdYlGr,
+    "orGrBlu": orGrBlu,
+    "blGr": blGr,
+    "grYlRd": grYlRd
+}
+
+export function getPalette(min, max, scheme = "rdYlGr") {
+    let palette = schemes[scheme](min, max)
+    return palette
 }
 
 function getQuant(min, max, quant) {
@@ -26,12 +34,22 @@ function blGr(min, max) {
     ]
 }
 
+
 function rdYlGr(min, max) {
     return [
         [-1, "#ddd", "Missing"],
         [min, "#ff3300cc", "Very low biodiversity"],
         [getQuant(min, max, 0.5), "#ffff33cc", "Normal biodiversity"],
         [max, "#00ff33cc", "Very high biodiversity"],
+    ]
+}
+
+function grYlRd(min, max) {
+    return [
+        [-1, "#ddd", "Missing"],
+        [min, "#00ff33cc", "Very low biodiversity"],
+        [getQuant(min, max, 0.5), "#ffff33cc", "Normal biodiversity"],
+        [max, "#ff3300cc", "Very high biodiversity"],
     ]
 }
 
