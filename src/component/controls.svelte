@@ -9,7 +9,9 @@
     const options = ["pd", "mpd", "mntd"]
 
     let colorScheme;
-    const colors = ["rdYlGr", "blGr", "orGrBlu", "grYlRd", "blBluCy"]
+
+    import { schemes } from '../util/colors';
+    const colors = Object.keys(schemes)
     
 </script>
 
