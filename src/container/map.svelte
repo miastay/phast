@@ -74,8 +74,8 @@
             .then((hex) => hexagons = hex)
             .then(() => {
 
-                maxes = hexagons.properties.maxes
-                mins = hexagons.properties.mins
+                maxes = hexagons.properties?.maxes
+                mins = hexagons.properties?.mins
                 //populateFeatures(hexagons, hexagonFetchResolution).then((pop) => console.log(pop));
 
                 // fetch('/phast/data/initial_poly_bird_data.json')
