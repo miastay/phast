@@ -14,12 +14,12 @@
 
     let selectedFeature, selectedId;
     let selectedHexStyle = {
-        "layout": {
-            "line-join": "round",
-            "line-cap": "round"
-        },
+        // "layout": {
+        //     "line-join": "round",
+        //     "line-cap": "round"
+        // },
         "paint": {
-            "line-color": "red",
+            "line-color": "#00ffff",
             "line-width": 5
         }
     }
@@ -157,12 +157,12 @@
                     if (typeof map.getLayer('selected-hex') !== "undefined"){         
                         map.removeLayer('selected-hex')
                         map.removeSource('selected-hex');  
+                        if(cell == selectedId) {
+                            update({});
+                            return;
+                        } 
                     }
-                    if(cell == selectedId) {
-                        map.removeLayer('selected-hex')
-                        map.removeSource('selected-hex');  
-                        return;
-                    } 
+                    
                     selectedFeature = features[0];
                     selectedId = cell;
                     map.addSource('selected-hex', {
