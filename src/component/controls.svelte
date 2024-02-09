@@ -9,7 +9,7 @@
     const options = ["pd", "mpd", "mntd"]
 
     let colorScheme;
-    const colors = ["rdYlGr", "blGr", "orGrBlu", "grYlRdpal"]
+    const colors = ["rdYlGr", "blGr", "orGrBlu", "grYlRd", "blBluCy"]
     
 </script>
 

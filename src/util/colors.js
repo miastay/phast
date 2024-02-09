@@ -2,7 +2,8 @@ const schemes = {
     "rdYlGr": rdYlGr,
     "orGrBlu": orGrBlu,
     "blGr": blGr,
-    "grYlRd": grYlRd
+    "grYlRd": grYlRd,
+    "blBluCy": blBluCy
 }
 
 export function getPalette(min, max, scheme = "rdYlGr") {
@@ -31,6 +32,15 @@ function blGr(min, max) {
         [-1, "#ddd", "Missing"],
         [min, "#000000", "Very low biodiversity"],
         [max, "#00ff00", "Very high biodiversity"],
+    ]
+}
+
+function blBluCy(min, max) {
+    return [
+        [-1, "#ddd", "Missing"],
+        [min, "#000000cc", "Very low biodiversity"],
+        [getQuant(min, max, 0.5), "#0000ffcc", "Expected biodiversity"],
+        [max, "#00ffffcc", "Very high biodiversity"],
     ]
 }
 
