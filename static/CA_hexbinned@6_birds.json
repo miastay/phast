@@ -313,6 +313,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862916677ffffff"
         },
         "geometry": {
@@ -4754,6 +4756,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86485b39fffffff"
         },
         "geometry": {
@@ -5015,6 +5020,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629b5227ffffff"
         },
         "geometry": {
@@ -5452,6 +5460,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a6997ffffff"
         },
         "geometry": {
@@ -5493,6 +5504,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a362fffffff"
         },
         "geometry": {
@@ -5579,6 +5593,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862810b57ffffff"
         },
         "geometry": {
@@ -6237,6 +6253,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a33b7ffffff"
         },
         "geometry": {
@@ -6586,6 +6604,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862984a1fffffff"
         },
         "geometry": {
@@ -7771,6 +7792,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a2c4fffffff"
         },
         "geometry": {
@@ -7900,6 +7924,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862985da7ffffff"
         },
         "geometry": {
@@ -8513,6 +8540,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862985b2fffffff"
         },
         "geometry": {
@@ -8950,6 +8980,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a275fffffff"
         },
         "geometry": {
@@ -9476,6 +9509,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a8bb7ffffff"
         },
         "geometry": {
@@ -10749,6 +10784,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86298514fffffff"
         },
         "geometry": {
@@ -11582,6 +11620,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a9cc7ffffff"
         },
         "geometry": {
@@ -11844,6 +11885,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629ae8a7ffffff"
         },
         "geometry": {
@@ -13293,6 +13336,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86298476fffffff"
         },
         "geometry": {
@@ -13555,6 +13601,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8628103b7ffffff"
         },
         "geometry": {
@@ -13992,6 +14040,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a2c17ffffff"
         },
         "geometry": {
@@ -14033,6 +14084,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86281680fffffff"
         },
         "geometry": {
@@ -14074,6 +14128,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862985d6fffffff"
         },
         "geometry": {
@@ -14379,6 +14436,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8628119b7ffffff"
         },
         "geometry": {
@@ -14993,6 +15053,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862984007ffffff"
         },
         "geometry": {
@@ -15342,6 +15404,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86485ba97ffffff"
         },
         "geometry": {
@@ -15559,6 +15624,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629b591fffffff"
         },
         "geometry": {
@@ -15644,6 +15712,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a24afffffff"
         },
         "geometry": {
@@ -16346,6 +16417,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86298538fffffff"
         },
         "geometry": {
@@ -17312,6 +17385,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629b51b7ffffff"
         },
         "geometry": {
@@ -17486,6 +17561,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86281c00fffffff"
         },
         "geometry": {
@@ -17527,6 +17604,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862981b37ffffff"
         },
         "geometry": {
@@ -18141,6 +18221,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8628156c7ffffff"
         },
         "geometry": {
@@ -18974,6 +19056,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a6437ffffff"
         },
         "geometry": {
@@ -19015,6 +19100,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a30cfffffff"
         },
         "geometry": {
@@ -20376,6 +20464,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862984247ffffff"
         },
         "geometry": {
@@ -20769,6 +20860,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862806457ffffff"
         },
         "geometry": {
@@ -21206,6 +21300,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a26efffffff"
         },
         "geometry": {
@@ -21555,6 +21652,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629b58e7ffffff"
         },
         "geometry": {
@@ -21685,6 +21785,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86281606fffffff"
         },
         "geometry": {
@@ -23134,6 +23236,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86485b2f7ffffff"
         },
         "geometry": {
@@ -24188,6 +24293,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a8167ffffff"
         },
         "geometry": {
@@ -24977,6 +25084,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862984977ffffff"
         },
         "geometry": {
@@ -25062,6 +25172,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629acacfffffff"
         },
         "geometry": {
@@ -25104,6 +25217,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a9767ffffff"
         },
         "geometry": {
@@ -25937,6 +26052,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629aad67ffffff"
         },
         "geometry": {
@@ -26814,6 +26932,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86298420fffffff"
         },
         "geometry": {
@@ -27076,6 +27197,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862985a87ffffff"
         },
         "geometry": {
@@ -28130,6 +28253,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629ad6efffffff"
         },
         "geometry": {
@@ -29668,6 +29793,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862981ac7ffffff"
         },
         "geometry": {
@@ -29709,6 +29836,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86280245fffffff"
         },
         "geometry": {
@@ -29883,6 +30013,8 @@
         "type": "Feature",
         "properties": {
           "pd": 69.9467,
+          "mpd": -1,
+          "mntd": -1,
           "id": "8629a68b7ffffff"
         },
         "geometry": {
@@ -30320,6 +30452,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "862984bb7ffffff"
         },
         "geometry": {
@@ -30361,6 +30496,9 @@
       {
         "type": "Feature",
         "properties": {
+          "pd": -1,
+          "mpd": -1,
+          "mntd": -1,
           "id": "86298184fffffff"
         },
         "geometry": {
@@ -30663,5 +30801,17 @@
           ]
         }
       }
-    ]
+    ],
+    "properties": {
+      "maxes": {
+        "pd": 1730.1843,
+        "mpd": 129.268,
+        "mntd": 129.268
+      },
+      "mins": {
+        "pd": 69.9467,
+        "mpd": 18.1587,
+        "mntd": 9.9054
+      }
+    }
   }

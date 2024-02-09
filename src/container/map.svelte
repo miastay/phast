@@ -46,15 +46,13 @@
     let hexagons;
     let hexdata = {};
 
+    let maxes, mins;
     let mapPalette = getPalette(0, 5000);
 
     function generatePalette(m) {
-        if(m == "pd")
-            mapPalette = getPalette(0, 2000);
-        if(m == "mntd")
-            mapPalette = getPalette(0, 100);
-        if(m == "mpd")
-            mapPalette = getPalette(0, 300);
+        if(!maxes || !mins) return;
+        mapPalette = getPalette(mins[m], maxes[m]);
+        console.log(mapPalette)
         const len = mapPalette.length
         let colors = mapPalette.map((color, i) => [color[0], color[1]])
         //colors[colors.length - 1] = colors[colors.length - 1][0]
@@ -76,6 +74,8 @@
             .then((hex) => hexagons = hex)
             .then(() => {
 
+                maxes = hexagons.properties.maxes
+                mins = hexagons.properties.mins
                 //populateFeatures(hexagons, hexagonFetchResolution).then((pop) => console.log(pop));
 
                 // fetch('/phast/data/initial_poly_bird_data.json')
@@ -110,9 +110,9 @@
                     'layout': {},
                     'paint': {
                         "fill-color": generatePalette(metric ?? "pd"),
-                        'fill-opacity': 0.75,
+                        "fill-opacity": 0.75,
                         "fill-color-transition": {
-                            "duration": 300,
+                            "duration": 1000,
                             "delay": 0
                         },
                     },
@@ -121,8 +121,6 @@
                 map.on('load', () => {
                     let hexBounds = geojsonExtent(hexagons)
                     rightPadding = (window.innerWidth) / 3;
-
-                    //populateFeatures(hexagons).then((featurec) => console.log(featurec))
 
                     console.log(hexBounds)
                     map.setMaxBounds([[-130, 30], [-100, 45]])
@@ -155,6 +153,7 @@
 
                     // highlight hexagon clicked with new line layer
 
+                    /*
                     let features = map.queryRenderedFeatures(e.point, { layers: ['hex'] });
                     if (!features.length) {
                         return;
@@ -181,7 +180,7 @@
                         ...selectedHexStyle
                     });
 
-
+                    */
                     console.log(cell)
                     update({
                         latlng: e.lngLat,
