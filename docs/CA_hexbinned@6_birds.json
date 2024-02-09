@@ -1,5 +1,17 @@
 {
     "type": "FeatureCollection",
+    "properties": {
+      "maxes": {
+        "pd": 1730.1843,
+        "mpd": 129.268,
+        "mntd": 129.268
+      },
+      "mins": {
+        "pd": 69.9467,
+        "mpd": 18.1587,
+        "mntd": 9.9054
+      }
+    },
     "features": [
       {
         "type": "Feature",
@@ -30801,17 +30813,5 @@
           ]
         }
       }
-    ],
-    "properties": {
-      "maxes": {
-        "pd": 1730.1843,
-        "mpd": 129.268,
-        "mntd": 129.268
-      },
-      "mins": {
-        "pd": 69.9467,
-        "mpd": 18.1587,
-        "mntd": 9.9054
-      }
-    }
+    ]
   }
