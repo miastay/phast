@@ -32,7 +32,7 @@
     let hexagons;
     let hexdata = {};
 
-    const mapPalette = getPalette(0, 5000);
+    const mapPalette = getPalette(0, 2000);
 
     function generatePalette() {
         const len = mapPalette.length
@@ -85,7 +85,7 @@
                     'layout': {},
                     'paint': {
                         "fill-color": generatePalette(),
-                        'fill-opacity': 1
+                        'fill-opacity': 0.75
                     }
                 }, firstSymbolId);
 
@@ -109,7 +109,7 @@
                 // backup in case the load event doesn't fire properly
                 setTimeout(() => {
                     map._canvas.style.filter = "none";
-                }, 5000)
+                }, 3000)
 
                 
                 map.on('click', 'hex', (e) => {
