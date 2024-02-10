@@ -24,30 +24,30 @@ function getQuant(min, max, quant) {
 function orGrBlu(min, max) {
     return [
         [-1, "#ddddddcc"],
-        [min, "#F9A825", "Very low biodiversity"],
+        [min, "#F9A825", "Very low"],
         [getQuant(min, max, 0.35), "#e8f4c4"],
-        [getQuant(min, max, 0.5), "#00E676", "Expected biodiversity"],
+        [getQuant(min, max, 0.5), "#00E676", "Expected"],
         [getQuant(min, max, 0.75), "#3d9ab8"],
         [getQuant(min, max, 0.85), "#318ab5"],
-        [max, "#2a4e9b", "Very high biodiversity"],
+        [max, "#2a4e9b", "Very high"],
     ];
 }
 
 function blGr(min, max) {
     return [
         [-1, "#ddddddcc"],
-        [min, "#000000", "Very low biodiversity"],
-        [max, "#00ff00", "Very high biodiversity"],
+        [min, "#000000", "Very low"],
+        [max, "#00ff00", "Very high"],
     ]
 }
 
 function blBluCyWt(min, max) {
     return [
         [-1, "#ddddddcc", "Missing"],
-        [min, "#000000cc", "Very low biodiversity"],
-        [getQuant(min, max, 0.5), "#0000ffcc", "Expected biodiversity"],
+        [min, "#000000cc", "Very low"],
+        [getQuant(min, max, 0.5), "#0000ffcc", "Expected"],
         [getQuant(min, max, 0.75), "#00ffffcc"],
-        [max, "#ffffffcc", "Very high biodiversity"],
+        [max, "#ffffffcc", "Very high"],
     ]
 }
 
@@ -55,9 +55,9 @@ function blBluCyWt(min, max) {
 function rdYlGr(min, max) {
     return [
         [-1, "#ddddddcc", "Missing"],
-        [min, "#ff3300cc", "Very low biodiversity"],
-        [getQuant(min, max, 0.5), "#ffff33cc", "Normal biodiversity"],
-        [max, "#00ff33cc", "Very high biodiversity"],
+        [min, "#ff3300cc", "Very low"],
+        [getQuant(min, max, 0.5), "#ffff33cc", "Normal"],
+        [max, "#00ff33cc", "Very high"],
     ]
 }
 
@@ -65,9 +65,9 @@ function rdYlGr(min, max) {
 function rdYlGr_discrete(min, max) {
     return [
         [-1, "#ddddddcc", "Missing"],
-        [0, "#ff3300cc", "Very low biodiversity"],
-        [getQuant(min, max, 0.5), "#ffff33cc", "Normal biodiversity"],
-        [max, "#00ff33cc", "Very high biodiversity"],
+        [0, "#ff3300cc", "Very low"],
+        [getQuant(min, max, 0.5), "#ffff33cc", "Normal"],
+        [max, "#00ff33cc", "Very high"],
     ]
 }
 

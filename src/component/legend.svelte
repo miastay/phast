@@ -1,5 +1,6 @@
 <script>
 	import { getPalette } from '../util/colors';
+    import { descs } from '../util/make_confidence_intervals';
 
     let scale = getPalette();
     let gradient;
@@ -23,7 +24,7 @@
     <div class="label-container">
         {#each scale as color}
             {#if color[2]}
-                <span>{`${color[2]} ${metric}`}</span>
+                <span>{`${color[2]} ${descs[metric] ?? ""}`}</span>
             {/if}
         {/each}
     </div>

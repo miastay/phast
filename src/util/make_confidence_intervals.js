@@ -3,6 +3,11 @@ const LL4 = ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Mat
 const MM3 = ({x,c,d,e}) => c + ((d-c) / (1 + (e/x)));
 
 export const metrics = ["pd", "mpd", "mntd", "rel_pd", "rel_mpd", "rel_mntd"]
+export const descs = {
+    "pd": "phylodiversity",
+    "mpd": "mean pairwise phylogenetic distance",
+    "mntd": "mean nearest-taxon phylogenetic distance"
+}
 
 export function buildModel(type) {
 
