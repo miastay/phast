@@ -41,7 +41,7 @@
         flex-direction: row;
         gap: 0.75rem;
         min-height: 5vh;
-        background-color: #ffffff00;
+        background-color: #ffffffaa;
         backdrop-filter: blur(50px);
 
         .label-container {

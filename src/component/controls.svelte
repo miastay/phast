@@ -46,7 +46,7 @@
         flex-direction: column;
 
         gap: 1rem;
-        background-color: #ffffff00;
+        background-color: #ffffffaa;
         backdrop-filter: blur(50px);
 
         .control-item {
