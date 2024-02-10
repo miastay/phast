@@ -16,7 +16,7 @@
             width:width,
             'left-right-spacing': 'fit-to-size', 
             'top-bottom-spacing': 'fit-to-size',
-            'is-radial': true,
+            'is-radial': false,
             container: "#tree_container",
         })
         console.log(renderedTree)
@@ -38,4 +38,16 @@
         fill: none;
         stroke: black;
     }
+
+    #tree_container {
+        width: 100%;
+        max-height: 50%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+    :global(svg) {
+        height: 100%;
+    }
+
 </style>

@@ -33,8 +33,9 @@
 
     function updateMetricPaintLayer(met) {
 
+        console.log(met)
         // we try to find a workaround to transitions not firing on feature-state changes, see: https://github.com/mapbox/mapbox-gl-js/issues/11748
-        map.moveLayer(`hex-${met}`, firstSymbolId);
+        map.moveLayer(`hex-${met}`, 'place_hamlet');
 
         setTimeout(() => {
             clearHexLayers([`hex-${met}`])
@@ -53,7 +54,9 @@
         let hexLayers = map.getStyle().layers.filter((layer) => layer.source === "hexlayer")
         for(let layer of hexLayers) {
             let layerMetric = layer.id.split('-')[1]
-            map.setPaintProperty(layer.id, 'fill-color', generatePalette(layerMetric, colors, true))
+            let pal = generatePalette(layerMetric, colors, true)
+            console.log("palette:", pal)
+            map.setPaintProperty(layer.id, 'fill-color', pal)
         }
     }
 
@@ -69,7 +72,7 @@
 
     function generatePalette(m, scheme, interp = true) {
         if(!maxes || !mins) return;
-
+        console.log("generating for ", m)
         if(interp) {
 
             mapPalette = getPalette(mins[m], maxes[m], scheme);
@@ -104,7 +107,7 @@
     export let update;
 
     onMount(() => {
-        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_birds.json`)
+        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_birds_fct.json`)
             .then((data) => data.json())
             .then((hex) => hexagons = hex)
             .then(() => {
@@ -112,6 +115,7 @@
                 maxes = hexagons.properties?.maxes
                 mins = hexagons.properties?.mins
 
+                //populateFeatures(hexagons, hexagonFetchResolution).then((txt) => console.log(txt))
                 
                 // Find the index of the first symbol layer in the map style
                 const layers = map.getStyle().layers;
@@ -144,7 +148,9 @@
                             },
                         },
                     }, firstSymbolId);
+                    console.log("added layer for ", mt)
                 }
+                console.log(map.getStyle().layers)
 
                 let firstMetricId = `hex-${metrics[0]}`;
                 map.on('click', firstMetricId, (e) => {
@@ -192,7 +198,10 @@
                     map._canvas.style.filter = "none";
                 }, 3000)
 
-            })
+                //generateReserveSurfaces(map);
+
+        })
+        
     });
 
     function zoomToHexagon(index, map) {
@@ -213,6 +222,28 @@
             padding: { top: 100, left: 50, bottom: 100, right: rightPadding},
             duration: 750
         });
+    }
+
+    function generateReserveSurfaces(map) {
+        fetch(`/phast/surfaces/Angelo_Boundary.geojson`)
+        .then((data) => data.json())
+        .then((surface) => {
+            console.log(surface)
+            map.addSource('angelo_reserve', {
+                'type': 'geojson',
+                'data': surface
+            });
+            map.addLayer({
+                'id': 'angelo',
+                'type': 'fill',
+                'source': 'angelo_reserve',
+                'layout': {},
+                'paint': {
+                    "fill-color": "#ff0000",
+                },
+            });
+            console.log("added surface layer")
+        })
     }
 
     const darkMode = false;
@@ -239,14 +270,18 @@
     <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70.46 62.88">
         <defs>
         <style>
-            .cls-1 {
+            .fill {
                 fill: #000;
+                stroke: solid 1px red;
+            }
+            .stroke {
+                stroke: #fff;
             }
         </style>
         </defs>
         <g id="Layer_1-2" data-name="Layer 1">
         <g>
-            <path class="cls-1" d="m35.23,60.88c-1.81,0-3.43-.93-4.33-2.5L2.68,9.5c-.9-1.57-.9-3.44,0-5,.9-1.57,2.52-2.5,4.33-2.5h56.44c1.81,0,3.43.93,4.33,2.5.9,1.56.9,3.43,0,5l-28.22,48.88c-.9,1.57-2.52,2.5-4.33,2.5Z"/>
+            <path class="fill" d="m35.23,60.88c-1.81,0-3.43-.93-4.33-2.5L2.68,9.5c-.9-1.57-.9-3.44,0-5,.9-1.57,2.52-2.5,4.33-2.5h56.44c1.81,0,3.43.93,4.33,2.5.9,1.56.9,3.43,0,5l-28.22,48.88c-.9,1.57-2.52,2.5-4.33,2.5Z"/>
             <path d="m63.45,4c1.56,0,2.34,1.05,2.6,1.5.26.45.78,1.65,0,3l-28.22,48.88c-.78,1.35-2.08,1.5-2.6,1.5s-1.82-.15-2.6-1.5L4.41,8.5c-.78-1.35-.26-2.55,0-3,.26-.45,1.03-1.5,2.6-1.5h56.44m0-4H7.01C1.62,0-1.75,5.83.95,10.5l28.22,48.88c1.35,2.33,3.7,3.5,6.06,3.5s4.72-1.17,6.06-3.5l28.22-48.88c2.69-4.67-.67-10.5-6.06-10.5h0Z"/>
         </g>
         </g>
@@ -290,8 +325,8 @@
         transition: filter 0.5s ease;
     }
     :global(.hex-marker) {
-        width: 20px;
-        top: -1px;
+        width: 30px;
+        top: -9px;
         overflow: visible;
     }
 </style>

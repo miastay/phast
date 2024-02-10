@@ -1,6 +1,6 @@
 <script>
 	import Controls from '../component/controls.svelte';
-import Legend from '../component/legend.svelte';
+    import Legend from '../component/legend.svelte';
     import Logo from '../component/logo.svelte';
     import Modal from '../component/modal.svelte';
     import Map from "../container/map.svelte";
@@ -20,7 +20,7 @@ import Legend from '../component/legend.svelte';
         metricLayer = layer;
     }
 
-    let colorScheme = "rdYlGr";
+    let colorScheme = "blBluCyWt";
     function updateColorScheme(colors) {
         colorScheme = colors;
     }
@@ -29,5 +29,18 @@ import Legend from '../component/legend.svelte';
 
 <Map update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme}/>
 <Modal selectionData={selectionData} metric={metricLayer}/>
-<Legend />
-<Controls updateMetricLayer={updateMetricLayer} updateColorScheme={updateColorScheme}/>
+<div class='control-container'>
+    <Controls updateMetricLayer={updateMetricLayer} updateColorScheme={updateColorScheme}/>
+    <Legend colorScheme={colorScheme} metric={metricLayer}/>
+</div>
+
+<style lang="scss">
+    .control-container {
+        position: absolute;
+        left: 10px;
+        bottom: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+</style>

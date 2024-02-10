@@ -1,29 +1,29 @@
 export const schemes = {
+    "blBluCyWt": blBluCyWt,
     "rdYlGr": rdYlGr,
     "rdYlGr_discrete": rdYlGr_discrete,
     "orGrBlu": orGrBlu,
     "blGr": blGr,
     "grYlRd": grYlRd,
-    "blBluCyWt": blBluCyWt
 }
 
-export function getPalette(min, max, scheme = "rdYlGr") {
+export function getPalette(min, max, scheme = "blBluCyWt") {
     let palette = schemes[scheme](min, max)
     return palette
 }
 
-export function getDiscretePalette(min, max, scheme = "rdYlGr") {
+export function getDiscretePalette(min, max, scheme = "blBluCyWt") {
     let palette = schemes['rdYlGr_discrete'](min, max)
     return palette
 }
 
 function getQuant(min, max, quant) {
-    return  (quant * (max - min));
+    return  (quant * (max - min)) + min;
 }
 
 function orGrBlu(min, max) {
     return [
-        [-1, "#ddd", "Missing"],
+        [-1, "#ddddddcc"],
         [min, "#F9A825", "Very low biodiversity"],
         [getQuant(min, max, 0.35), "#e8f4c4"],
         [getQuant(min, max, 0.5), "#00E676", "Expected biodiversity"],
@@ -35,7 +35,7 @@ function orGrBlu(min, max) {
 
 function blGr(min, max) {
     return [
-        [-1, "#ddd", "Missing"],
+        [-1, "#ddddddcc"],
         [min, "#000000", "Very low biodiversity"],
         [max, "#00ff00", "Very high biodiversity"],
     ]
@@ -43,7 +43,7 @@ function blGr(min, max) {
 
 function blBluCyWt(min, max) {
     return [
-        [-1, "#ddd", "Missing"],
+        [-1, "#ddddddcc", "Missing"],
         [min, "#000000cc", "Very low biodiversity"],
         [getQuant(min, max, 0.5), "#0000ffcc", "Expected biodiversity"],
         [getQuant(min, max, 0.75), "#00ffffcc"],
@@ -54,15 +54,17 @@ function blBluCyWt(min, max) {
 
 function rdYlGr(min, max) {
     return [
-        [-1, "#ddd", "Missing"],
+        [-1, "#ddddddcc", "Missing"],
         [min, "#ff3300cc", "Very low biodiversity"],
         [getQuant(min, max, 0.5), "#ffff33cc", "Normal biodiversity"],
         [max, "#00ff33cc", "Very high biodiversity"],
     ]
 }
+
+
 function rdYlGr_discrete(min, max) {
     return [
-        [-1, "#ddd", "Missing"],
+        [-1, "#ddddddcc", "Missing"],
         [0, "#ff3300cc", "Very low biodiversity"],
         [getQuant(min, max, 0.5), "#ffff33cc", "Normal biodiversity"],
         [max, "#00ff33cc", "Very high biodiversity"],
@@ -71,7 +73,7 @@ function rdYlGr_discrete(min, max) {
 
 function grYlRd(min, max) {
     return [
-        [-1, "#ddd", "Missing"],
+        [-1, "#ddddddcc", "Missing"],
         [min, "#00ff33cc", "Very low biodiversity"],
         [getQuant(min, max, 0.5), "#ffff33cc", "Normal biodiversity"],
         [max, "#ff3300cc", "Very high biodiversity"],

@@ -16,22 +16,48 @@
 </script>
 
 <div class='controls'>
-    <select bind:value={metric} on:change={() => updateMetricLayer(metric)} label="Diversity Metric">
-        {#each metrics as opt}
-          <option value={opt}>{opt}</option>
-        {/each}
-    </select>
-    <select bind:value={colorScheme} on:change={() => updateColorScheme(colorScheme)} label="Color Scheme">
-        {#each colors as opt}
-          <option value={opt}>{opt}</option>
-        {/each}
-    </select>
+    <div class="control-item">
+        <h4>Metric</h4>
+        <select bind:value={metric} on:change={() => updateMetricLayer(metric)} label="Diversity Metric">
+            {#each metrics as opt}
+              <option value={opt}>{opt}</option>
+            {/each}
+        </select>
+    </div>
+    <div class="control-item">
+        <h4>Palette</h4>
+        <select bind:value={colorScheme} on:change={() => updateColorScheme(colorScheme)} label="Color Scheme">
+            {#each colors as opt}
+              <option value={opt}>{opt}</option>
+            {/each}
+        </select>
+    </div>
 </div>
 
 <style lang="scss">
+
+    @import '../style/frames.scss';
+    @import '../style/colors.scss';
     .controls {
-        position: absolute;
-        left: 10px;
-        bottom: 200px;
+
+        @include container;
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 1rem;
+        background-color: #ffffff00;
+        backdrop-filter: blur(50px);
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            h4 {
+                font-size: 1rem;
+                margin-block: 0;
+                color: $dark-gray;
+            }
+        }
     }
 </style>

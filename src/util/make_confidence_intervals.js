@@ -2,14 +2,14 @@
 const LL4 = ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))));
 const MM3 = ({x,c,d,e}) => c + ((d-c) / (1 + (e/x)));
 
-export const metrics = ["pd", "mpd", "mntd"]
+export const metrics = ["pd", "mpd", "mntd", "rel_pd", "rel_mpd", "rel_mntd"]
 
 export function buildModel(type) {
 
-    const types = ["pd", "mpd", "mntd"];
+    const types = metrics;
     if(!type || !types.includes(type)) return;
 
-    const resolution = 100;
+    const resolution = 650;
     let points = new Array(resolution);
     let yAxis = [0, 1]
 
@@ -32,17 +32,19 @@ export function buildModel(type) {
     let b = data.b;
     let e = data.e;
     let c = data.c;
-    let model = data.model;
+    let modelHigh = data.modelHigh;
+    let modelLow = data.modelLow;
     let minY = data.minY;
     let maxY = data.maxY;
 
     let xOffset = 2;
 
     for(let i = 0; i < resolution; i++) {
+        let x = (i + xOffset) * delta;
         points[i] = {
-            "x": (i + xOffset) * delta,
-            "high": model({x: (i + xOffset), b: b.high, c: c.high, d: d.high, e: e.high}),
-            "low": model({x: (i + xOffset), b: b.low, c: c.low, d: d.low, e: e.low})
+            "x": x,
+            "high": modelHigh({x: x, b: b.high, c: c.high, d: d.high, e: e.high}),
+            "low": modelLow({x: x, b: b.low, c: c.low, d: d.low, e: e.low})
         }
     }
 
@@ -78,8 +80,9 @@ const pd = {
     },
     "minY": 0,
     "maxY": 5000,
-    "yAxisLabel": "Phylogenetic Diversity (pd)",
-    "model": LL4
+    "yAxisLabel": "Phylodiversity (pd)",
+    "modelHigh": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) + Math.log(e))))),
+    "modelLow": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) + Math.log(e)))))
 }
 
 const mpd = {
@@ -101,8 +104,9 @@ const mpd = {
     },
     "minY": 0,
     "maxY": 500,
-    "yAxisLabel": "M Phylogenetic Diversity (mpd)",
-    "model": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))))
+    "yAxisLabel": "Mean pairwise phylogenetic distance (mpd)",
+    "modelHigh": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) + Math.log(e))))),
+    "modelLow": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) + Math.log(e)))))
 }
 
 const mntd = {
@@ -124,6 +128,47 @@ const mntd = {
     },
     "minY": 0,
     "maxY": 150,
-    "yAxisLabel": "MN Tree Diversity (mntd)",
-    "model": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) + Math.log(e)))))
+    "yAxisLabel": "Mean nearest-taxon phylogenetic distance (mntd)",
+    "modelHigh": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) + Math.log(e))))),
+    "modelLow": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) + Math.log10(e)))))
+}
+
+export function generateRelativeMetric(type, value, x) {
+    let data;
+    switch(type) {
+        case "mntd":
+            data = mntd;
+            break;
+        case "mpd":
+            data = mpd;
+            break;
+        default:
+        case "pd":
+            data = pd;
+    }
+    let d = data.d;
+    let b = data.b;
+    let e = data.e;
+    let c = data.c;
+    let modelHigh = data.modelHigh;
+    let modelLow = data.modelLow;
+
+    // if(!x) {
+    //     return (xt) => ((value - modelLow({x: xt, b: b.low, c: c.low, d: d.low, e: e.low})) * (modelHigh({x: xt, b: b.high, c: c.high, d: d.high, e: e.high}) - modelLow({x: xt, b: b.low, c: c.low, d: d.low, e: e.low}))) / (data.maxY - data.minY);
+    // }
+
+    let upperBound = modelHigh({x: x, b: b.high, c: c.high, d: d.high, e: e.high})
+    let lowerBound = modelLow({x: x, b: b.low, c: c.low, d: d.low, e: e.low})
+    let confidenceIntervalWidth = (upperBound - lowerBound)
+
+    // console.log("value", value)
+    // console.log("x", x)
+    // console.log("bounds", lowerBound, upperBound)
+    // console.log("width", confidenceIntervalWidth)
+
+    // console.log("10:", modelLow({x: 10, b: b.low, c: c.low, d: d.low, e: e.low}))
+    // console.log("50:", modelLow({x: 50, b: b.low, c: c.low, d: d.low, e: e.low}))
+    // console.log("200:", modelLow({x: 200, b: b.low, c: c.low, d: d.low, e: e.low}))
+
+    return ((value - lowerBound) * confidenceIntervalWidth) / (data.maxY - data.minY);
 }

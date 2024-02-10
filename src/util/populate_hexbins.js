@@ -1,20 +1,29 @@
 import * as shapely from 'shapely';
 import { featureToH3Set } from "geojson2h3";
+import { generateRelativeMetric } from './make_confidence_intervals';
 
 export async function populateFeatures(geo, res) {
 
     let i = 0;
+    const relatives = ["rel_pd", "rel_mpd", "rel_mntd"]
+
     let maxes = {
         pd: Number.MIN_VALUE,
         mpd: Number.MIN_VALUE,
         mntd: Number.MIN_VALUE,
-        tree_size: Number.MIN_VALUE,
+        tree_sizes: Number.MIN_VALUE,
+        rel_pd: Number.MIN_VALUE,
+        rel_mpd: Number.MIN_VALUE,
+        rel_mntd: Number.MIN_VALUE,
     }
     let mins = {
         pd: Number.MAX_VALUE,
         mpd: Number.MAX_VALUE,
         mntd: Number.MAX_VALUE,
-        tree_size: Number.MAX_VALUE,
+        tree_sizes: Number.MAX_VALUE,
+        rel_pd: Number.MAX_VALUE,
+        rel_mpd: Number.MAX_VALUE,
+        rel_mntd: Number.MAX_VALUE,
     }
 
     //fetch feature data in dict format
@@ -34,7 +43,10 @@ export async function populateFeatures(geo, res) {
                 "pd": -1,
                 "mpd": -1,
                 "mntd": -1,
-                "tree_sizes": 0
+                "tree_sizes": 0,
+                "rel_pd": -1,
+                "rel_mpd": -1,
+                "rel_mntd": -1,
             },
             "geometry": {
                 "type": "Polygon",
@@ -50,6 +62,13 @@ export async function populateFeatures(geo, res) {
             feature['properties'][key] = data[index][key]
             if(data[index][key] > maxes[key]) maxes[key] = data[index][key]
             else if(data[index][key] < mins[key]) mins[key] = data[index][key]
+        }
+        for(let key of relatives) {
+            let absolute = data[index][key.substring(4)]
+            let relative = generateRelativeMetric(key, absolute, data[index]["tree_sizes"])
+            feature['properties'][key] = relative
+            if(relative > maxes[key]) maxes[key] = relative
+            else if(relative < mins[key]) mins[key] = relative
         }
 
         // if(data[index].pd) {

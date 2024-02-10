@@ -6,15 +6,19 @@
 </script>
 
 <div class={'modal'}>
+    <div class='header'>
+        {#if selectionData.properties}
+            <h1>{`${selectionData.hex}`}</h1>
+            <h3>{`${selectionData.latlng.lat}, ${selectionData.latlng.lng}`}</h3>
+            <span>{selectionData.properties[metric]}</span>
+        {/if}
+        {#if !selectionData || !selectionData.properties}
+            <h3>Click on a hexagon to see data</h3>
+        {/if}
+    </div>
     {#if selectionData.properties}
-        <h1>{`${selectionData.hex}`}</h1>
-        <h3>{`${selectionData.latlng.lat}, ${selectionData.latlng.lng}`}</h3>
-        <span>{selectionData.properties[metric]}</span>
-        <Graph metric={metric} data={[0.4, 0.7, 0.8, 0.9, 1]} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
+        <Graph metric={metric} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
         <Phylo />
-    {/if}
-    {#if !selectionData || !selectionData.properties}
-    <h3>Click on a hexagon to see data</h3>
     {/if}
 </div>
 
@@ -27,13 +31,15 @@
 
         box-shadow: 0px 0px 20px #00000055;
         position: absolute;
-        top: 8vh;
-        right: 8vh;
-        height: 82vh;
+        top: 2vh;
+        right: 2vh;
+        height: 96vh;
         width: 35vw;
         padding: 2rem;
         box-sizing: border-box;
         flex-direction: column;
+        align-items: center;
+        gap: 2rem;
         h1 {
             margin-block: 0;
         }

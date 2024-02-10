@@ -1,7 +1,7 @@
 <script>
 
     import * as d3 from 'd3';
-	import { buildModel } from '../util/make_confidence_intervals';
+	import { buildModel, generateRelativeMetric } from '../util/make_confidence_intervals';
   
     export let data;
     export let point;
@@ -22,6 +22,7 @@
     let xAxis = [0, 10];
     let xAxisLabel = "";
     let yAxisLabel = "";
+    let yAxisPos = 0;
 
     let x, y, line;
 
@@ -43,6 +44,7 @@
         xAxis = model.xAxis;
         xAxisLabel = model.xAxisLabel;
         yAxisLabel = model.yAxisLabel;
+        yAxisPos = getYAxisPos(yAxisLabel)
     }
 
     $: model = redrawModel(metric);
@@ -63,8 +65,17 @@
         //class to make it responsive
         .classed("svg-content-responsive", true); 
 
+    $: console.log("relative:", generateRelativeMetric(metric, point[0][1], point[0][0]))
+
+    function getYAxisPos(label) {
+        console.log("label length:", label.length)
+        return (-1 * (height / 2)) - (label.length * 2.5)
+    }
+
     const area = d3.area().x((d) => x(d.x)).y0((d) => y(d.low)).y1((d) => y(d.high))
     const li = d3.line((d) => x(d.x), (d) => y(d.y));
+    const ciLow = d3.line((d) => x(d.x), (d) => y(d.low));
+    const ciHigh = d3.line((d) => x(d.x), (d) => y(d.high));
     const curveFunc = d3.line((d) => x(d.x), (d) => y(d.y)).curve(d3.curveBasis)//.x(function(d) { return d.x }).y(function(d) { return d.y })
 
 </script>
@@ -77,8 +88,9 @@
 
             <!-- <path class="line" fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} /> -->
 
-            <path class="area" fill="#00ffff44" stroke="currentColor" stroke-width="0" d={area(interval)} />
-            <path class="line" fill="none" stroke="currentColor" stroke-width="1.5" d={curveFunc(interval)} />
+            <path class="area" fill="#cccccc44" stroke="currentColor" stroke-width="0" d={area(interval)} />
+            <path class="line" fill="none" stroke="blue" stroke-width="1.5" d={ciLow(interval)} />
+            <path class="line" fill="none" stroke="red" stroke-width="1.5" d={ciHigh(interval)} />
 
             <g class="point" fill="white" stroke="currentColor" stroke-width="1.5">
                 {#each point as p, i}
@@ -86,8 +98,8 @@
                 {/each}
             </g>
 
-            <text text-anchor="center" x={width/2.2} y={height + 15}>{xAxisLabel}</text>
-            <text text-anchor="center" x={-width / 2.2} y={-20} transform="rotate(-90)">{yAxisLabel}</text>
+            <text class="axis-label" text-anchor="center" x={width / 2} y={height + 12}>{xAxisLabel}</text>
+            <text class="axis-label" text-anchor="center" transform="rotate(-90)" x={yAxisPos} y={-10} >{yAxisLabel}</text>
 
         </svg>
     </div>
@@ -95,15 +107,20 @@
 
 <style lang="scss">
     .graph-container {
-        display: inline-block;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         position: relative;
         width: 100%;
+        max-height: 35%;
         vertical-align: top;
         overflow: visible;
         > svg {
+            height: 100%;
             overflow: visible;
-            g.scale {
+            g.scale, .axis-label {
                 font-size: 0.7rem;
+                font-weight: 500;
             }
             g.point circle {
                 fill: red;
