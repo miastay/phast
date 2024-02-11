@@ -5,15 +5,15 @@
 		<link rel="icon" href="./favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		
-		<link href="./_app/immutable/assets/2.GlpS0Qg6.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.jZVjpyMZ.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/entry.Fy4655Fj.js">
+		<link href="./_app/immutable/assets/2.a0ON1POP.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.vHdhO-Kn.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/entry.tOd6zYXp.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/scheduler.5eeauvpB.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/index.cSiU3nbh.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.uSSTzbjo.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.sKmlu5Ra.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/index.nJ64X6DF.js">
 		<link rel="modulepreload" href="./_app/immutable/nodes/0.RntgKIaY.js">
-		<link rel="modulepreload" href="./_app/immutable/nodes/2.Y-Kvq0WM.js">
+		<link rel="modulepreload" href="./_app/immutable/nodes/2.aRfQtzIs.js">
 
 		<style>
             @font-face {
@@ -68,11 +68,11 @@
 
 	</head>
 	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">  <div class="svelte-p00lfq expand-map"> </div> <div class="modal svelte-9x45zh"><div class="header"> <h3 data-svelte-h="svelte-k06cu4">Click on a hexagon to see data</h3></div>  </div> <div class="control-container svelte-c2izy0"><div class="controls svelte-82km55"><div class="control-item svelte-82km55"><h4 class="svelte-82km55" data-svelte-h="svelte-1wtuo56">Metric</h4> <select label="Diversity Metric"><option value="pd">pd</option><option value="mpd">mpd</option><option value="mntd">mntd</option><option value="rel_pd">rel_pd</option><option value="rel_mpd">rel_mpd</option><option value="rel_mntd">rel_mntd</option></select></div> <div class="control-item svelte-82km55"><h4 class="svelte-82km55" data-svelte-h="svelte-16skbun">Palette</h4> <select label="Color Scheme"><option value="blBluCyWt">blBluCyWt</option><option value="rdYlGr">rdYlGr</option><option value="rdYlGr_discrete">rdYlGr_discrete</option><option value="orGrBlu">orGrBlu</option><option value="blGr">blGr</option><option value="grYlRd">grYlRd</option></select></div> </div> <div class="legend-container svelte-dpsp7m"><div class="gradient svelte-dpsp7m" style="background-image: url(&quot;/phast/SVG/ticks.svg&quot;), linear-gradient(#ffffffcc,#00ffffcc,#0000ffcc,#000000cc)"></div> <div class="label-container svelte-dpsp7m"><span class="svelte-dpsp7m">Very low biodiversity pd</span><span class="svelte-dpsp7m">Expected biodiversity pd</span><span class="svelte-dpsp7m">Very high biodiversity pd</span></div> </div> </div> 
+		<div style="display: contents">  <div class="svelte-p00lfq expand-map"> </div> <div class="modal svelte-9x45zh"><div class="header"> <h3 data-svelte-h="svelte-k06cu4">Click on a hexagon to see data</h3></div>  </div> <div class="control-container svelte-c2izy0"><div class="controls svelte-nm1w30"><div class="control-item svelte-nm1w30"><h4 class="svelte-nm1w30" data-svelte-h="svelte-1wtuo56">Metric</h4> <select label="Diversity Metric"><option value="pd">pd</option><option value="mpd">mpd</option><option value="mntd">mntd</option><option value="rel_pd">rel_pd</option><option value="rel_mpd">rel_mpd</option><option value="rel_mntd">rel_mntd</option></select></div> <div class="control-item svelte-nm1w30"><h4 class="svelte-nm1w30" data-svelte-h="svelte-16skbun">Palette</h4> <select label="Color Scheme"><option value="blBluCyWt">blBluCyWt</option><option value="rdYlGr">rdYlGr</option><option value="rdYlGr_discrete">rdYlGr_discrete</option><option value="orGrBlu">orGrBlu</option><option value="blGr">blGr</option><option value="grYlRd">grYlRd</option><option value="census">census</option><option value="seqseq">seqseq</option><option value="parula">parula</option></select></div> </div> <div class="legend-container svelte-1olfwdl"><div class="gradient svelte-1olfwdl" style="background-image: url(&quot;/phast/SVG/ticks.svg&quot;), linear-gradient(#ffffffcc,#00ffffcc,#0000ffcc,#000000cc)"></div> <div class="label-container svelte-1olfwdl"><span class="svelte-1olfwdl">Very low phylodiversity</span><span class="svelte-1olfwdl">Expected phylodiversity</span><span class="svelte-1olfwdl">Very high phylodiversity</span></div> </div> </div> 
 			
 			<script>
 				{
-					__sveltekit_bpjiz = {
+					__sveltekit_1s2wb31 = {
 						base: new URL(".", location).pathname.slice(0, -1),
 						assets: "/phast"
 					};
@@ -82,8 +82,8 @@
 					const data = [null,null];
 
 					Promise.all([
-						import("./_app/immutable/entry/start.jZVjpyMZ.js"),
-						import("./_app/immutable/entry/app.uSSTzbjo.js")
+						import("./_app/immutable/entry/start.vHdhO-Kn.js"),
+						import("./_app/immutable/entry/app.sKmlu5Ra.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 2],
