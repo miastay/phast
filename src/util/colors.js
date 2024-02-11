@@ -24,12 +24,12 @@ function getQuant(min, max, quant) {
 function orGrBlu(min, max) {
     return [
         [-1, "#ddddddcc"],
-        [min, "#F9A825", "Very low"],
-        [getQuant(min, max, 0.35), "#e8f4c4"],
-        [getQuant(min, max, 0.5), "#00E676", "Expected"],
-        [getQuant(min, max, 0.75), "#3d9ab8"],
-        [getQuant(min, max, 0.85), "#318ab5"],
-        [max, "#2a4e9b", "Very high"],
+        [min, "#F9A825cc", "Very low"],
+        [getQuant(min, max, 0.35), "#e8f4c4cc"],
+        [getQuant(min, max, 0.5), "#00E676cc", "Expected"],
+        [getQuant(min, max, 0.75), "#3d9ab8cc"],
+        [getQuant(min, max, 0.85), "#318ab5cc"],
+        [max, "#2a4e9bcc", "Very high"],
     ];
 }
 

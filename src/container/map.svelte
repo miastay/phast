@@ -179,23 +179,13 @@
 
 
                 map.on('load', () => {
-                    let hexBounds = geojsonExtent(hexagons)
-                    rightPadding = (window.innerWidth) / 3;
-
-                    map.setMaxBounds([[-130, 30], [-100, 45]])
-                    map.fitBounds(hexBounds, {
-                        padding: { top: 50, left: 10, bottom: 50, right: rightPadding }
-                    })
-
-                    map._canvas.style.filter = "none";
-
-                    setInterval(() => {
-                        }, 1000);
+                    zoomFitAnim();
                 })
 
                 // backup in case the load event doesn't fire properly
                 setTimeout(() => {
                     map._canvas.style.filter = "none";
+                    zoomFitAnim();
                 }, 3000)
 
                 //generateReserveSurfaces(map);
@@ -203,6 +193,18 @@
         })
         
     });
+
+    function zoomFitAnim() {
+        let hexBounds = geojsonExtent(hexagons)
+        rightPadding = (window.innerWidth) / 3;
+
+        map.setMaxBounds([[-130, 30], [-100, 45]])
+        map.fitBounds(hexBounds, {
+            padding: { top: 50, left: 10, bottom: 50, right: rightPadding }
+        })
+
+        map._canvas.style.filter = "none";
+    }
 
     function zoomToHexagon(index, map) {
         let minLat, maxLat, minLon, maxLon;
