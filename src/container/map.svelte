@@ -198,7 +198,7 @@
         let hexBounds = geojsonExtent(hexagons)
         rightPadding = (window.innerWidth) / 3;
 
-        map.setMaxBounds([[-130, 30], [-100, 45]])
+        //map.setMaxBounds([[-130, 30], [-100, 45]])
         map.fitBounds(hexBounds, {
             padding: { top: 50, left: 10, bottom: 50, right: rightPadding }
         })

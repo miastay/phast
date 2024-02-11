@@ -5,6 +5,9 @@ export const schemes = {
     "orGrBlu": orGrBlu,
     "blGr": blGr,
     "grYlRd": grYlRd,
+    "census": census,
+    "seqseq": seqseq,
+    "parula": parula
 }
 
 export function getPalette(min, max, scheme = "blBluCyWt") {
@@ -78,6 +81,38 @@ function grYlRd(min, max) {
         [getQuant(min, max, 0.5), "#ffff33cc", "Normal biodiversity"],
         [max, "#ff3300cc", "Very high biodiversity"],
     ]
+}
+
+function census(min, max) {
+    return [
+        [-1, "#ddddddcc", "Missing"],
+        [min, "#efd100cc", "Very low biodiversity"],
+        [getQuant(min, max, 0.5), "#4eb87bcc", "Normal biodiversity"],
+        [max, "#007fc4cc", "Very high biodiversity"],
+    ]
+    
+}
+
+function seqseq(min, max) {
+    return [
+        [-1, "#ddddddcc", "Missing"],
+        [min, "#de4fa6cc", "Very low biodiversity"],
+        [getQuant(min, max, 0.5), "#4fadd0cc", "Normal biodiversity"],
+        [max, "#2a1a8acc", "Very high biodiversity"],
+    ]
+}
+
+function parula(min, max) {
+    return [
+        [-1, "#ddddddcc"],
+        [min, "#352a87cc", "Very low"],
+        [getQuant(min, max, 0.167), "#0469dfcc"],
+        [getQuant(min, max, 0.33), "#06a0cbcc"],
+        [getQuant(min, max, 0.5), "#1fb2accc", "Expected"],
+        [getQuant(min, max, 0.667), "#a3bd6acc"],
+        [getQuant(min, max, 0.833), "#fcc336cc"],
+        [max, "#f8f611cc", "Very high"],
+    ];
 }
 
 /**
