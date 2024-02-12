@@ -1,7 +1,7 @@
 <script>
 
     import * as d3 from 'd3';
-	import { buildModel, generateRelativeMetric } from '../util/make_confidence_intervals';
+	import { buildModel, generateRelativeMetric, descs } from '../util/make_confidence_intervals';
   
     export let data;
     export let point;
@@ -80,41 +80,55 @@
 
 </script>
 
-{#if interval}
-    <div class='graph-container'>
-        <svg id="viz" viewBox={`0 0 ${width} ${height}`}>
-            <g class="scale x" bind:this={gx} transform="translate(0,{height - marginBottom})" />
-            <g class="scale y" bind:this={gy} transform="translate({marginLeft},0)" />
+{#if interval && metric}
+<div class='graph-container'>
+    <h2>{descs[metric]} by tree size</h2>
+    <svg id="viz" viewBox={`0 0 ${width} ${height}`}>
+        <g class="scale x" bind:this={gx} transform="translate(0,{height - marginBottom})" />
+        <g class="scale y" bind:this={gy} transform="translate({marginLeft},0)" />
 
-            <!-- <path class="line" fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} /> -->
+        <!-- <path class="line" fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} /> -->
 
-            <path class="area" fill="#cccccc44" stroke="currentColor" stroke-width="0" d={area(interval)} />
-            <path class="line" fill="none" stroke="blue" stroke-width="1.5" d={ciLow(interval)} />
-            <path class="line" fill="none" stroke="red" stroke-width="1.5" d={ciHigh(interval)} />
+        <path class="area" fill="#cccccc44" stroke="currentColor" stroke-width="0" d={area(interval)} />
+        <path class="line" fill="none" stroke="blue" stroke-width="1.5" d={ciLow(interval)} />
+        <path class="line" fill="none" stroke="red" stroke-width="1.5" d={ciHigh(interval)} />
 
-            <g class="point" fill="white" stroke="currentColor" stroke-width="1.5">
-                {#each point as p, i}
-                    <circle key={i} cx={x(p[0])} cy={y(p[1])} r="5" fill="white" />
-                {/each}
-            </g>
+        <g class="point" fill="white" stroke="currentColor" stroke-width="1.5">
+            {#each point as p, i}
+                <circle key={i} cx={x(p[0])} cy={y(p[1])} r="5" fill="white" />
+            {/each}
+        </g>
 
-            <text class="axis-label" text-anchor="center" x={width / 2} y={height + 12}>{xAxisLabel}</text>
-            <text class="axis-label" text-anchor="center" transform="rotate(-90)" x={yAxisPos} y={-10} >{yAxisLabel}</text>
+        <text class="axis-label" text-anchor="center" x={width / 2} y={height + 12}>{xAxisLabel}</text>
+        <text class="axis-label" text-anchor="center" transform="rotate(-90)" x={yAxisPos} y={-10} >{yAxisLabel}</text>
 
-        </svg>
-    </div>
+    </svg>
+</div>
 {/if}
 
 <style lang="scss">
+
+    @import '../style/frames.scss';
+    @import '../style/colors.scss';
+
     .graph-container {
         display: flex;
         flex-direction: column;
         align-items: center;
         position: relative;
-        width: 100%;
+        width: 95%;
         max-height: 35%;
         vertical-align: top;
         overflow: visible;
+
+        > h2 {
+            margin-block: 0;
+            color: $dark-gray;
+            &:first-letter {
+                text-transform: uppercase;
+            }
+        }
+
         > svg {
             height: 100%;
             overflow: visible;

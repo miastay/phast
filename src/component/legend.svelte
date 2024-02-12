@@ -44,12 +44,15 @@
         min-height: 5vh;
         background-color: #ffffffaa;
         backdrop-filter: blur(50px);
+        cursor: default;
+        user-select: none;
 
         .label-container {
             display: flex;
             flex-direction: column-reverse;
             justify-content: space-between;
             gap: 0.75rem;
+            padding: 0.25rem 0;
             span {
                 font-size: 0.85rem;
                 line-height: 0.85rem;

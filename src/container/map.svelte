@@ -14,6 +14,7 @@
 
     export let metric;
     export let colorScheme;
+    export let selectionData;
 
     const layerTransitionTime = 500;
 
@@ -150,15 +151,19 @@
                     }, firstSymbolId);
                     console.log("added layer for ", mt)
                 }
-                console.log(map.getStyle().layers)
+                //console.log(map.getStyle().layers)
 
                 let firstMetricId = `hex-${metrics[0]}`;
                 map.on('click', firstMetricId, (e) => {
                     console.log(e)
                     let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, hexagonFetchResolution)
                     //zoomToHexagon(cell, map)
+                    if(cell === selectionData?.hex) {
+                        update(null)
+                        return;
+                    }
 
-                    
+                    console.log(map.getStyle().layers)
 
                     let newLatLng = h3.cellToLatLng(cell);
                     selectedLngLat = {lng: newLatLng[1], lat: newLatLng[0]}
@@ -177,15 +182,16 @@
                     map.getCanvas().style.cursor = '';
                 });
 
-
                 map.on('load', () => {
                     zoomFitAnim();
                 })
 
                 // backup in case the load event doesn't fire properly
                 setTimeout(() => {
-                    map._canvas.style.filter = "none";
-                    zoomFitAnim();
+                    if(!loaded) {
+                        map._canvas.style.filter = "none";
+                        zoomFitAnim();
+                    }
                 }, 3000)
 
                 //generateReserveSurfaces(map);
@@ -264,31 +270,33 @@
     center={centerOfCalifornia}
     zoom={4}
 >
-<Marker
-    bind:this={marker}
-    lngLat={selectedLngLat}
-    class="hex-marker" 
->
-    <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70.46 62.88">
-        <defs>
-        <style>
-            .fill {
-                fill: #000;
-                stroke: solid 1px red;
-            }
-            .stroke {
-                stroke: #fff;
-            }
-        </style>
-        </defs>
-        <g id="Layer_1-2" data-name="Layer 1">
-        <g>
-            <path class="fill" d="m35.23,60.88c-1.81,0-3.43-.93-4.33-2.5L2.68,9.5c-.9-1.57-.9-3.44,0-5,.9-1.57,2.52-2.5,4.33-2.5h56.44c1.81,0,3.43.93,4.33,2.5.9,1.56.9,3.43,0,5l-28.22,48.88c-.9,1.57-2.52,2.5-4.33,2.5Z"/>
-            <path d="m63.45,4c1.56,0,2.34,1.05,2.6,1.5.26.45.78,1.65,0,3l-28.22,48.88c-.78,1.35-2.08,1.5-2.6,1.5s-1.82-.15-2.6-1.5L4.41,8.5c-.78-1.35-.26-2.55,0-3,.26-.45,1.03-1.5,2.6-1.5h56.44m0-4H7.01C1.62,0-1.75,5.83.95,10.5l28.22,48.88c1.35,2.33,3.7,3.5,6.06,3.5s4.72-1.17,6.06-3.5l28.22-48.88c2.69-4.67-.67-10.5-6.06-10.5h0Z"/>
-        </g>
-        </g>
-    </svg>
-</Marker>
+{#if selectionData?.hex}
+    <Marker
+        bind:this={marker}
+        lngLat={selectedLngLat}
+        class="hex-marker" 
+    >
+        <svg class="marker-svg" id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70.46 62.88">
+            <defs>
+            <style>
+                .fill {
+                    fill: #000;
+                    stroke: solid 1px red;
+                }
+                .stroke {
+                    stroke: #fff;
+                }
+            </style>
+            </defs>
+            <g id="Layer_1-2" data-name="Layer 1">
+            <g>
+                <path class="fill" d="m35.23,60.88c-1.81,0-3.43-.93-4.33-2.5L2.68,9.5c-.9-1.57-.9-3.44,0-5,.9-1.57,2.52-2.5,4.33-2.5h56.44c1.81,0,3.43.93,4.33,2.5.9,1.56.9,3.43,0,5l-28.22,48.88c-.9,1.57-2.52,2.5-4.33,2.5Z"/>
+                <path d="m63.45,4c1.56,0,2.34,1.05,2.6,1.5.26.45.78,1.65,0,3l-28.22,48.88c-.78,1.35-2.08,1.5-2.6,1.5s-1.82-.15-2.6-1.5L4.41,8.5c-.78-1.35-.26-2.55,0-3,.26-.45,1.03-1.5,2.6-1.5h56.44m0-4H7.01C1.62,0-1.75,5.83.95,10.5l28.22,48.88c1.35,2.33,3.7,3.5,6.06,3.5s4.72-1.17,6.06-3.5l28.22-48.88c2.69-4.67-.67-10.5-6.06-10.5h0Z"/>
+            </g>
+            </g>
+        </svg>
+    </Marker>
+{/if}
 <!-- {#if hexagons}
   <GeoJSON id="hexagons" data={hexagons}>
       <FillLayer
@@ -330,5 +338,8 @@
         width: 30px;
         top: -9px;
         overflow: visible;
+        &:hover {
+            cursor: pointer;
+        }
     }
 </style>

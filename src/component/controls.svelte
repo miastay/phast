@@ -49,6 +49,9 @@
 
         @include container;
 
+        cursor: default;
+        user-select: none;
+
         display: flex;
         flex-direction: column;
 

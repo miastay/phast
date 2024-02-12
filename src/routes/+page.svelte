@@ -5,10 +5,7 @@
     import Modal from '../component/modal.svelte';
     import Map from "../container/map.svelte";
 
-    let selectionData = {
-        latlng: {lat: 0, lng: 0},
-        hex: ""
-    };
+    let selectionData = null
 
     function updateSelectionData(data) {
         console.log("updating!!")
@@ -27,8 +24,10 @@
 
 </script>
 
-<Map update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme}/>
-<Modal selectionData={selectionData} metric={metricLayer}/>
+<Map update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData}/>
+{#if selectionData}
+    <Modal selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData}/>
+{/if}
 <div class='control-container'>
     <Controls updateMetricLayer={updateMetricLayer} updateColorScheme={updateColorScheme}/>
     <Legend colorScheme={colorScheme} metric={metricLayer}/>
