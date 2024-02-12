@@ -1,5 +1,5 @@
 
-export function getPalette(min, max, scheme = "blBluCyWt") {
+export function getPalette(min, max, scheme = "*ibm_flip") {
     let palette = schemes[scheme](min, max)
     return palette
 }
@@ -25,7 +25,7 @@ export const schemes = {
             [max, "#648FFFcc", "Very high"],
         ];
     },
-    
+
     'orGrBlu': function orGrBlu(min, max) {
         return [
             [-1, "#ddddddcc"],

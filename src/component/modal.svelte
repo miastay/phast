@@ -83,7 +83,7 @@
         &:hover {
             //opacity: 0.5;
         }
-        transition: opacity 0.3s ease;
+        transition: all 0.3s ease;
     }
     .logo {
         width: 50px;
