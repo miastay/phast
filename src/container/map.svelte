@@ -188,8 +188,8 @@
 
                 // backup in case the load event doesn't fire properly
                 setTimeout(() => {
+                    map._canvas.style.filter = "none";
                     if(!loaded) {
-                        map._canvas.style.filter = "none";
                         zoomFitAnim();
                     }
                 }, 3000)
