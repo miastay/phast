@@ -1,7 +1,9 @@
 <script>
+    import { onMount } from 'svelte';
     import Select from "@smui/select";
 	import { Option } from "@smui/select";
     import { metrics } from "../util/make_confidence_intervals";
+    import { schemes } from '../util/colors';
 
     export let updateMetricLayer;
     export let updateColorScheme;
@@ -10,8 +12,13 @@
 
     let colorScheme;
 
-    import { schemes } from '../util/colors';
+    
     const colors = Object.keys(schemes)
+
+    onMount(() => {
+        updateMetricLayer(metric)
+        updateColorScheme(colorScheme)
+    })
     
 </script>
 
