@@ -16,7 +16,7 @@
             width:width,
             'left-right-spacing': 'fit-to-size', 
             'top-bottom-spacing': 'fit-to-size',
-            'is-radial': false,
+            'is-radial': true,
             container: "#tree_container",
         })
         console.log(renderedTree)
@@ -31,12 +31,24 @@
 
 </script>
 
-<div id="tree_container" bind:this={treeref}/>
+<div class="container">
+    <h2>Phylogenetic tree</h2>
+    <div id="tree_container" bind:this={treeref}/>
+</div>
+
 
 <style lang="scss">
+
+    @import '../style/frames.scss';
+    @import '../style/colors.scss';
+
     :global(path.branch) {
         fill: none;
         stroke: black;
+    }
+
+    .container {
+        width: 100%;
     }
 
     #tree_container {
@@ -48,6 +60,11 @@
     }
     :global(svg) {
         height: 100%;
+    }
+
+    h2 {
+        @include graph-header;
+        text-align: center;
     }
 
 </style>

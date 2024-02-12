@@ -21,3 +21,12 @@
     flex-direction: row;
     gap: 0.5rem;
 }
+
+@mixin graph-header {
+    margin-block: 0;
+    font-size: 1.3rem;
+    color: $dark-gray;
+    &:first-letter {
+        text-transform: uppercase;
+    }
+}

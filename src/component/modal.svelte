@@ -46,7 +46,7 @@
         box-sizing: border-box;
         flex-direction: column;
         align-items: center;
-        gap: 2rem;
+        gap: 4rem;
 
         .header {
             display: flex;

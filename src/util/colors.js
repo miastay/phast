@@ -15,6 +15,17 @@ function getQuant(min, max, quant) {
 
 export const schemes = {
 
+    '*ibm_flip': function ibm(min, max) {
+        return [
+            [-1, "#ddddddcc"],
+            [min, "#FFB000cc", "Very low"],
+            [getQuant(min, max, 0.25), "#FE6100cc"],
+            [getQuant(min, max, 0.5), "#DC267Fcc", "Expected"],
+            [getQuant(min, max, 0.75), "#785EF0cc"],
+            [max, "#648FFFcc", "Very high"],
+        ];
+    },
+    
     'orGrBlu': function orGrBlu(min, max) {
         return [
             [-1, "#ddddddcc"],
@@ -126,17 +137,6 @@ export const schemes = {
             [getQuant(min, max, 0.5), "#DC267Fcc", "Expected"],
             [getQuant(min, max, 0.75), "#FE6100cc"],
             [max, "#FFB000cc", "Very high"],
-        ];
-    },
-
-    '*ibm_flip': function ibm(min, max) {
-        return [
-            [-1, "#ddddddcc"],
-            [min, "#FFB000cc", "Very low"],
-            [getQuant(min, max, 0.25), "#FE6100cc"],
-            [getQuant(min, max, 0.5), "#DC267Fcc", "Expected"],
-            [getQuant(min, max, 0.75), "#785EF0cc"],
-            [max, "#648FFFcc", "Very high"],
         ];
     },
 

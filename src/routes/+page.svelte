@@ -17,7 +17,7 @@
         metricLayer = layer;
     }
 
-    let colorScheme = "blBluCyWt";
+    let colorScheme = "*ibm_flip";
     function updateColorScheme(colors) {
         colorScheme = colors;
     }

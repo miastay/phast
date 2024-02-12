@@ -122,11 +122,8 @@
         overflow: visible;
 
         > h2 {
-            margin-block: 0;
-            color: $dark-gray;
-            &:first-letter {
-                text-transform: uppercase;
-            }
+            @include graph-header;
+            margin-left: 1rem;
         }
 
         > svg {

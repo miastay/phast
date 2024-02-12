@@ -9,9 +9,7 @@
     export let updateColorScheme;
 
     let metric;
-
     let colorScheme;
-
     
     const colors = Object.keys(schemes)
 
