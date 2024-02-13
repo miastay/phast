@@ -11,8 +11,6 @@
     <div class='header'>
         {#if selectionData.properties}
         <div>
-            <h1>{`${selectionData.hex}`}</h1>
-            <h3>{`${selectionData.latlng.lat}, ${selectionData.latlng.lng}`}</h3>
             <span>Value: {selectionData.properties[metric]}, Tree Size: {selectionData.properties['tree_sizes']}, Rel: {generateRelativeMetric(metric, selectionData.properties[metric], selectionData.properties['tree_sizes'])}</span>
         </div>
         {/if}
@@ -47,7 +45,7 @@
         box-sizing: border-box;
         flex-direction: column;
         align-items: center;
-        gap: 4rem;
+        justify-content: space-between;
 
         .header {
             display: flex;

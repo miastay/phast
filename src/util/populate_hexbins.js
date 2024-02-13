@@ -64,13 +64,13 @@ export async function populateFeatures(geo, res) {
             if(val > maxes[key]) maxes[key] = val
             else if(val < mins[key]) mins[key] = val
         }
-        // for(let key of relatives) {
-        //     let absolute = data[index][key.substring(4)]
-        //     let relative = generateRelativeMetric(key, absolute, data[index]["tree_sizes"])
-        //     feature['properties'][key] = relative
-        //     if(relative > maxes[key]) maxes[key] = relative
-        //     else if(relative < mins[key]) mins[key] = relative
-        // }
+        for(let key of relatives) {
+            let absolute = data[index][key.substring(4)]
+            let relative = generateRelativeMetric(key, absolute, data[index]["tree_sizes"])
+            feature['properties'][key] = relative
+            if(relative > maxes[key]) maxes[key] = relative
+            else if(relative < mins[key]) mins[key] = relative
+        }
 
         // if(data[index].pd) {
         //     feature['properties']['pd'] = data[index].pd

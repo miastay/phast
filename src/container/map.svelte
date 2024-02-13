@@ -117,7 +117,7 @@
     export let update;
 
     onMount(() => {
-        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_birds_fct.json`)
+        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_birds_err.json`)
             .then((data) => data.json())
             .then((hex) => hexagons = hex)
             .then(() => {

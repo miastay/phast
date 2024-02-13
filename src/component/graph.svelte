@@ -129,7 +129,7 @@
 
         > svg {
             height: 100%;
-            overflow: visible;
+            overflow: hidden;
             g.scale, .axis-label {
                 font-size: 0.7rem;
                 font-weight: 500;
