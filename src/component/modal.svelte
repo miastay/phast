@@ -1,4 +1,5 @@
 <script>
+	import { generateRelativeMetric } from '../util/make_confidence_intervals';
 	import Graph from "./graph.svelte";
 	import Phylo from "./phylo.svelte";
     export let selectionData;
@@ -12,7 +13,7 @@
         <div>
             <h1>{`${selectionData.hex}`}</h1>
             <h3>{`${selectionData.latlng.lat}, ${selectionData.latlng.lng}`}</h3>
-            <span>{selectionData.properties[metric]}</span>
+            <span>Value: {selectionData.properties[metric]}, Tree Size: {selectionData.properties['tree_sizes']}, Rel: {generateRelativeMetric(metric, selectionData.properties[metric], selectionData.properties['tree_sizes'])}</span>
         </div>
         {/if}
         {#if !selectionData || !selectionData.properties}

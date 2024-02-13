@@ -2,7 +2,7 @@
 const LL4 = ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))));
 const MM3 = ({x,c,d,e}) => c + ((d-c) / (1 + (e/x)));
 
-export const metrics = ["pd", "mpd", "mntd", "rel_pd", "rel_mpd", "rel_mntd"]
+export const metrics = ["pd", "mpd", "mntd", "rel_pd", "rel_mpd", "rel_mntd", "tree_sizes"]
 export const descs = {
     "pd": "phylodiversity",
     "mpd": "mean pairwise phylogenetic distance",
@@ -135,10 +135,13 @@ const mntd = {
     "maxY": 150,
     "yAxisLabel": "Mean nearest-taxon phylogenetic distance (mntd)",
     "modelHigh": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) + Math.log(e))))),
-    "modelLow": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) + Math.log10(e)))))
+    "modelLow": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) + Math.log(e)))))
 }
 
 export function generateRelativeMetric(type, value, x) {
+
+    if(value == -1) return 0;
+
     let data;
     switch(type) {
         case "mntd":
@@ -166,6 +169,8 @@ export function generateRelativeMetric(type, value, x) {
     let lowerBound = modelLow({x: x, b: b.low, c: c.low, d: d.low, e: e.low})
     let confidenceIntervalWidth = (upperBound - lowerBound)
 
+    let ciCenter = lowerBound + (confidenceIntervalWidth / 2);
+
     // console.log("value", value)
     // console.log("x", x)
     // console.log("bounds", lowerBound, upperBound)
@@ -175,5 +180,5 @@ export function generateRelativeMetric(type, value, x) {
     // console.log("50:", modelLow({x: 50, b: b.low, c: c.low, d: d.low, e: e.low}))
     // console.log("200:", modelLow({x: 200, b: b.low, c: c.low, d: d.low, e: e.low}))
 
-    return ((value - lowerBound) * confidenceIntervalWidth) / (data.maxY - data.minY);
+    return (value - ciCenter);
 }

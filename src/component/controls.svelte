@@ -7,9 +7,11 @@
 
     export let updateMetricLayer;
     export let updateColorScheme;
+    export let updateShowCounties;
 
     let metric;
     let colorScheme;
+    let showCounties;
     
     const colors = Object.keys(schemes)
 
@@ -36,6 +38,10 @@
               <option value={opt}>{opt}</option>
             {/each}
         </select>
+    </div>
+    <div class="control-item">
+        <h4>Show county lines?</h4>
+        <input type="checkbox" bind:checked={showCounties} on:change={() => updateShowCounties(showCounties)}/>
     </div>
 </div>
 

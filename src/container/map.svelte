@@ -15,6 +15,7 @@
     export let metric;
     export let colorScheme;
     export let selectionData;
+    export let showCounties;
 
     const layerTransitionTime = 500;
 
@@ -31,6 +32,7 @@
     }
     $: if(map && loaded) updateMetricPaintLayer(metric)
     $: if(map && loaded) updateLayerPalettes(colorScheme)
+    $: if(map && loaded) updateShowCounties(showCounties)
 
     function updateMetricPaintLayer(met) {
 
@@ -61,6 +63,13 @@
         }
     }
 
+    function updateShowCounties(shown) {
+        if(shown) {
+            map.setPaintProperty('counties', 'line-opacity', 1)
+        } else {
+            map.setPaintProperty('counties', 'line-opacity', 0)
+        }
+    }
 
     let rightPadding;
     const showBorder = true;
@@ -152,12 +161,13 @@
                     console.log("added layer for ", mt)
                 }
                 //console.log(map.getStyle().layers)
+                loadLineFeatures('California_County_Boundaries.geojson', 'counties', map);
 
                 let firstMetricId = `hex-${metrics[0]}`;
                 map.on('click', firstMetricId, (e) => {
                     console.log(e)
                     let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, hexagonFetchResolution)
-                    //zoomToHexagon(cell, map)
+                    zoomToHexagon(cell, map)
                     if(cell === selectionData?.hex) {
                         update(null)
                         return;
@@ -174,6 +184,7 @@
                         hex: cell,
                         properties: e.features[0].properties
                     })
+                    
                 });
                 map.on('mouseenter', firstMetricId, () => {
                     map.getCanvas().style.cursor = 'pointer';
@@ -182,15 +193,19 @@
                     map.getCanvas().style.cursor = '';
                 });
 
-                map.on('load', () => {
-                    zoomFitAnim();
-                })
+                //map.on('load', () => {
+                   // console.log("loaded")
+                    zoomFitCenter();
+                    //zoomFitAnim();
+                //})
 
                 // backup in case the load event doesn't fire properly
                 setTimeout(() => {
+                    console.log("no load on timeout")
                     map._canvas.style.filter = "none";
                     if(!loaded) {
-                        zoomFitAnim();
+                        zoomFitCenter();
+                        //zoomFitAnim();
                     }
                 }, 3000)
 
@@ -200,7 +215,7 @@
         
     });
 
-    function zoomFitAnim() {
+    async function zoomFitAnim() {
         let hexBounds = geojsonExtent(hexagons)
         rightPadding = (window.innerWidth) / 3;
 
@@ -212,24 +227,65 @@
         map._canvas.style.filter = "none";
     }
 
+    function zoomFitCenter() {
+        let hexBounds = geojsonExtent(hexagons)
+        map.fitBounds(hexBounds, {
+            padding: { top: 50, left: 10, bottom: 50, right: 50 }
+        })
+    }
+
     function zoomToHexagon(index, map) {
-        let minLat, maxLat, minLon, maxLon;
-        let vertices = h3.cellToBoundary(index).flat();
-        let lats = vertices.filter(function(x, i) { return i % 2 == 0; });
-        let lngs = vertices.filter(function(x, i) { return i % 2 == 1; });
 
-        console.log(lats)
-        console.log(lngs)
+        let center = h3.cellToLatLng(index);
+        console.log(center)
 
-        minLat = Math.min(...lats); maxLat = Math.max(...lats);
-        minLon = Math.min(...lngs); maxLon = Math.max(...lngs);
-        map.fitBounds([
-            [minLon, minLat],
-            [maxLon, maxLat]
-        ], {
-            padding: { top: 100, left: 50, bottom: 100, right: rightPadding},
+        rightPadding = (2 * (window.innerWidth)) / 5;
+
+        map.flyTo({center: [center[1], center[0]], essential: true,
+            padding: { right: rightPadding},
             duration: 750
-        });
+        })
+
+        // let minLat, maxLat, minLon, maxLon;
+        // let vertices = h3.cellToBoundary(index).flat();
+        // let lats = vertices.filter(function(x, i) { return i % 2 == 0; });
+        // let lngs = vertices.filter(function(x, i) { return i % 2 == 1; });
+
+        // console.log(lats)
+        // console.log(lngs)
+
+        // minLat = Math.min(...lats); maxLat = Math.max(...lats);
+        // minLon = Math.min(...lngs); maxLon = Math.max(...lngs);
+        // map.fitBounds([
+        //     [minLon, minLat],
+        //     [maxLon, maxLat]
+        // ], {
+        //     padding: { top: 100, left: 50, bottom: 100, right: rightPadding},
+        //     duration: 750
+        // });
+    }
+
+    async function loadLineFeatures(path, id, map) {
+        fetch(`/phast/${path}`)
+        .then((data) => data.json())
+        .then((surface) => {
+            map.addSource(path, {
+                'type': 'geojson',
+                'data': surface
+            });
+            map.addLayer({
+                'id': id,
+                'type': 'line',
+                'source': path,
+                'layout': {},
+                'paint': {
+                    "line-color": "#000000",
+                    "line-width": 0.25,
+                    "line-opacity": 0
+                },
+            });
+            console.log("added surface layer")
+        })
     }
 
     function generateReserveSurfaces(map) {

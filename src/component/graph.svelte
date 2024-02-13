@@ -44,7 +44,7 @@
         xAxis = model.xAxis;
         xAxisLabel = model.xAxisLabel;
         yAxisLabel = model.yAxisLabel;
-        yAxisPos = getYAxisPos(yAxisLabel)
+        yAxisPos = getYAxisPos(yAxisLabel);
     }
 
     $: model = redrawModel(metric);
@@ -95,7 +95,7 @@
 
         <g class="point" fill="white" stroke="currentColor" stroke-width="1.5">
             {#each point as p, i}
-                <circle key={i} cx={x(p[0])} cy={y(p[1])} r="5" fill="white" />
+                <circle key={i} cx={x(p[0])} cy={y(p[1])} r="5" fill="white" class="anim-point" />
             {/each}
         </g>
 
@@ -110,6 +110,7 @@
 
     @import '../style/frames.scss';
     @import '../style/colors.scss';
+    @import '../style/anim.scss';
 
     .graph-container {
         display: flex;
@@ -134,13 +135,18 @@
                 font-weight: 500;
             }
             g.point circle {
-                fill: red;
-                stroke: none;
+                fill: white;
+                stroke: black;
+                &.anim-point {
+                    transition: all $anim-long ease;
+                }
             }
             g.path.point-line {
                 stroke: green;
                 stroke-width: 2;
             }
+
+
         }
     }
 </style>

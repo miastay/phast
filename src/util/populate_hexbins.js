@@ -59,17 +59,18 @@ export async function populateFeatures(geo, res) {
         feature['properties']['id'] = index;
 
         for(let key of Object.keys(data[index])) {
-            feature['properties'][key] = data[index][key]
-            if(data[index][key] > maxes[key]) maxes[key] = data[index][key]
-            else if(data[index][key] < mins[key]) mins[key] = data[index][key]
+            let val = data[index][key]//generateRelativeMetric(key, data[index][key], data[index]["tree_sizes"])
+            feature['properties'][key] = val
+            if(val > maxes[key]) maxes[key] = val
+            else if(val < mins[key]) mins[key] = val
         }
-        for(let key of relatives) {
-            let absolute = data[index][key.substring(4)]
-            let relative = generateRelativeMetric(key, absolute, data[index]["tree_sizes"])
-            feature['properties'][key] = relative
-            if(relative > maxes[key]) maxes[key] = relative
-            else if(relative < mins[key]) mins[key] = relative
-        }
+        // for(let key of relatives) {
+        //     let absolute = data[index][key.substring(4)]
+        //     let relative = generateRelativeMetric(key, absolute, data[index]["tree_sizes"])
+        //     feature['properties'][key] = relative
+        //     if(relative > maxes[key]) maxes[key] = relative
+        //     else if(relative < mins[key]) mins[key] = relative
+        // }
 
         // if(data[index].pd) {
         //     feature['properties']['pd'] = data[index].pd

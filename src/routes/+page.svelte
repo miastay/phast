@@ -22,14 +22,19 @@
         colorScheme = colors;
     }
 
+    let showCounties = false;
+    function updateShowCounties(show) {
+        showCounties = show;
+    }
+
 </script>
 
-<Map update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData}/>
+<Map update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties}/>
 {#if selectionData}
     <Modal selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData}/>
 {/if}
 <div class='control-container'>
-    <Controls updateMetricLayer={updateMetricLayer} updateColorScheme={updateColorScheme}/>
+    <Controls updateMetricLayer={updateMetricLayer} updateColorScheme={updateColorScheme} updateShowCounties={updateShowCounties}/>
     <Legend colorScheme={colorScheme} metric={metricLayer}/>
 </div>
 
