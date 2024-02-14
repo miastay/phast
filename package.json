@@ -33,6 +33,7 @@
 	"type": "module",
 	"dependencies": {
 		"@mapbox/geojson-extent": "^1.0.1",
+		"@turf/turf": "^6.5.0",
 		"chart.js": "^4.4.1",
 		"csv-parser": "^3.0.0",
 		"d3": "^7.8.5",
@@ -40,6 +41,7 @@
 		"h3-js": "^4.1.0",
 		"leaflet": "^1.9.4",
 		"mapbox-gl": "^3.1.2",
+		"paper": "^0.12.17",
 		"phylotree": "^2.0.1",
 		"sass": "^1.70.0",
 		"shapely": "^0.2.3",

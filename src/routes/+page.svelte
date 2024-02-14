@@ -1,5 +1,6 @@
 <script>
 	import Controls from '../component/controls.svelte';
+	import Drawer from '../component/drawer.svelte';
     import Legend from '../component/legend.svelte';
     import Logo from '../component/logo.svelte';
     import Modal from '../component/modal.svelte';
@@ -27,16 +28,29 @@
         showCounties = show;
     }
 
+    let drawing = false;
+    function updateDrawing(draw) {
+        drawing = draw;
+    }
+
+    let path = null;
+    function updatePath(p) {
+        path = p;
+    }
+
 </script>
 
-<Map update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties}/>
+<Map update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties} drawnPath={path}/>
 {#if selectionData}
     <Modal colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData}/>
 {/if}
 <div class='control-container'>
-    <Controls updateMetricLayer={updateMetricLayer} updateColorScheme={updateColorScheme} updateShowCounties={updateShowCounties}/>
+    <Controls updateMetricLayer={updateMetricLayer} updateColorScheme={updateColorScheme} updateShowCounties={updateShowCounties} updateDrawing={updateDrawing} drawing={drawing} updateDrawnPath={updatePath}/>
     <Legend colorScheme={colorScheme} metric={metricLayer}/>
 </div>
+{#if drawing}
+    <Drawer updatePath={updatePath} updateIsDrawing={updateDrawing} isDrawing={drawing}/>
+{/if}
 
 <style lang="scss">
     .control-container {

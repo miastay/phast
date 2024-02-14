@@ -2,7 +2,9 @@
 	import { onMount } from 'svelte';
     import { FillLayer, LineLayer, MapLibre, GeoJSON, Marker } from 'svelte-maplibre';
     import geojsonExtent from '@mapbox/geojson-extent';
+    import { h3SetToMultiPolygonFeature } from "geojson2h3";
     import * as h3 from 'h3-js';
+    import * as turf from '@turf/turf'
 
     import { objToDict, populateFeatures } from '../util/populate_hexbins';
     import { getPalette, getDiscretePalette } from '../util/colors';
@@ -16,6 +18,8 @@
     export let colorScheme;
     export let selectionData;
     export let showCounties;
+
+    export let drawnPath;
 
     const layerTransitionTime = 500;
 
@@ -33,6 +37,64 @@
     $: if(map && loaded) updateMetricPaintLayer(metric)
     $: if(map && loaded) updateLayerPalettes(colorScheme)
     $: if(map && loaded) updateShowCounties(showCounties)
+    $: if(map && loaded) pathToHexagons(drawnPath)
+
+    async function pathToHexagons(drawnPath) {
+        if(!drawnPath || !hexagons) return;
+        console.log(drawnPath);
+        // for(let segment of drawnPath._segments) {
+        //     console.log(segment._point);
+        // }
+        console.log(map.transform);
+        console.log(drawnPath[0])
+        console.log(map.transform.pointLocation({x: 10, y: 10}))
+        console.log(map.transform.pointLocation(drawnPath[0]))
+
+        let latLngs = [];
+        for(let point of drawnPath) {
+            let lngLat = map.transform.pointLocation(point);
+            latLngs.push([lngLat.lat, lngLat.lng])
+            //console.log(h3.latLngToCell(lngLat.lat, lngLat.lng, hexagonFetchResolution))
+        }
+        let poly = h3.polygonToCells(latLngs, hexagonFetchResolution)
+        let drawnMultiFeature = h3SetToMultiPolygonFeature(poly);
+
+        console.log(drawnMultiFeature)
+        console.log(hexagons)
+
+        let combinedHexagons = turf.combine(hexagons)
+        console.log(combinedHexagons)
+
+        let intersectionWithCalifornia = turf.intersect(drawnMultiFeature.geometry, combinedHexagons.features[0].geometry);
+        console.log(intersectionWithCalifornia);
+
+        try {
+            map.removeLayer('drawLayer');
+            map.removeSource('drawnPolygon');
+        } catch(err) {
+            console.log(err)
+        }
+        map.addSource('drawnPolygon', {
+                        'type': 'geojson',
+                        'data': intersectionWithCalifornia
+        });
+        map.addLayer({
+            'id': 'drawLayer',
+            'type': 'fill',
+            'source': 'drawnPolygon',
+            'layout': {},
+            'paint': {
+                "fill-color": '#00ffff',
+                "fill-opacity": 0.75,
+                "fill-color-transition": {
+                    "duration": 500,
+                    "delay": 0
+                },
+            },
+        }, firstSymbolId);
+
+        //console.log(MapLibre.Transform.pointLocation(drawnPath[0]));
+    }
 
     function updateMetricPaintLayer(met) {
 
@@ -191,6 +253,12 @@
                 });
                 map.on('mouseleave', firstMetricId, () => {
                     map.getCanvas().style.cursor = '';
+                });
+                map.on('dragstart', firstMetricId, () => {
+                    map.getCanvas().style.cursor = 'grabbing';
+                });
+                map.on('dragend', firstMetricId, () => {
+                    map.getCanvas().style.cursor = 'pointer';
                 });
 
                 //map.on('load', () => {

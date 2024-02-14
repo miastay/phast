@@ -149,7 +149,7 @@
         > svg {
             height: 100%;
             overflow: hidden;
-            background: white;
+            //background: white;
             g.scale, .axis-label {
                 font-size: 0.7rem;
                 font-weight: 500;
@@ -158,7 +158,7 @@
                 fill: white;
                 stroke: black;
                 &.anim-point {
-                    transition: all $anim-long ease;
+                    transition: all $anim-med-long ease;
                 }
             }
             g.path.point-line {
@@ -174,6 +174,11 @@
             }
             .stop3 {
                 stop-color: green;
+            }
+
+            .area {
+                transition: all $anim-med ease;
+                opacity: 0.5;
             }
 
         }

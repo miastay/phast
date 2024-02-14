@@ -8,6 +8,10 @@
     export let updateMetricLayer;
     export let updateColorScheme;
     export let updateShowCounties;
+    export let updateDrawing;
+    export let updateDrawnPath;
+
+    export let isDrawing;
 
     let metric;
     let colorScheme;
@@ -42,6 +46,11 @@
     <div class="control-item">
         <h4>Show county lines?</h4>
         <input type="checkbox" bind:checked={showCounties} on:change={() => updateShowCounties(showCounties)}/>
+    </div>
+    <div class="control-item">
+        <h4>Draw Mode?</h4>
+        <button on:click={() => updateDrawing(true)}>Draw Polygon</button>
+        <button on:click={() => updateDrawnPath(null)}>Reset</button>
     </div>
 </div>
 
