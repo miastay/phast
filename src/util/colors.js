@@ -4,6 +4,15 @@ export function getPalette(min, max, scheme = "*ibm_flip") {
     return palette
 }
 
+export function getColorList(scheme = "*ibm_flip") {
+    let palette = schemes[scheme](0, 1)
+    let colors = []
+    for(let c of palette) {
+        colors.push(c[1])
+    }
+    return colors
+}
+
 export function getDiscretePalette(min, max, scheme = "blBluCyWt") {
     let palette = schemes['rdYlGr_discrete'](min, max)
     return palette

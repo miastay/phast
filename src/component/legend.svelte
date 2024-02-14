@@ -1,6 +1,6 @@
 <script>
 	import { getPalette } from '../util/colors';
-    import { descs } from '../util/make_confidence_intervals';
+    import { descs } from '../util/model';
 
     let scale = getPalette();
     let gradient;
@@ -11,8 +11,8 @@
     $: scale = getPalette(0, 1, colorScheme).slice(1);
     $: gradient = createPaletteGradient(scale);
 
-    function createPaletteGradient(scale) {
-        let grad = `url("/phast/SVG/ticks.svg"), linear-gradient(${scale.map((item) => item[1]).flat().reverse()})`
+    export function createPaletteGradient(scale) {
+        let grad = `linear-gradient(${scale.map((item) => item[1]).flat().reverse()})`
         console.log(grad)
         return grad;
     }
@@ -20,7 +20,7 @@
 </script>
 
 <div class="legend-container">
-    <div class="gradient" style={`background-image: ${gradient}`}/>
+    <div class="gradient" style={`background-image: url("/phast/SVG/ticks.svg"), ${gradient}`}/>
     <div class="label-container">
         {#each scale as color}
             {#if color[2]}

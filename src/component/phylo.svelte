@@ -40,7 +40,7 @@
 </script>
 
 <div class="container">
-    <h2>Phylogenetic tree</h2>
+    <h2>Taxa found in this area</h2>
     <div id="tree_container" bind:this={treeref}/>
 </div>
 

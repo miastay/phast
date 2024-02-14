@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import Select from "@smui/select";
 	import { Option } from "@smui/select";
-    import { metrics } from "../util/make_confidence_intervals";
+    import { metrics } from "../util/model";
     import { schemes } from '../util/colors';
 
     export let updateMetricLayer;

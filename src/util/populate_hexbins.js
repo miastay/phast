@@ -1,6 +1,6 @@
 import * as shapely from 'shapely';
 import { featureToH3Set } from "geojson2h3";
-import { generateRelativeMetric } from './make_confidence_intervals';
+import { generateRelativeMetric } from './model';
 
 export async function populateFeatures(geo, res) {
 

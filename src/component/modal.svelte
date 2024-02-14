@@ -1,28 +1,35 @@
 <script>
-	import { generateRelativeMetric } from '../util/make_confidence_intervals';
+	import { generateRelativeMetric } from '../util/model';
 	import Graph from "./graph.svelte";
 	import Phylo from "./phylo.svelte";
     export let selectionData;
     export let metric;
     export let updateData;
+    export let colorScheme;
+
+    let showSummary;
+    $: showSummary = selectionData.properties && selectionData.properties[metric] !== -1;
+
 </script>
 
 <div class={'modal'}>
     <div class='header'>
-        {#if selectionData.properties}
+        {#if showSummary}
         <div>
             <span>Value: {selectionData.properties[metric]}, Tree Size: {selectionData.properties['tree_sizes']}, Rel: {generateRelativeMetric(metric, selectionData.properties[metric], selectionData.properties['tree_sizes'])}</span>
         </div>
         {/if}
-        {#if !selectionData || !selectionData.properties}
-            <h3>Click on a hexagon to see data</h3>
+        {#if !showSummary}
+        <div>
+            <span>No data for this hexagon!</span>
+        </div>
         {/if}
         <div class="close">
             <button on:click={() => updateData(null)}>x</button>
         </div>
     </div>
-    {#if selectionData.properties}
-        <Graph metric={metric} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
+    {#if showSummary}
+        <Graph colorScheme={colorScheme} metric={metric} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
         <Phylo />
     {/if}
 </div>

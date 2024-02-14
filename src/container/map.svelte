@@ -7,7 +7,7 @@
     import { objToDict, populateFeatures } from '../util/populate_hexbins';
     import { getPalette, getDiscretePalette } from '../util/colors';
 
-    import { metrics } from "../util/make_confidence_intervals";
+    import { metrics } from "../util/model";
 
     let hexagonFetchResolution = 6;
     const centerOfCalifornia = [-119.449444, 37.166111];

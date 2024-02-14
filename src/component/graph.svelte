@@ -1,7 +1,8 @@
 <script>
 
     import * as d3 from 'd3';
-	import { buildModel, generateRelativeMetric, descs } from '../util/make_confidence_intervals';
+	import { buildModel, generateRelativeMetric, descs } from '../util/model';
+	import { getColorList, getPalette } from '../util/colors';
   
     export let data;
     export let point;
@@ -33,6 +34,10 @@
     //     {x: 2, y: 0.55, ci_minus: 0.65, ci_plus: 0.7},
     //     {x: 3, y: 0.65, ci_minus: 0.6, ci_plus: 0.75},
     // ]
+
+    let scale;
+    export let colorScheme;
+    $: scale = getColorList(colorScheme)
 
     let model;
 
@@ -76,6 +81,10 @@
     const li = d3.line((d) => x(d.x), (d) => y(d.y));
     const ciLow = d3.line((d) => x(d.x), (d) => y(d.low));
     const ciHigh = d3.line((d) => x(d.x), (d) => y(d.high));
+
+    const areaAbove = d3.area().x((d) => x(d.x)).y0((d) => y(d.high)).y1((d) => -1 * y(yAxis[1]))
+    const areaBelow = d3.area().x((d) => x(d.x)).y0((d) => y(yAxis[0])).y1((d) => y(d.low))
+
     const curveFunc = d3.line((d) => x(d.x), (d) => y(d.y)).curve(d3.curveBasis)//.x(function(d) { return d.x }).y(function(d) { return d.y })
 
 </script>
@@ -84,18 +93,28 @@
 <div class='graph-container'>
     <h2>{descs[metric]} by tree size</h2>
     <svg id="viz" viewBox={`0 0 ${width} ${height}`}>
+        <defs>
+            <linearGradient id="Gradient1" x1="0" x2="0" y1="0" y2="0.2">
+              <stop class="stop1" offset="0%" />
+              <stop class="stop2" offset="50%" />
+              <stop class="stop3" offset="100%" />
+            </linearGradient>
+        </defs>
         <g class="scale x" bind:this={gx} transform="translate(0,{height - marginBottom})" />
         <g class="scale y" bind:this={gy} transform="translate({marginLeft},0)" />
 
         <!-- <path class="line" fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} /> -->
 
-        <path class="area" fill="#cccccc44" stroke="currentColor" stroke-width="0" d={area(interval)} />
-        <path class="line" fill="none" stroke="blue" stroke-width="1.5" d={ciLow(interval)} />
-        <path class="line" fill="none" stroke="red" stroke-width="1.5" d={ciHigh(interval)} />
+        <path class="area above" fill={scale[scale.length - 1]} stroke="currentColor" stroke-width="0" d={areaAbove(interval)} />
+        <path class="area below" fill={scale[1]} stroke="currentColor" stroke-width="0" d={areaBelow(interval)} />
+        <path class="area ci" fill={scale[Math.ceil(scale.length / 2)]} stroke="currentColor" stroke-width="0" d={area(interval)} />
+
+        <!-- <path class="line" fill="none" stroke="black" stroke-width="1" d={ciLow(interval)} />
+        <path class="line" fill="none" stroke="black" stroke-width="1" d={ciHigh(interval)} /> -->
 
         <g class="point" fill="white" stroke="currentColor" stroke-width="1.5">
             {#each point as p, i}
-                <circle key={i} cx={x(p[0])} cy={y(p[1])} r="5" fill="white" class="anim-point" />
+                <circle key={i} cx={x(p[0])} cy={y(p[1])} r="5" fill={"white"} class="anim-point" />
             {/each}
         </g>
 
@@ -130,6 +149,7 @@
         > svg {
             height: 100%;
             overflow: hidden;
+            background: white;
             g.scale, .axis-label {
                 font-size: 0.7rem;
                 font-weight: 500;
@@ -146,6 +166,15 @@
                 stroke-width: 2;
             }
 
+            .stop1 {
+                stop-color: white;
+            }
+            .stop2 {
+                stop-color: red;
+            }
+            .stop3 {
+                stop-color: green;
+            }
 
         }
     }

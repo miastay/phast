@@ -24,15 +24,15 @@ export function buildModel(type) {
     switch(type) {
         case "mntd":
         case "rel_mntd":
-            data = mntd;
+            data = models.mntd;
             break;
         case "mpd":
         case "rel_mpd":
-            data = mpd;
+            data = models.mpd;
             break;
         default:
         case "pd":
-            data = pd;
+            data = models.pd;
     }
 
     let d = data.d;
@@ -68,76 +68,78 @@ export function buildModel(type) {
 
 const xAxis = [0, 150]
 
-const pd = {
-    "b": {
-        "low": -0.7043,
-        "high": -0.6657
+const models = {
+    'pd': {
+        "b": {
+            "low": -0.7043,
+            "high": -0.6657
+        },
+        "c": {
+            "low": 23.0845,
+            "high": 240.3973
+        },
+         "d": {
+            "low": 19970.5549,
+            "high": 19686.1185
+        },
+        "e": {
+            "low": 3792.2577,
+            "high": 4198.5041
+        },
+        "minY": 100,
+        "maxY": 5000,
+        "yAxisLabel": "Phylodiversity (pd)",
+        "modelHigh": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e))))),
+        "modelLow": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))))
     },
-    "c": {
-        "low": 23.0845,
-        "high": 240.3973
+    "mpd": {
+        "b": {
+            "low": -0.6143,
+            "high": 0.4445
+        },
+        "c": {
+            "low": 6.3176,
+            "high": 97.3052
+        },
+         "d": {
+            "low": 102.0496,
+            "high": 150.1521
+        },
+        "e": {
+            "low": 1.9251,
+            "high": 2.2335
+        },
+        "minY": 0,
+        "maxY": 200,
+        "yAxisLabel": "Mean pairwise phylogenetic distance (mpd)",
+        "modelHigh": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e))))),
+        "modelLow": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))))
     },
-     "d": {
-        "low": 19970.5549,
-        "high": 19686.1185
-    },
-    "e": {
-        "low": 3792.2577,
-        "high": 4198.5041
-    },
-    "minY": 100,
-    "maxY": 5000,
-    "yAxisLabel": "Phylodiversity (pd)",
-    "modelHigh": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e))))),
-    "modelLow": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))))
-}
-const mpd = {
-    "b": {
-        "low": -0.6143,
-        "high": 0.4445
-    },
-    "c": {
-        "low": 6.3176,
-        "high": 97.3052
-    },
-     "d": {
-        "low": 102.0496,
-        "high": 150.1521
-    },
-    "e": {
-        "low": 1.9251,
-        "high": 2.2335
-    },
-    "minY": 0,
-    "maxY": 200,
-    "yAxisLabel": "Mean pairwise phylogenetic distance (mpd)",
-    "modelHigh": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e))))),
-    "modelLow": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))))
+    "mntd": {
+        "b": {
+            "low": 0.9954,
+            "high": 0.8694
+        },
+        "c": {
+            "low": 6.0540,
+            "high": 5.1347
+        },
+         "d": {
+            "low": 33.1945,
+            "high": 185.9164
+        },
+        "e": {
+            "low": 52.3284,
+            "high": 7.0013
+        },
+        "minY": 0,
+        "maxY": 150,
+        "yAxisLabel": "Mean nearest-taxon phylogenetic distance (mntd)",
+        "modelHigh": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e))))),
+        "modelLow": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))))
+    }
 }
 
-const mntd = {
-    "b": {
-        "low": 0.9954,
-        "high": 0.8694
-    },
-    "c": {
-        "low": 6.0540,
-        "high": 5.1347
-    },
-     "d": {
-        "low": 33.1945,
-        "high": 185.9164
-    },
-    "e": {
-        "low": 52.3284,
-        "high": 7.0013
-    },
-    "minY": 0,
-    "maxY": 150,
-    "yAxisLabel": "Mean nearest-taxon phylogenetic distance (mntd)",
-    "modelHigh": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e))))),
-    "modelLow": ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))))
-}
 
 export function generateRelativeMetric(type, value, x) {
 
@@ -147,15 +149,15 @@ export function generateRelativeMetric(type, value, x) {
     switch(type) {
         case "mntd":
         case "rel_mntd":
-            data = mntd;
+            data = models.mntd;
             break;
         case "mpd":
         case "rel_mpd":
-            data = mpd;
+            data = models.mpd;
             break;
         default:
         case "pd":
-            data = pd;
+            data = models.pd;
     }
     let d = data.d;
     let b = data.b;
