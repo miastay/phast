@@ -21,7 +21,7 @@
 
 		tool.onMouseDown = function(event) {
 			path = new paper.Path();
-			path.strokeColor = 'black';
+			path.strokeColor = 'white';
 			path.add(event.point);
 		}
 

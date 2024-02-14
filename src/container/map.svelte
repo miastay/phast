@@ -4,7 +4,8 @@
     import geojsonExtent from '@mapbox/geojson-extent';
     import { h3SetToMultiPolygonFeature } from "geojson2h3";
     import * as h3 from 'h3-js';
-    import * as turf from '@turf/turf'
+    import * as turf from '@turf/turf';
+    import * as polyclip from "polyclip-ts";
 
     import { objToDict, populateFeatures } from '../util/populate_hexbins';
     import { getPalette, getDiscretePalette } from '../util/colors';
@@ -65,8 +66,21 @@
         let combinedHexagons = turf.combine(hexagons)
         console.log(combinedHexagons)
 
-        let intersectionWithCalifornia = turf.intersect(drawnMultiFeature.geometry, combinedHexagons.features[0].geometry);
+        console.log(drawnMultiFeature.geometry)
+        console.log(combinedHexagons.features[0].geometry)
+
+        //let intersectionWithCalifornia = turf.intersect(drawnMultiFeature.geometry, combinedHexagons.features[0].geometry);
+        let intersectionWithCalifornia = polyclip.intersection(drawnMultiFeature.geometry.coordinates, combinedHexagons.features[0].geometry.coordinates);
         console.log(intersectionWithCalifornia);
+
+        let newGeoJson = {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "type": "MultiPolygon",
+                "coordinates": intersectionWithCalifornia
+            }
+        };
 
         try {
             map.removeLayer('drawLayer');
@@ -76,7 +90,7 @@
         }
         map.addSource('drawnPolygon', {
                         'type': 'geojson',
-                        'data': intersectionWithCalifornia
+                        'data': newGeoJson
         });
         map.addLayer({
             'id': 'drawLayer',

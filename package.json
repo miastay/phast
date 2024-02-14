@@ -43,6 +43,7 @@
 		"mapbox-gl": "^3.1.2",
 		"paper": "^0.12.17",
 		"phylotree": "^2.0.1",
+		"polyclip-ts": "^0.16.3",
 		"sass": "^1.70.0",
 		"shapely": "^0.2.3",
 		"svelte-maplibre": "^0.7.7",
