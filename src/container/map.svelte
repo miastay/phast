@@ -41,8 +41,15 @@
     $: if(map && loaded) pathToHexagons(drawnPath)
 
     async function pathToHexagons(drawnPath) {
-        if(!drawnPath || !hexagons) return;
+        if(!hexagons) return;
         console.log(drawnPath);
+
+        if(drawnPath === null) {
+            map.removeLayer('drawLayer');
+            map.removeSource('drawnPolygon');
+            return;
+        }
+
         // for(let segment of drawnPath._segments) {
         //     console.log(segment._point);
         // }
