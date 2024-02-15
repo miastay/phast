@@ -28,6 +28,8 @@ export async function populateFeatures(geo, res) {
 
     //fetch feature data in dict format
     let data = await fetch('/phast/data/poly_bird_data.json').then((raw) => raw.json());
+    let trees = await fetch('/phast/data/bird_trees.json').then((raw) => raw.json());
+    trees = treeToDict(trees);
 
     //iterate through polygons
     let multipolygon = geo.geometry.coordinates;
@@ -47,6 +49,7 @@ export async function populateFeatures(geo, res) {
                 "rel_pd": -1,
                 "rel_mpd": -1,
                 "rel_mntd": -1,
+                "tree": null
             },
             "geometry": {
                 "type": "Polygon",
@@ -71,6 +74,7 @@ export async function populateFeatures(geo, res) {
             if(relative > maxes[key]) maxes[key] = relative
             else if(relative < mins[key]) mins[key] = relative
         }
+        feature['properties']['tree'] = (trees[index][0] ?? "");
 
         // if(data[index].pd) {
         //     feature['properties']['pd'] = data[index].pd
@@ -102,4 +106,10 @@ export async function populateFeatures(geo, res) {
 export function objToDict(obj) {
     let dictionary = Object.fromEntries(obj.map(x => [x.id, {"pd": x.pd, "mpd": x.mpd, "mntd": x.mntd, "tree_sizes": x.tree_sizes}]));
     return dictionary;
+}
+
+export function treeToDict(obj) {
+    console.log(obj)
+    let trees = JSON.parse(obj[0]);
+    return trees;
 }

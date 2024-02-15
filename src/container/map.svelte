@@ -45,8 +45,12 @@
         console.log(drawnPath);
 
         if(drawnPath === null) {
-            map.removeLayer('drawLayer');
-            map.removeSource('drawnPolygon');
+            try {
+                map.removeLayer('drawLayer');
+                map.removeSource('drawnPolygon');
+            } catch(err) {
+                console.log(err)
+            }
             return;
         }
 

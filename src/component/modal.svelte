@@ -30,7 +30,7 @@
     </div>
     {#if showSummary}
         <Graph colorScheme={colorScheme} metric={metric} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
-        <Phylo />
+        <Phylo newick={selectionData.properties.tree}/>
     {/if}
 </div>
 
