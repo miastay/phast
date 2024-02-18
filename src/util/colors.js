@@ -165,3 +165,20 @@ export const schemes = {
     [1, "#2a4e9b", "Very high biodiversity"],
  * 
  */
+
+export function getBrandColors() {
+    // return {
+    //     "500": "#0fe200",
+    //     "700": "#00bc00",
+    //     "900": "#008400",
+    //     "300": "#81ee6d",
+    //     "100": "#cef8c3"
+    // }
+    return {
+        "500": "#7edc26",
+        "700": "#55b60e",
+        "900": "#007f00",
+        "300": "#aae874",
+        "100": "#dcf5c5"
+    }   
+}

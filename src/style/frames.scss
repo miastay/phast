@@ -1,5 +1,5 @@
 @mixin container {
-    background: #ffffffbb;
+    background: #ffffffdc;
     backdrop-filter: blur(20px);
     border-radius: 10px;
     padding: 0.75rem;
@@ -25,9 +25,15 @@
 @mixin graph-header {
     margin-block: 0;
     font-size: 1.3rem;
-    color: $dark-gray;
-    text-align: center;
+    font-weight: 700;
+    color: $theme-900;
+    text-align: left !important;
     &:first-letter {
         text-transform: uppercase;
     }
+    border-bottom: solid 3px $theme-900;
+    //border-top: solid 4px $theme-900;
+    padding: 4px;
+    padding-left: 0px;
+    //border-radius: 4px;
 }

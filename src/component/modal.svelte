@@ -14,23 +14,23 @@
 
 <div class={'modal'}>
     <div class='header'>
-        {#if showSummary}
+        <div class="close">
+            <button on:click={() => updateData(null)}>x</button>
+        </div>
+        <!-- {#if showSummary}
         <div>
             <span>Value: {selectionData.properties[metric]}, Tree Size: {selectionData.properties['tree_sizes']}, Rel: {generateRelativeMetric(metric, selectionData.properties[metric], selectionData.properties['tree_sizes'])}</span>
         </div>
-        {/if}
+        {/if} -->
         {#if !showSummary}
         <div>
             <span>No data for this hexagon!</span>
         </div>
         {/if}
-        <div class="close">
-            <button on:click={() => updateData(null)}>x</button>
-        </div>
     </div>
     {#if showSummary}
         <Graph colorScheme={colorScheme} metric={metric} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
-        <Phylo newick={selectionData.properties.tree}/>
+        <Phylo newick={selectionData.properties.tree} hex_id={selectionData.properties.id}/>
     {/if}
 </div>
 
@@ -54,9 +54,13 @@
         align-items: center;
         justify-content: space-between;
 
+        :not(:first-child) {
+            margin-bottom: 2rem;
+        }
+
         .header {
             display: flex;
-            flex-direction: row;
+            flex-direction: row-reverse;
             justify-content: space-between;
             width: 100%;
 

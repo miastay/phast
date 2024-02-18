@@ -3,6 +3,7 @@
     import * as d3 from 'd3';
 	import { buildModel, generateRelativeMetric, descs } from '../util/model';
 	import { getColorList, getPalette } from '../util/colors';
+    import { getBrandColors } from '../util/colors';
   
     export let data;
     export let point;
@@ -77,7 +78,7 @@
         return (-1 * (height / 2)) - (label.length * 2.5)
     }
 
-    const area = d3.area().x((d) => x(d.x)).y0((d) => y(d.low)).y1((d) => y(d.high))
+    const area = d3.area().x((d) => x(d.x)).y0((d) => y(Math.max(d.low, yAxis[0]))).y1((d) => y(Math.min(d.high, yAxis[1])))
     const li = d3.line((d) => x(d.x), (d) => y(d.y));
     const ciLow = d3.line((d) => x(d.x), (d) => y(d.low));
     const ciHigh = d3.line((d) => x(d.x), (d) => y(d.high));
@@ -105,9 +106,9 @@
 
         <!-- <path class="line" fill="none" stroke="currentColor" stroke-width="1.5" d={line(data)} /> -->
 
-        <path class="area above" fill={scale[scale.length - 1]} stroke="currentColor" stroke-width="0" d={areaAbove(interval)} />
-        <path class="area below" fill={scale[1]} stroke="currentColor" stroke-width="0" d={areaBelow(interval)} />
-        <path class="area ci" fill={scale[Math.ceil(scale.length / 2)]} stroke="currentColor" stroke-width="0" d={area(interval)} />
+        <!-- <path class="area above" fill={scale[scale.length - 1]} stroke="currentColor" stroke-width="0" d={areaAbove(interval)} />
+        <path class="area below" fill={scale[1]} stroke="currentColor" stroke-width="0" d={areaBelow(interval)} /> -->
+        <path class="area ci" fill={getBrandColors()['500']} stroke="currentColor" stroke-width="0" d={area(interval)} />
 
         <!-- <path class="line" fill="none" stroke="black" stroke-width="1" d={ciLow(interval)} />
         <path class="line" fill="none" stroke="black" stroke-width="1" d={ciHigh(interval)} /> -->
@@ -134,21 +135,22 @@
     .graph-container {
         display: flex;
         flex-direction: column;
-        align-items: center;
         position: relative;
-        width: 95%;
+        width: 100%;
         max-height: 35%;
         vertical-align: top;
         overflow: visible;
+        gap: 1rem;
 
         > h2 {
             @include graph-header;
-            margin-left: 1rem;
         }
 
         > svg {
+            align-self: center;
             height: 100%;
-            overflow: hidden;
+            width: 95%;
+            overflow: visible;
             //background: white;
             g.scale, .axis-label {
                 font-size: 0.7rem;
@@ -177,6 +179,7 @@
             }
 
             .area {
+                overflow: hidden;
                 transition: all $anim-med ease;
                 opacity: 0.5;
             }
