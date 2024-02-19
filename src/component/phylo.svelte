@@ -12,6 +12,11 @@
     let treeref;
     let treemap;
 
+    let tooltipX, tooltipY;
+    let showTooltip = false;
+    let tooltipText = '';
+    let tooltipFlip = false;
+
     function rerender(tree_str) {
         const maxdim = 2000//window.innerHeight;
 
@@ -43,8 +48,6 @@
             if(treemap[hex_id].includes(data.target.data.name)) {
                 element.style("stroke", getBrandColors()['500']);
                 element.style ("stroke-width", "2px");
-                console.log(data)
-                console.log(element)
             }
             
             // if (data.target.data._cp_id > 0) {
@@ -67,7 +70,6 @@
 
         if(treemap) {
             for(let value of treemap[hex_id]) {
-                console.log(value)
                 let node_group = tree_svg.querySelector(`[data-node-name="${value}"]`);
                 let node_text = node_group.firstChild;
 
@@ -90,6 +92,35 @@
 
         console.log(tree_svg)
         treeref.appendChild(tree_svg)
+
+        console.log(treeref.querySelectorAll('.node-circle'))
+        treeref.querySelectorAll('.node-circle').forEach((elem) => {
+            elem.addEventListener('mouseover', (e) => {
+                let layerWidth = document.querySelector('#tree_container').clientWidth;
+                //tooltipX = e.layerX; tooltipY = e.layerY;
+                tooltipFlip = false;
+
+                if(tooltipX > layerWidth / 2) {
+                    tooltipFlip = true;
+                }
+
+                showTooltip = true;
+                tooltipText = e.target.attributes.title.value;
+                //d3.select(elem.parentElement).append("rect").classed("node-tooltip", true)
+                // d3.select(elem.parentElement).append("text").classed("node-tooltip", true).text(e.target.attributes.title.value).attr("textLength", 100)
+            })
+            elem.addEventListener('mouseout', (e) => {
+                //d3.select(elem.parentElement).select('.node-tooltip').remove();
+                showTooltip = false;
+            })
+        })
+
+        tree_svg.addEventListener('mousemove', (e) => {
+            if(!e.target.localName === "svg") return;
+            tooltipX = e.offsetX;
+            tooltipY = e.offsetY;
+        })
+
         //tree_svg.style = "fill: none; stroke: black;"
     }
 
@@ -109,7 +140,9 @@
 
 <div class="container">
     <h2>Taxa found in this area</h2>
-    <div id="tree_container" bind:this={treeref}/>
+    <div id="tree_container" bind:this={treeref}>
+        <div class={`tree_tooltip ${showTooltip ? 'shown' : 'hidden'} ${tooltipFlip ? 'flip' : ''}`} style={`margin-top: ${tooltipY}px; left: ${tooltipX}px;`}><span>{tooltipText}</span></div>
+    </div>
 </div>
 
 
@@ -117,6 +150,36 @@
 
     @import '../style/frames.scss';
     @import '../style/colors.scss';
+
+
+    .tree_tooltip {
+        display: flex;
+        position: absolute;
+        background: $theme-900;
+        color: white;
+        padding: 0.5rem;
+        padding-bottom: 0.6rem;
+        transform-origin: bottom left;
+        transform: translate(25px, -45px);
+        clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 10% 90%, 0% 110%);
+        &.hidden {
+            opacity: 0;
+            transform: translate(0px, 0px);
+            display: none;
+            //transform: scaleY(0.1);
+        }
+        &.flip {
+            transform-origin: top left;
+            transform: scaleX(-1) translateY(-100%);
+            > * {
+                transform: scaleX(-1);
+            }
+            //clip-path: polygon(0% 0%, 100% 0%, 100% 110%, 90% 90%, 0% 90%);
+            //text-align: right;
+        }
+        transition: all 0.3s ease, margin-top 0s ease, left 0s ease;
+    }
+
 
     :global(path.branch) {
         fill: none;
@@ -155,12 +218,18 @@
         fill: blue !important;
     }
 
-    :global(.node-tooltip) {
-        //visibility: hidden;
-        fill: red;
+    :global(text.node-tooltip ) {
+        fill: white;
+        font-size: 1rem;
         white-space: nowrap;
         transform: translate(5px, -5px);
-        background: white;
+    }
+    :global(rect.node-tooltip ) {
+        fill: red;
+        width: 100px;
+        height: -50px;
+        white-space: nowrap;
+        transform: translate(5px, -5px);
     }
 
     :global(.tree-scale-bar) {
