@@ -89,6 +89,7 @@
         tree_svg.setAttribute("width", width); 
         tree_svg.setAttribute("height", height); 
         tree_svg.setAttribute("viewBox", `${0} ${0} ${width / 4} ${height / 4}`); 
+        tree_svg.style.marginTop = "-2rem";
 
         console.log(tree_svg)
         treeref.appendChild(tree_svg)
@@ -141,7 +142,7 @@
 <div class="container">
     <h2>Taxa found in this area</h2>
     <div id="tree_container" bind:this={treeref}>
-        <div class={`tree_tooltip ${showTooltip ? 'shown' : 'hidden'} ${tooltipFlip ? 'flip' : ''}`} style={`margin-top: ${tooltipY}px; left: ${tooltipX}px;`}><span>{tooltipText}</span></div>
+        <div class={`tree_tooltip ${showTooltip ? 'shown' : 'hidden'} ${tooltipFlip ? 'flip' : ''}`} style={`margin-top: calc(${tooltipY}px - 2rem); left: ${tooltipX}px;`}><span>{tooltipText}</span></div>
     </div>
 </div>
 
@@ -162,10 +163,11 @@
         transform-origin: bottom left;
         transform: translate(25px, -45px);
         clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 10% 90%, 0% 110%);
+        border-radius: 0.5rem;
         &.hidden {
             opacity: 0;
-            transform: translate(0px, 0px);
-            display: none;
+            z-index: -1000;
+            //display: none;
             //transform: scaleY(0.1);
         }
         &.flip {
@@ -177,7 +179,7 @@
             //clip-path: polygon(0% 0%, 100% 0%, 100% 110%, 90% 90%, 0% 90%);
             //text-align: right;
         }
-        transition: all 0.3s ease, margin-top 0s ease, left 0s ease;
+        transition: all 0.3s ease, margin-top 0s ease, left 0s ease, transform 0s ease;
     }
 
 
@@ -258,6 +260,10 @@
     h2 {
         @include graph-header;
         text-align: center;
+    }
+
+    :global(html) {
+        overflow: hidden;
     }
 
 </style>
