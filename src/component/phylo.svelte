@@ -169,18 +169,13 @@
 
     .container {
         width: 100%;
-        height: 100%;
-        //background: white;
-        padding: 5px;
     }
 
     #tree_container {
-        width: 100%;
         display: flex;
         flex-direction: row;
         justify-content: center;
-        border-bottom-left-radius: 0.25rem;
-        border-bottom-right-radius: 0.25rem;
+        margin-top: -2vw;
     }
     :global(svg) {
         height: 100%;
