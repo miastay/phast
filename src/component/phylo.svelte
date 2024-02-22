@@ -246,7 +246,6 @@
         display: flex;
         flex-direction: row;
         justify-content: center;
-        margin-top: -2vw;
     }
     :global(svg) {
         height: 100%;
