@@ -38,11 +38,16 @@
         path = p;
     }
 
+    let clade = 'Birds';
+    function updateClade(c) {
+        clade = c;
+    }
+
 </script>
 
-<Map update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties} drawnPath={path}/>
+<Map update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties} drawnPath={path} clade={clade}/>
 {#if selectionData}
-    <Modal colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData}/>
+    <Modal colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData} clade={clade} updateClade={updateClade}/>
 {/if}
 <div class='control-container'>
     <Controls updateMetricLayer={updateMetricLayer} updateColorScheme={updateColorScheme} updateShowCounties={updateShowCounties} updateDrawing={updateDrawing} drawing={drawing} updateDrawnPath={updatePath}/>

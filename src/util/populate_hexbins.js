@@ -27,8 +27,8 @@ export async function populateFeatures(geo, res) {
     }
 
     //fetch feature data in dict format
-    let data = await fetch('/phast/data/poly_bird_data.json').then((raw) => raw.json());
-    let trees = await fetch('/phast/data/bird_trees.json').then((raw) => raw.json());
+    let data = await fetch('/phast/data/poly_plant_data.json').then((raw) => raw.json());
+    let trees = await fetch('/phast/data/plant_trees.json').then((raw) => raw.json());
     trees = treeToDict(trees);
 
     //iterate through polygons

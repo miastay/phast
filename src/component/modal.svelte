@@ -7,6 +7,10 @@
     export let updateData;
     export let colorScheme;
 
+    export let clade;
+    export let updateClade;
+    const clades = ['Birds', 'Squamates', 'Plants'];
+
     let showSummary;
     $: showSummary = selectionData.properties && selectionData.properties[metric] !== -1;
 
@@ -14,10 +18,10 @@
 
 <div class={'modal'}>
     <div class='header'>
-        <select>
-            <option>Birds</option>
-            <option>Squamates</option>
-            <option>Plants</option>
+        <select bind:value={clade} on:change={() => updateClade(clade)} label="Clade">
+            {#each clades as opt}
+              <option value={opt}>{opt}</option>
+            {/each}
         </select>
         <div class="close">
             <button on:click={() => updateData(null)}>x</button>

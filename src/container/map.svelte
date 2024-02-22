@@ -19,8 +19,8 @@
     export let colorScheme;
     export let selectionData;
     export let showCounties;
-
     export let drawnPath;
+    export let clade;
 
     const layerTransitionTime = 500;
 
@@ -39,6 +39,7 @@
     $: if(map && loaded) updateLayerPalettes(colorScheme)
     $: if(map && loaded) updateShowCounties(showCounties)
     $: if(map && loaded) pathToHexagons(drawnPath)
+    $: if(map && loaded) draw_hexagons(clade, hexagonFetchResolution);
 
     async function pathToHexagons(drawnPath) {
         if(!hexagons) return;
@@ -123,25 +124,27 @@
 
     function updateMetricPaintLayer(met) {
 
+        let id = `hex-${met}-${clade}`
+
         console.log(met)
         // we try to find a workaround to transitions not firing on feature-state changes, see: https://github.com/mapbox/mapbox-gl-js/issues/11748
-        map.moveLayer(`hex-${met}`, 'place_hamlet');
+        map.moveLayer(id, 'place_hamlet');
 
         setTimeout(() => {
-            clearHexLayers([`hex-${met}`])
+            clearHexLayers([id])
         }, layerTransitionTime / 4);
 
-        map.setPaintProperty(`hex-${met}`, 'fill-opacity', 1)
+        map.setPaintProperty(id, 'fill-opacity', 1)
     }
 
     function clearHexLayers(exclude = []) {
-        let layersToClear = map.getStyle().layers.filter((layer) => layer.source === "hexlayer" && !(exclude.includes(layer.id)))
+        let layersToClear = map.getStyle().layers.filter((layer) => layer.source === `hexlayer-${clade}` && !(exclude.includes(layer.id)))
         for(let layer of layersToClear) {
             map.setPaintProperty(layer.id, 'fill-opacity', 0)
         }
     }
     function updateLayerPalettes(colors) {
-        let hexLayers = map.getStyle().layers.filter((layer) => layer.source === "hexlayer")
+        let hexLayers = map.getStyle().layers.filter((layer) => layer.source === `hexlayer-${clade}`)
         for(let layer of hexLayers) {
             let layerMetric = layer.id.split('-')[1]
             let pal = generatePalette(layerMetric, colors, true)
@@ -203,54 +206,96 @@
 
     export let update;
 
+    async function draw_hexagons(clade, resolution) {
+        console.log(clade)
+
+        console.log(map?.getStyle()?.sources)
+        if(map && map?.getStyle()?.sources[`hexlayer-${clade}`]) return;
+
+        fetch(`/phast/CA_hexbinned@${resolution ?? 6}_${clade}.json`)
+        .then((data) => data.json())
+        .then((hex) => hexagons = hex)
+        .then(() => { 
+
+            maxes = hexagons.properties?.maxes
+            mins = hexagons.properties?.mins
+
+            const layers = map.getStyle().layers;
+            let firstSymbolId = layers[71].id;
+
+            map.addSource(`hexlayer-${clade}`, {
+                'type': 'geojson',
+                'data': hexagons
+            });
+
+            for(let mt of metrics) {
+                let id = `hex-${mt}-${clade}`
+                map.addLayer({
+                    'id': id,
+                    'type': 'fill',
+                    'source': `hexlayer-${clade}`,
+                    'layout': {},
+                    'paint': {
+                        "fill-color": generatePalette(mt, colorScheme, true),
+                        "fill-opacity": 0.75,
+                        "fill-color-transition": {
+                            "duration": 500,
+                            "delay": 0
+                        },
+                    },
+                }, firstSymbolId);
+                console.log("added layer ", id)
+            }
+
+        });
+    }
+
     onMount(() => {
-        fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_birds_err.json`)
-            .then((data) => data.json())
-            .then((hex) => hexagons = hex)
-            .then(() => {
+        draw_hexagons(clade, hexagonFetchResolution);
+        // fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_${clade}.json`)
+        //     .then((data) => data.json())
+        //     .then((hex) => hexagons = hex)
+        //     .then(() => {
 
-                maxes = hexagons.properties?.maxes
-                mins = hexagons.properties?.mins
-
+                
                 //populateFeatures(hexagons, hexagonFetchResolution).then((txt) => console.log(txt))
+                //fetch('/phast/data/initial_poly_plants_data.json').then((data) => data.json()).then((obj) => console.log(objToDict(obj)));
                 
                 // Find the index of the first symbol layer in the map style
-                const layers = map.getStyle().layers;
-                let firstSymbolId = layers[71].id;
 
-                console.log(map)
-                map.doubleClickZoom._clickZoom._enabled = false;
-                map.doubleClickZoom._tapZoom._enabled = false;
+                // console.log(map)
+                // map.doubleClickZoom._clickZoom._enabled = false;
+                // map.doubleClickZoom._tapZoom._enabled = false;
 
 
-                // generate one layer per metric, we fade opacity rather than feature-state switching
+                // // generate one layer per metric, we fade opacity rather than feature-state switching
 
-                map.addSource('hexlayer', {
-                    'type': 'geojson',
-                    'data': hexagons
-                });
-                for(let mt of metrics) {
-                    let id = `hex-${mt}`
-                    map.addLayer({
-                        'id': id,
-                        'type': 'fill',
-                        'source': 'hexlayer',
-                        'layout': {},
-                        'paint': {
-                            "fill-color": generatePalette(mt, colorScheme, true),
-                            "fill-opacity": 0.75,
-                            "fill-color-transition": {
-                                "duration": 500,
-                                "delay": 0
-                            },
-                        },
-                    }, firstSymbolId);
-                    console.log("added layer for ", mt)
-                }
+                // map.addSource('hexlayer', {
+                //     'type': 'geojson',
+                //     'data': hexagons
+                // });
+                // for(let mt of metrics) {
+                //     let id = `hex-${mt}`
+                //     map.addLayer({
+                //         'id': id,
+                //         'type': 'fill',
+                //         'source': 'hexlayer',
+                //         'layout': {},
+                //         'paint': {
+                //             "fill-color": generatePalette(mt, colorScheme, true),
+                //             "fill-opacity": 0.75,
+                //             "fill-color-transition": {
+                //                 "duration": 500,
+                //                 "delay": 0
+                //             },
+                //         },
+                //     }, firstSymbolId);
+                //     console.log("added layer for ", mt)
+                // }
                 //console.log(map.getStyle().layers)
                 loadLineFeatures('California_County_Boundaries.geojson', 'counties', map);
 
-                let firstMetricId = `hex-${metrics[0]}`;
+                let firstMetricId = `hex-${metrics[0]}-${clade}`;
                 map.on('click', firstMetricId, (e) => {
                     console.log(e)
                     let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, hexagonFetchResolution)
@@ -288,7 +333,7 @@
 
                 //map.on('load', () => {
                    // console.log("loaded")
-                    zoomFitCenter();
+                    //zoomFitCenter();
                     //zoomFitAnim();
                 //})
 
@@ -297,7 +342,7 @@
                     console.log("no load on timeout")
                     map._canvas.style.filter = "none";
                     if(!loaded) {
-                        zoomFitCenter();
+                        //zoomFitCenter();
                         //zoomFitAnim();
                     }
                 }, 3000)
@@ -306,7 +351,7 @@
 
         })
         
-    });
+    //});
 
     async function zoomFitAnim() {
         let hexBounds = geojsonExtent(hexagons)

@@ -7,7 +7,8 @@
 
     export let newick;
     export let hex_id;
-    $: newick && treeref && rerender(newick);
+    export let clade;
+    $: newick && treeref && rerender(newick, clade);
 
     let treeref;
     let treemap;
@@ -17,7 +18,7 @@
     let tooltipText = '';
     let tooltipFlip = false;
 
-    function rerender(tree_str) {
+    function rerender(tree_str, clade) {
         const maxdim = 2000//window.innerHeight;
 
         const width = maxdim;
@@ -125,8 +126,8 @@
         //tree_svg.style = "fill: none; stroke: black;"
     }
 
-    async function buildNodeMap() {
-        return fetch('/phast/data/bird_hex_species.json').then((res) => res.json())
+    async function buildNodeMap(type) {
+        return fetch(`/phast/data/${type}_hex_species.json`).then((res) => res.json())
         .then((actualNodes) => {
             treemap = JSON.parse(actualNodes[0]);
             return treemap;
@@ -134,7 +135,7 @@
     }
 
     onMount(async () => {
-        buildNodeMap().then((map) => rerender(hex_id))   
+        buildNodeMap(clade).then((map) => rerender(hex_id))   
     })
 
 </script>
