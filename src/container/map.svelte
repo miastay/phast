@@ -212,7 +212,7 @@
         console.log(map?.getStyle()?.sources)
         if(map && map?.getStyle()?.sources[`hexlayer-${clade}`]) return;
 
-        fetch(`/phast/CA_hexbinned@${resolution ?? 6}_${clade}.json`)
+        fetch(`/phast/${clade}_hex.json`)
         .then((data) => data.json())
         .then((hex) => hexagons = hex)
         .then(() => { 
