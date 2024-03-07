@@ -35,7 +35,7 @@
         textLayers = map.getStyle().layers.filter((layer) => layer['source-layer'] === 'place');
         console.log(textLayers)
     }
-    $: if(map && loaded) updateMetricPaintLayer(metric)
+    $: if(map && loaded) updateMetricPaintLayer(metric, clade)
     $: if(map && loaded) updateLayerPalettes(colorScheme)
     $: if(map && loaded) updateShowCounties(showCounties)
     $: if(map && loaded) pathToHexagons(drawnPath)
@@ -122,7 +122,7 @@
         //console.log(MapLibre.Transform.pointLocation(drawnPath[0]));
     }
 
-    function updateMetricPaintLayer(met) {
+    function updateMetricPaintLayer(met, clade) {
 
         let id = `hex-${met}-${clade}`
 
@@ -138,7 +138,7 @@
     }
 
     function clearHexLayers(exclude = []) {
-        let layersToClear = map.getStyle().layers.filter((layer) => layer.source === `hexlayer-${clade}` && !(exclude.includes(layer.id)))
+        let layersToClear = map.getStyle().layers.filter((layer) => layer.source?.includes(`hexlayer`) && !(exclude.includes(layer.id)))
         for(let layer of layersToClear) {
             map.setPaintProperty(layer.id, 'fill-opacity', 0)
         }
@@ -331,18 +331,18 @@
                     map.getCanvas().style.cursor = 'pointer';
                 });
 
-                //map.on('load', () => {
-                   // console.log("loaded")
-                    //zoomFitCenter();
+                map.on('load', () => {
+                    console.log("loaded")
+                    zoomFitCenter();
                     //zoomFitAnim();
-                //})
+                })
 
                 // backup in case the load event doesn't fire properly
                 setTimeout(() => {
                     console.log("no load on timeout")
                     map._canvas.style.filter = "none";
                     if(!loaded) {
-                        //zoomFitCenter();
+                        zoomFitCenter();
                         //zoomFitAnim();
                     }
                 }, 3000)

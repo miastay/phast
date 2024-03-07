@@ -141,7 +141,6 @@
         vertical-align: top;
         overflow: visible;
         gap: 1rem;
-        margin-bottom: 2rem;
 
         > h2 {
             @include graph-header;

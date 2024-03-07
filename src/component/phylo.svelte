@@ -135,7 +135,7 @@
     }
 
     onMount(async () => {
-        buildNodeMap(clade).then((map) => rerender(hex_id))   
+        buildNodeMap(clade).then((map) => rerender(hex_id)).then(() => console.log('built node map'))   
     })
 
 </script>
