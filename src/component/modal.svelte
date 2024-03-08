@@ -3,6 +3,8 @@
     import Select, { Option } from '@smui/select';
 	import Graph from "./graph.svelte";
 	import Phylo from "./phylo.svelte";
+	import Builder from './builder.svelte';
+
     export let selectionData;
     export let metric;
     export let updateData;
@@ -12,13 +14,18 @@
     export let updateClade;
     export let clades;
 
+    export let isBuilt;
+    export let showEcoregions;
+    export let build;
+
     let showSummary;
-    $: showSummary = selectionData.properties && selectionData.properties[metric] !== -1;
+    $: if(selectionData) showSummary = selectionData.properties && selectionData.properties[metric] !== -1;
     $: updateClade(clade);
 
 </script>
 
 <div class={'modal'}>
+    {#if isBuilt}
     <div class='header'>
         <Select class="shaped" variant="outlined" bind:value={clade}>
             {#each clades as opt}
@@ -45,6 +52,10 @@
             <Phylo clade={clade} newick={selectionData.properties.tree} hex_id={selectionData.properties.id}/>
         {/if}
     </div>
+    {/if}
+    {#if !isBuilt}
+        <Builder showEcoregions={showEcoregions} build={build}/>
+    {/if}
 </div>
 
 <style lang="scss">
@@ -72,7 +83,7 @@
             flex-direction: row;
             justify-content: space-between;
             width: 100%;
-            background: $theme-900;
+            background: $theme-500;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
             padding: 1rem;
@@ -86,7 +97,7 @@
             }
 
             > select {
-                font-size: 1.5rem;
+                font-size: 1.75rem;
                 font-weight: 900;
                 color: white;
                 background: none;
@@ -101,9 +112,9 @@
                     color: red;
                 }
                 > option {
-                    background: $theme-900;
+                    background: $theme-500 !important;
                     &:hover {
-                        background: $theme-700;
+                        background: $theme-600;
                     }
                 }
             }

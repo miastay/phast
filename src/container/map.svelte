@@ -24,6 +24,15 @@
     export let clade;
     export let clades;
 
+    const californiaExtent = [
+        -124.40971816218747,
+        32.534154544948464,
+        -114.13120909272375,
+        42.009518182466415
+    ]
+
+    let hoveredEcoregion = null;
+
     const layerTransitionTime = 500;
 
     let map;//: maplibregl.Map | undefined;
@@ -45,6 +54,9 @@
     //$: if(map && loaded) drawHexagons(clade, hexagonFetchResolution);
     $: if(map && loaded) updateCladeOpacity(clade);
 
+    export let built;
+    $: if(map && loaded) buildMap(built);
+
     function updateCladeOpacity(clade) {
         if(!map.getStyle()) return;
         console.log(map.getStyle().layers)
@@ -52,7 +64,6 @@
         for(let layer of layersToClear) {
             map.setPaintProperty(layer.id, 'fill-opacity', 0)
         }
-        updateMetricPaintLayer(metric);
     }
 
     async function pathToHexagons(drawnPath) {
@@ -175,12 +186,24 @@
         }
     }
 
-    function updateShowEcoregions(shown) {
+    export function updateShowEcoregions(shown) {
         console.log('ecoregions', shown)
         if(shown) {
-            map.setPaintProperty('ecoregions', 'line-opacity', 1)
+            map.setPaintProperty('ecoregions-line', 'line-opacity', 1)
+            map.setPaintProperty('ecoregions-fill', 'fill-opacity', 0.75)
         } else {
-            map.setPaintProperty('ecoregions', 'line-opacity', 0)
+            map.setPaintProperty('ecoregions-line', 'line-opacity', 0)
+            map.setPaintProperty('ecoregions-fill', 'fill-opacity', 0)
+        }
+    }
+
+    export function updateShowCalifornia(shown) {
+        if(shown) {
+            map.setPaintProperty('california-line', 'line-opacity', 1)
+            map.setPaintProperty('california-fill', 'fill-opacity', 0.75)
+        } else {
+            map.setPaintProperty('california-line', 'line-opacity', 0)
+            map.setPaintProperty('california-fill', 'fill-opacity', 0)
         }
     }
 
@@ -314,97 +337,175 @@
         fetch(`/phast/data/ecoregions.geojson`)
         .then((data) => data.json())
         .then((shape) => {
+            console.log(shape)
+
             map.addSource('ecoregions', {
                 'type': 'geojson',
-                'data': shape
+                'data': shape,
+                'generateId': true
             });
+
+            // generate individual sources per ecoregion
+            // let numEcoregions = 0;
+            // let filledShape = {
+            //     "type": "FeatureCollection",
+            //     "features": []
+            // }
+            // for(let surface of shape.features) {
+            //     surface.properties.id = `ecoregion-${numEcoregions}`;
+            //     filledShape.features.push({
+            //         ...surface
+            //     })
+            //     console.log(filledShape)
+            //     numEcoregions++;
+            // }
+
+            // map.addSource('ecoregion-fills', {
+            //     'type': 'geojson',
+            //     'data': filledShape
+            // });
+
+            // console.log(shape)
+            // console.log(filledShape)
+
             map.addLayer({
-                'id': 'ecoregions',
+                'id': 'ecoregions-fill',
+                'type': 'fill',
+                'source': 'ecoregions',
+                'layout': {},
+                'paint': {
+                    "fill-opacity": 0,
+                    'fill-color': [
+                        'case',
+                        ['boolean', ['feature-state', 'hover'], false],
+                        '#29abe2',
+                        '#e9f6fb'
+                    ],
+                    'fill-color-transition': {
+                        "duration": 500,
+                        "delay": 0
+                    },
+                },
+            });
+
+            // generate one line source for ecoregion
+            map.addLayer({
+                'id': 'ecoregions-line',
                 'type': 'line',
                 'source': 'ecoregions',
                 'layout': {},
                 'paint': {
-                    "line-color": "#000000",
-                    "line-width": 1,
+                    "line-color": "#555555",
+                    "line-width": 0.25,
                     "line-opacity": 0
                 },
+            });
+
+            map.on('mousemove', 'ecoregions-fill', (e) => {
+                if (e.features.length > 0) {
+                    if (hoveredEcoregion) {
+                        map.setFeatureState(
+                            { source: 'ecoregions', id: hoveredEcoregion },
+                            { hover: false }
+                        );
+                    }
+                    hoveredEcoregion = e.features[0].id;
+                    map.setFeatureState(
+                        { source: 'ecoregions', id: hoveredEcoregion },
+                        { hover: true }
+                    );
+                }
+            });
+            map.on('mouseleave', 'ecoregions-fill', () => {
+                if (hoveredEcoregion) {
+                    map.setFeatureState(
+                        { source: 'ecoregions', id: hoveredEcoregion },
+                        { hover: false }
+                    );
+                }
+                hoveredEcoregion = null;
             });
             console.log("added ecoregions")
         })
     }
 
-    onMount(() => {
-        drawEcoregions();
+    async function drawCalifornia() {
+        if(!map) return;
+        fetch(`/phast/data/california.geojson`)
+        .then((data) => data.json())
+        .then((shape) => {
+            console.log(shape)
+            map.addSource('california', {
+                'type': 'geojson',
+                'data': shape,
+                'generateId': true
+            });
+            map.addLayer({
+                'id': 'california-fill',
+                'type': 'fill',
+                'source': 'california',
+                'layout': {},
+                'paint': {
+                    "fill-opacity": 0.75,
+                    'fill-color': [
+                        'case',
+                        ['boolean', ['feature-state', 'hover'], false],
+                        '#29abe2',
+                        '#e9f6fb'
+                    ],
+                    "fill-color-transition": {
+                        "duration": 500,
+                        "delay": 0
+                    },
+                },
+            });
+            map.addLayer({
+                'id': 'california-line',
+                'type': 'line',
+                'source': 'california',
+                'layout': {},
+                'paint': {
+                    "line-color": "#555555",
+                    "line-width": 0.25,
+                    "line-opacity": 1
+                },
+            });
+        });
+    }
+
+    function buildMap(built) {
+        if(!built) return;
         for(let cl of clades) {
             drawHexagons(cl, hexagonFetchResolution);
         }
-        // fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_${clade}.json`)
-        //     .then((data) => data.json())
-        //     .then((hex) => hexagons = hex)
-        //     .then(() => {
+        updateShowEcoregions(false);
+        updateShowCalifornia(false);
+    }
 
-                
-                //populateFeatures(hexagons, hexagonFetchResolution).then((txt) => console.log(txt))
-                //fetch('/phast/data/initial_poly_plants_data.json').then((data) => data.json()).then((obj) => console.log(objToDict(obj)));
-                
-                // Find the index of the first symbol layer in the map style
+    onMount(() => {
 
-                // console.log(map)
-                // map.doubleClickZoom._clickZoom._enabled = false;
-                // map.doubleClickZoom._tapZoom._enabled = false;
+        drawEcoregions();
+        drawCalifornia();
+        //loadLineFeatures('California_County_Boundaries.geojson', 'counties', map);
 
-
-                // // generate one layer per metric, we fade opacity rather than feature-state switching
-
-                // map.addSource('hexlayer', {
-                //     'type': 'geojson',
-                //     'data': hexagons
-                // });
-                // for(let mt of metrics) {
-                //     let id = `hex-${mt}`
-                //     map.addLayer({
-                //         'id': id,
-                //         'type': 'fill',
-                //         'source': 'hexlayer',
-                //         'layout': {},
-                //         'paint': {
-                //             "fill-color": generatePalette(mt, colorScheme, true),
-                //             "fill-opacity": 0.75,
-                //             "fill-color-transition": {
-                //                 "duration": 500,
-                //                 "delay": 0
-                //             },
-                //         },
-                //     }, firstSymbolId);
-                //     console.log("added layer for ", mt)
-                // }
-                //console.log(map.getStyle().layers)
-                loadLineFeatures('California_County_Boundaries.geojson', 'counties', map);
-
-                //map.on('load', () => {
-                   // console.log("loaded")
-                    //zoomFitCenter();
-                    //zoomFitAnim();
-                //})
-
-                // backup in case the load event doesn't fire properly
-                setTimeout(() => {
-                    console.log("no load on timeout")
-                    map._canvas.style.filter = "none";
-                    if(!loaded) {
-                        zoomFitCenter();
-                        //zoomFitAnim();
-                    }
-                }, 3000)
-
-                //generateReserveSurfaces(map);
-
+        map.on('load', () => {
+            console.log("loaded")
+            zoomFitAnim();
         })
-        
-    //});
 
+        // backup in case the load event doesn't fire properly
+        setTimeout(() => {
+            console.log("no load on timeout")
+            map._canvas.style.filter = "none";
+            if(!loaded) {
+                zoomFitAnim();
+            }
+        }, 3000)
+
+    })
+        
     async function zoomFitAnim() {
-        let hexBounds = geojsonExtent(hexagons)
+        let hexBounds = californiaExtent;
         rightPadding = (window.innerWidth) / 3;
 
         //map.setMaxBounds([[-130, 30], [-100, 45]])
@@ -433,24 +534,6 @@
             padding: { right: rightPadding},
             duration: 750
         })
-
-        // let minLat, maxLat, minLon, maxLon;
-        // let vertices = h3.cellToBoundary(index).flat();
-        // let lats = vertices.filter(function(x, i) { return i % 2 == 0; });
-        // let lngs = vertices.filter(function(x, i) { return i % 2 == 1; });
-
-        // console.log(lats)
-        // console.log(lngs)
-
-        // minLat = Math.min(...lats); maxLat = Math.max(...lats);
-        // minLon = Math.min(...lngs); maxLon = Math.max(...lngs);
-        // map.fitBounds([
-        //     [minLon, minLat],
-        //     [maxLon, maxLat]
-        // ], {
-        //     padding: { top: 100, left: 50, bottom: 100, right: rightPadding},
-        //     duration: 750
-        // });
     }
 
     async function loadLineFeatures(path, id, map) {
@@ -541,30 +624,6 @@
         </svg>
     </Marker>
 {/if}
-<!-- {#if hexagons}
-  <GeoJSON id="hexagons" data={hexagons}>
-      <FillLayer
-        id="hex-fill"
-        paint={{
-          'fill-color': '#00ffff',
-          'fill-opacity': 0.5,
-        }}
-        beforeLayerType="symbol"
-        on:click={(e) => console.log(e)}
-      />
-      <LineLayer
-        layout={{ 
-            'line-cap': 'round', 
-            'line-join': 'round' 
-        }}
-        paint={{ 
-            'line-color': '#0000ff', 
-            'line-width': 1 
-        }}
-        beforeLayerType="symbol"
-      />
-  </GeoJSON>
-{/if} -->
 </MapLibre>
 
 <style lang="scss">
