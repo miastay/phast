@@ -19,6 +19,7 @@
     export let colorScheme;
     export let selectionData;
     export let showCounties;
+    export let showEcoregions;
     export let drawnPath;
     export let clade;
 
@@ -38,6 +39,7 @@
     $: if(map && loaded) updateMetricPaintLayer(metric, clade)
     $: if(map && loaded) updateLayerPalettes(colorScheme)
     $: if(map && loaded) updateShowCounties(showCounties)
+    $: if(map && loaded) updateShowEcoregions(showEcoregions);
     $: if(map && loaded) pathToHexagons(drawnPath)
     $: if(map && loaded) draw_hexagons(clade, hexagonFetchResolution);
 
@@ -161,6 +163,15 @@
         }
     }
 
+    function updateShowEcoregions(shown) {
+        console.log('ecoregions', shown)
+        if(shown) {
+            map.setPaintProperty('ecoregions', 'line-opacity', 1)
+        } else {
+            map.setPaintProperty('ecoregions', 'line-opacity', 0)
+        }
+    }
+
     let rightPadding;
     const showBorder = true;
     const showFill = true;
@@ -250,8 +261,33 @@
         });
     }
 
+    async function drawEcoregions() {
+        if(!map) return;
+        fetch(`/phast/data/ecoregions.geojson`)
+        .then((data) => data.json())
+        .then((shape) => {
+            map.addSource('ecoregions', {
+                'type': 'geojson',
+                'data': shape
+            });
+            map.addLayer({
+                'id': 'ecoregions',
+                'type': 'line',
+                'source': 'ecoregions',
+                'layout': {},
+                'paint': {
+                    "line-color": "#000000",
+                    "line-width": 1,
+                    "line-opacity": 0
+                },
+            });
+            console.log("added ecoregions")
+        })
+    }
+
     onMount(() => {
         draw_hexagons(clade, hexagonFetchResolution);
+        drawEcoregions();
         // fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_${clade}.json`)
         //     .then((data) => data.json())
         //     .then((hex) => hexagons = hex)

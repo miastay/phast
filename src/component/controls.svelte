@@ -8,6 +8,7 @@
     export let updateMetricLayer;
     export let updateColorScheme;
     export let updateShowCounties;
+    export let updateShowEcoregions;
     export let updateDrawing;
     export let updateDrawnPath;
 
@@ -16,6 +17,7 @@
     let metric;
     let colorScheme;
     let showCounties;
+    let showEcoregions;
     
     const colors = Object.keys(schemes)
 
@@ -46,6 +48,10 @@
     <div class="control-item">
         <h4>Show county lines?</h4>
         <input type="checkbox" bind:checked={showCounties} on:change={() => updateShowCounties(showCounties)}/>
+    </div>
+    <div class="control-item">
+        <h4>Show ecoregions?</h4>
+        <input type="checkbox" bind:checked={showEcoregions} on:change={() => updateShowEcoregions(showEcoregions)}/>
     </div>
     <div class="control-item">
         <h4>Draw Mode?</h4>
