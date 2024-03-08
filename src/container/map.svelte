@@ -22,6 +22,7 @@
     export let showEcoregions;
     export let drawnPath;
     export let clade;
+    export let clades;
 
     const layerTransitionTime = 500;
 
@@ -41,7 +42,18 @@
     $: if(map && loaded) updateShowCounties(showCounties)
     $: if(map && loaded) updateShowEcoregions(showEcoregions);
     $: if(map && loaded) pathToHexagons(drawnPath)
-    $: if(map && loaded) draw_hexagons(clade, hexagonFetchResolution);
+    //$: if(map && loaded) drawHexagons(clade, hexagonFetchResolution);
+    $: if(map && loaded) updateCladeOpacity(clade);
+
+    function updateCladeOpacity(clade) {
+        if(!map.getStyle()) return;
+        console.log(map.getStyle().layers)
+        let layersToClear = map.getStyle().layers.filter((layer) => { let spl = layer.source?.split('-'); return (spl && spl[0] === 'hexlayer' && spl[1] !== clade); })
+        for(let layer of layersToClear) {
+            map.setPaintProperty(layer.id, 'fill-opacity', 0)
+        }
+        updateMetricPaintLayer(metric);
+    }
 
     async function pathToHexagons(drawnPath) {
         if(!hexagons) return;
@@ -217,7 +229,7 @@
 
     export let update;
 
-    async function draw_hexagons(clade, resolution) {
+    async function drawHexagons(clade, resolution) {
         console.log(clade)
 
         console.log(map?.getStyle()?.sources)
@@ -258,6 +270,42 @@
                 console.log("added layer ", id)
             }
 
+            let firstMetricId = `hex-${metrics[0]}-${clade}`;
+            map.on('click', firstMetricId, (e) => {
+                console.log(e)
+                let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, resolution)
+                zoomToHexagon(cell, map)
+                if(cell === selectionData?.hex) {
+                    update(null)
+                    return;
+                }
+
+                console.log(map.getStyle().layers)
+
+                let newLatLng = h3.cellToLatLng(cell);
+                selectedLngLat = {lng: newLatLng[1], lat: newLatLng[0]}
+
+                console.log(cell)
+                update({
+                    latlng: e.lngLat,
+                    hex: cell,
+                    properties: e.features[0].properties
+                })
+                
+            });
+            map.on('mouseenter', firstMetricId, () => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on('mouseleave', firstMetricId, () => {
+                map.getCanvas().style.cursor = '';
+            });
+            map.on('dragstart', firstMetricId, () => {
+                map.getCanvas().style.cursor = 'grabbing';
+            });
+            map.on('dragend', firstMetricId, () => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+
         });
     }
 
@@ -286,8 +334,10 @@
     }
 
     onMount(() => {
-        draw_hexagons(clade, hexagonFetchResolution);
         drawEcoregions();
+        for(let cl of clades) {
+            drawHexagons(cl, hexagonFetchResolution);
+        }
         // fetch(`/phast/CA_hexbinned@${hexagonFetchResolution ?? 5}_${clade}.json`)
         //     .then((data) => data.json())
         //     .then((hex) => hexagons = hex)
@@ -331,47 +381,11 @@
                 //console.log(map.getStyle().layers)
                 loadLineFeatures('California_County_Boundaries.geojson', 'counties', map);
 
-                let firstMetricId = `hex-${metrics[0]}-${clade}`;
-                map.on('click', firstMetricId, (e) => {
-                    console.log(e)
-                    let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, hexagonFetchResolution)
-                    zoomToHexagon(cell, map)
-                    if(cell === selectionData?.hex) {
-                        update(null)
-                        return;
-                    }
-
-                    console.log(map.getStyle().layers)
-
-                    let newLatLng = h3.cellToLatLng(cell);
-                    selectedLngLat = {lng: newLatLng[1], lat: newLatLng[0]}
-
-                    console.log(cell)
-                    update({
-                        latlng: e.lngLat,
-                        hex: cell,
-                        properties: e.features[0].properties
-                    })
-                    
-                });
-                map.on('mouseenter', firstMetricId, () => {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
-                map.on('mouseleave', firstMetricId, () => {
-                    map.getCanvas().style.cursor = '';
-                });
-                map.on('dragstart', firstMetricId, () => {
-                    map.getCanvas().style.cursor = 'grabbing';
-                });
-                map.on('dragend', firstMetricId, () => {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
-
-                map.on('load', () => {
-                    console.log("loaded")
-                    zoomFitCenter();
+                //map.on('load', () => {
+                   // console.log("loaded")
+                    //zoomFitCenter();
                     //zoomFitAnim();
-                })
+                //})
 
                 // backup in case the load event doesn't fire properly
                 setTimeout(() => {

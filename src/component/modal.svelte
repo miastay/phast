@@ -1,5 +1,6 @@
 <script>
 	import { generateRelativeMetric } from '../util/model';
+    import Select, { Option } from '@smui/select';
 	import Graph from "./graph.svelte";
 	import Phylo from "./phylo.svelte";
     export let selectionData;
@@ -9,20 +10,21 @@
 
     export let clade;
     export let updateClade;
-    const clades = ['Birds', 'Squamates', 'Plants'];
+    export let clades;
 
     let showSummary;
     $: showSummary = selectionData.properties && selectionData.properties[metric] !== -1;
+    $: updateClade(clade);
 
 </script>
 
 <div class={'modal'}>
     <div class='header'>
-        <select bind:value={clade} on:change={() => updateClade(clade)} label="Clade">
+        <Select class="shaped" variant="outlined" bind:value={clade}>
             {#each clades as opt}
-              <option value={opt}>{opt}</option>
+                <Option value={opt}>{opt}</Option>
             {/each}
-        </select>
+        </Select>
         <div class="close">
             <button on:click={() => updateData(null)}>x</button>
         </div>
@@ -97,6 +99,12 @@
                 transition: all 0.3s ease;
                 &::after {
                     color: red;
+                }
+                > option {
+                    background: $theme-900;
+                    &:hover {
+                        background: $theme-700;
+                    }
                 }
             }
 

@@ -9,6 +9,7 @@
     export let hex_id;
     export let clade;
     $: newick && treeref && rerender(newick, clade);
+    $: if(clade && !treemap) buildNodeMap(clade);
 
     let treeref;
     let treemap;
@@ -18,7 +19,7 @@
     let tooltipText = '';
     let tooltipFlip = false;
 
-    function rerender(tree_str, clade) {
+    function rerender(tree_str) {
         const maxdim = 2000//window.innerHeight;
 
         const width = maxdim;
