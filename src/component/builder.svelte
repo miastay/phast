@@ -125,7 +125,7 @@
         }
         
         .logo {
-            width: 60%;
+            width: 50%;
             display: flex;
             align-items: center;
             flex-direction: column;

@@ -58,8 +58,10 @@
 
 </script>
 
-<Map built={isNullBuilt} update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
-<Modal isBuilt={isNullBuilt} build={runBuild} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData} clade={clade} clades={clades} updateClade={updateClade}/>
+<main>
+    <Map built={isNullBuilt} update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
+    <Modal isBuilt={isNullBuilt} build={runBuild} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData} clade={clade} clades={clades} updateClade={updateClade}/>
+</main>
 {#if isNullBuilt}
 <div class='control-container'>
     <Controls updateMetricLayer={updateMetricLayer} updateColorScheme={updateColorScheme} updateShowCounties={updateShowCounties} updateShowEcoregions={updateShowEcoregions} updateDrawing={updateDrawing} drawing={drawing} updateDrawnPath={updatePath}/>
@@ -71,6 +73,13 @@
 {/if}
 
 <style lang="scss">
+
+    main {
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+        overflow: hidden;
+    }
+
     .control-container {
         position: absolute;
         left: 10px;

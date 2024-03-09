@@ -46,12 +46,10 @@
         </div>
         {/if}
     </div>
-    <div class='content'>
-        {#if showSummary}
-            <Graph colorScheme={colorScheme} metric={metric} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
-            <Phylo clade={clade} newick={selectionData.properties.tree} hex_id={selectionData.properties.id}/>
-        {/if}
-    </div>
+    {#if showSummary}
+        <Graph colorScheme={colorScheme} metric={metric} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
+        <Phylo clade={clade} newick={selectionData.properties.tree} hex_id={selectionData.properties.id}/>
+    {/if}
     {/if}
     {#if !isBuilt}
         <Builder showEcoregions={showEcoregions} build={build}/>
@@ -64,30 +62,27 @@
     @import '../style/colors.scss';
     .modal {
 
-        @include container;
-
         box-shadow: 0px 0px 20px #00000055;
+        background: white;
+
+        display: grid;
+        grid-template-rows: 1fr 3fr 5fr;
+        grid-template-columns: 1fr;
+
         position: absolute;
-        top: 2vh;
-        right: 2vh;
-        height: 96vh;
+        right: 0;
         width: 35vw;
+        height: 100%;
+
         padding: 0;
         box-sizing: border-box;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
 
         .header {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            width: 100%;
             background: $theme-500;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
             padding: 1rem;
-            box-sizing: border-box;
             box-shadow: 0px 2px 6px #00000055;
 
             h1 {
@@ -150,15 +145,6 @@
             //opacity: 0.5;
         }
         transition: all 0.3s ease;
-    }
-
-    .content {
-        padding: 1rem;
-        width: inherit;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
     }
 
     .logo {

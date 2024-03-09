@@ -133,14 +133,17 @@
     @import '../style/anim.scss';
 
     .graph-container {
+
         display: flex;
         flex-direction: column;
         position: relative;
         width: 100%;
-        max-height: 35%;
         vertical-align: top;
         overflow: visible;
         gap: 1rem;
+
+        box-sizing: border-box;
+        padding: 1rem;
 
         > h2 {
             @include graph-header;
