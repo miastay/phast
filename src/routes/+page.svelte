@@ -55,12 +55,16 @@
         isNullBuilt = true;
     }
 
+    let isFinishedBuilding = false;
+    function finishBuilding() {
+        isFinishedBuilding = true;
+    }
 
 </script>
 
 <main>
-    <Map built={isNullBuilt} update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
-    <Modal isBuilt={isNullBuilt} build={runBuild} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData} clade={clade} clades={clades} updateClade={updateClade}/>
+    <Map built={isNullBuilt} finishBuilding={finishBuilding} update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
+    <Modal isBuilt={isNullBuilt} isFinishedBuilding={isFinishedBuilding} build={runBuild} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData} clade={clade} clades={clades} updateClade={updateClade}/>
 </main>
 {#if isNullBuilt}
 <div class='control-container'>

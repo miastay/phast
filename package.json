@@ -16,6 +16,7 @@
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
 		"@smui/button": "^7.0.0-beta.16",
+		"@smui/circular-progress": "^7.0.0-beta.16",
 		"@smui/select": "^7.0.0-beta.16",
 		"@smui/slider": "^7.0.0-beta.16",
 		"@sveltejs/adapter-static": "^3.0.1",
@@ -48,6 +49,7 @@
 		"sass": "^1.70.0",
 		"shapely": "^0.2.3",
 		"svelte-maplibre": "^0.7.7",
+		"svelte-materialify": "^0.3.11",
 		"svelte-preprocess": "^5.1.3"
 	}
 }

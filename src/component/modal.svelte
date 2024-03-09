@@ -1,9 +1,13 @@
 <script>
+
+    import CircularProgress from '@smui/circular-progress';
+
 	import { generateRelativeMetric } from '../util/model';
     import Select, { Option } from '@smui/select';
 	import Graph from "./graph.svelte";
 	import Phylo from "./phylo.svelte";
 	import Builder from './builder.svelte';
+	import Loader from './loader.svelte';
 
     export let selectionData;
     export let metric;
@@ -18,6 +22,8 @@
     export let showEcoregions;
     export let build;
 
+    export let isFinishedBuilding;
+
     let showSummary;
     $: if(selectionData) showSummary = selectionData.properties && selectionData.properties[metric] !== -1;
     $: updateClade(clade);
@@ -25,35 +31,46 @@
 </script>
 
 <div class={'modal'}>
+
     {#if isBuilt}
-    <div class='header'>
-        <Select class="shaped" variant="outlined" bind:value={clade}>
-            {#each clades as opt}
-                <Option value={opt}>{opt}</Option>
-            {/each}
-        </Select>
-        <div class="close">
-            <button on:click={() => updateData(null)}>x</button>
+        <div class='header'>
+            <Select class="shaped" variant="outlined" bind:value={clade}>
+                {#each clades as opt}
+                    <Option value={opt}>{opt}</Option>
+                {/each}
+            </Select>
+            <div class="close">
+                <button on:click={() => updateData(null)}>x</button>
+            </div>
+            <!-- {#if showSummary}
+            <div>
+                <span>Value: {selectionData.properties[metric]}, Tree Size: {selectionData.properties['tree_sizes']}, Rel: {generateRelativeMetric(metric, selectionData.properties[metric], selectionData.properties['tree_sizes'])}</span>
+            </div>
+            {/if} -->
+            {#if !showSummary}
+            <div>
+                <span>No data for this hexagon!</span>
+            </div>
+            {/if}
         </div>
-        <!-- {#if showSummary}
-        <div>
-            <span>Value: {selectionData.properties[metric]}, Tree Size: {selectionData.properties['tree_sizes']}, Rel: {generateRelativeMetric(metric, selectionData.properties[metric], selectionData.properties['tree_sizes'])}</span>
-        </div>
-        {/if} -->
-        {#if !showSummary}
-        <div>
-            <span>No data for this hexagon!</span>
-        </div>
+
+        
+        {#if !isFinishedBuilding}
+            <div class="load">
+                <Loader />
+            </div>
         {/if}
-    </div>
-    {#if showSummary}
-        <Graph colorScheme={colorScheme} metric={metric} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
-        <Phylo clade={clade} newick={selectionData.properties.tree} hex_id={selectionData.properties.id}/>
+
+        {#if showSummary}
+            <Graph colorScheme={colorScheme} metric={metric} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
+            <Phylo clade={clade} newick={selectionData.properties.tree} hex_id={selectionData.properties.id}/>
+        {/if}
     {/if}
-    {/if}
+
     {#if !isBuilt}
         <Builder showEcoregions={showEcoregions} build={build}/>
     {/if}
+
 </div>
 
 <style lang="scss">
@@ -76,6 +93,10 @@
 
         padding: 0;
         box-sizing: border-box;
+
+        .load {
+            height: 50%;
+        }
 
         .header {
             display: flex;

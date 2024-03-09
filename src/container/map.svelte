@@ -23,6 +23,7 @@
     export let drawnPath;
     export let clade;
     export let clades;
+    export let finishBuilding;
 
     const californiaExtent = [
         -124.40971816218747,
@@ -71,11 +72,11 @@
         console.log(drawnPath);
 
         if(drawnPath === null) {
-            try {
-                map.removeLayer('drawLayer');
+            if(map.getLayer('drawLayer')) {
+                map.removeLayer('drawnPolygon');
+            }
+            if(map.getSource('drawnPolygon')) {
                 map.removeSource('drawnPolygon');
-            } catch(err) {
-                console.log(err)
             }
             return;
         }
@@ -258,7 +259,7 @@
         console.log(map?.getStyle()?.sources)
         if(map && map?.getStyle()?.sources[`hexlayer-${clade}`]) return;
 
-        fetch(`/phast/${clade}_hex.json`)
+        return fetch(`/phast/${clade}_hex.json`)
         .then((data) => data.json())
         .then((hex) => hexagons = hex)
         .then(() => { 
@@ -269,10 +270,11 @@
             const layers = map.getStyle().layers;
             let firstSymbolId = layers[71].id;
 
-            map.addSource(`hexlayer-${clade}`, {
-                'type': 'geojson',
-                'data': hexagons
-            });
+            if(!map.getSource(`hexlayer-${clade}`))
+                map.addSource(`hexlayer-${clade}`, {
+                    'type': 'geojson',
+                    'data': hexagons
+                });
 
             for(let mt of metrics) {
                 let id = `hex-${mt}-${clade}`
@@ -328,7 +330,7 @@
             map.on('dragend', firstMetricId, () => {
                 map.getCanvas().style.cursor = 'pointer';
             });
-
+            return true;
         });
     }
 
@@ -475,9 +477,16 @@
 
     function buildMap(built) {
         if(!built) return;
-        for(let cl of clades) {
-            drawHexagons(cl, hexagonFetchResolution);
-        }
+        
+        console.log('started building')
+        let t = Date.now()
+
+        drawHexagons("Birds", hexagonFetchResolution)
+        .then(() => {
+            finishBuilding();
+            console.log(`finished building in ${Date.now() - t}ms`)
+        })
+        
         updateShowEcoregions(false);
         updateShowCalifornia(false);
     }
