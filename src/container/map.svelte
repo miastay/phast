@@ -152,6 +152,8 @@
 
     function updateMetricPaintLayer(met, clade) {
 
+        console.log(met)
+
         if(!$map.moveLayer) return;
 
         let id = `hex-${met}-${clade}`
@@ -387,30 +389,30 @@
                 },
             });
 
-            $map.on('mousemove', 'ecoregions-fill', (e) => {
-                if (e.features.length > 0) {
-                    if (hoveredEcoregion) {
-                        $map.setFeatureState(
-                            { source: 'ecoregions', id: hoveredEcoregion },
-                            { hover: false }
-                        );
-                    }
-                    hoveredEcoregion = e.features[0].id;
-                    $map.setFeatureState(
-                        { source: 'ecoregions', id: hoveredEcoregion },
-                        { hover: true }
-                    );
-                }
-            });
-            $map.on('mouseleave', 'ecoregions-fill', () => {
-                if (hoveredEcoregion) {
-                    $map.setFeatureState(
-                        { source: 'ecoregions', id: hoveredEcoregion },
-                        { hover: false }
-                    );
-                }
-                hoveredEcoregion = null;
-            });
+            // $map.on('mousemove', 'ecoregions-fill', (e) => {
+            //     if (e.features.length > 0) {
+            //         if (hoveredEcoregion) {
+            //             $map.setFeatureState(
+            //                 { source: 'ecoregions', id: hoveredEcoregion },
+            //                 { hover: false }
+            //             );
+            //         }
+            //         hoveredEcoregion = e.features[0].id;
+            //         $map.setFeatureState(
+            //             { source: 'ecoregions', id: hoveredEcoregion },
+            //             { hover: true }
+            //         );
+            //     }
+            // });
+            // $map.on('mouseleave', 'ecoregions-fill', () => {
+            //     if (hoveredEcoregion) {
+            //         $map.setFeatureState(
+            //             { source: 'ecoregions', id: hoveredEcoregion },
+            //             { hover: false }
+            //         );
+            //     }
+            //     hoveredEcoregion = null;
+            // });
             console.log("added ecoregions")
         })
     }
@@ -468,6 +470,7 @@
         drawHexagons("Birds", hexagonFetchResolution)
         .then(() => {
             finishBuilding();
+            updateMetricPaintLayer(metric, clade)
             console.log(`finished building in ${Date.now() - t}ms`)
         })
         
@@ -484,11 +487,12 @@
             zoom: 4 // starting zoom
         });
 
-        drawEcoregions();
-        drawCalifornia();
+        
         //loadLineFeatures('California_County_Boundaries.geojson', 'counties', map);
 
         $map.on('load', () => {
+            drawEcoregions();
+            drawCalifornia();
             console.log("loaded")
             zoomFitAnim();
         })

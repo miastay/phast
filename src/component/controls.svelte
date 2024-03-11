@@ -2,10 +2,8 @@
     import { onMount } from 'svelte';
     import Select from "@smui/select";
 	import { Option } from "@smui/select";
-    import { metrics } from "../util/model";
     import { schemes } from '../util/colors';
 
-    export let updateMetricLayer;
     export let updateColorScheme;
     export let updateShowCounties;
     export let updateShowEcoregions;
@@ -14,7 +12,6 @@
 
     export let isDrawing;
 
-    let metric;
     let colorScheme;
     let showCounties;
     let showEcoregions;
@@ -22,21 +19,12 @@
     const colors = Object.keys(schemes)
 
     onMount(() => {
-        updateMetricLayer(metric)
         updateColorScheme(colorScheme)
     })
     
 </script>
 
 <div class='controls'>
-    <div class="control-item">
-        <h4>Metric</h4>
-        <select bind:value={metric} on:change={() => updateMetricLayer(metric)} label="Diversity Metric">
-            {#each metrics as opt}
-              <option value={opt}>{opt}</option>
-            {/each}
-        </select>
-    </div>
     <div class="control-item">
         <h4>Palette</h4>
         <select bind:value={colorScheme} on:change={() => updateColorScheme(colorScheme)} label="Color Scheme">

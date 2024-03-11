@@ -3,6 +3,8 @@
     import Button, { Label } from '@smui/button';
 	import Logo from './logo.svelte';
 
+    import { map } from "../store";
+
     export let showEcoregions;
     export let build;
 
@@ -45,6 +47,53 @@
     export let altRegion;
     const altRegions = nullRegions;
 
+    function listLayers() {
+        let sourceFeatures = $map.querySourceFeatures('ecoregions');
+        console.log(sourceFeatures)
+        let regions = []
+        for(let feat of sourceFeatures) {
+            if(regions.filter((x) => x.ids.includes(feat.id)).length == 0) {
+                let nm = `${feat.properties.US_L3NAME}`;
+                let existingName = regions.filter((x) => x.name === nm)[0];
+                console.log(existingName)
+                if(!existingName || existingName?.length == 0) {
+                    regions.push({
+                        ids: [feat.id],
+                        name: `${feat.properties.US_L3NAME}`
+                    })
+                } else {
+                    existingName.ids = [...existingName.ids, feat.id]
+                }
+            }
+        }
+
+        regions = regions.sort((a, b) => (a.name).localeCompare(b.name))
+        //console.log(sourceFeatures.filter((x) => x.properties.US_L3NAME === "Central Basin and Range"));
+        console.log(regions)
+        nullRegions[1].next.options = regions;
+    }
+
+    $: highlightEcoregion(subNullRegion);
+
+    function highlightEcoregion(subr) {
+        if(!subr) return;
+        console.log(subr)
+        // clear any selected regions
+        let sourceFeatures = $map.querySourceFeatures('ecoregions');
+        for(let feat of sourceFeatures) {
+            $map.setFeatureState(
+                { source: 'ecoregions', id: feat.id },
+                { hover: false }
+            );
+        }
+        for(let id of subr.ids) {
+            $map.setFeatureState(
+                { source: 'ecoregions', id: id },
+                { hover: true }
+            );
+        }
+    }
+
 </script>
 
 <div class="builder">
@@ -84,6 +133,7 @@
         <Button class="theme-button" variant="raised" on:click={() => build()}>
             <Label>Build</Label>
         </Button>
+        <button on:click={() => listLayers()}>list layers</button>
     </div>
 </div>
 

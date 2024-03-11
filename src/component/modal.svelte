@@ -9,11 +9,13 @@
 	import Builder from './builder.svelte';
 	import Loader from './loader.svelte';
 	import Summary from './summary.svelte';
+    import { metrics } from "../util/model";
 
     export let selectionData;
     export let metric;
     export let updateData;
     export let colorScheme;
+    export let updateMetricLayer;
 
     export let clade;
     export let updateClade;
@@ -28,6 +30,7 @@
     let showSummary;
     $: if(selectionData) showSummary = selectionData.properties && selectionData.properties[metric] !== -1;
     $: updateClade(clade);
+    $: updateMetricLayer(metric);
 
 </script>
 
@@ -35,11 +38,20 @@
 
     {#if isBuilt}
         <div class='header'>
-            <Select class="shaped" variant="outlined" bind:value={clade}>
-                {#each clades as opt}
-                    <Option value={opt}>{opt}</Option>
-                {/each}
-            </Select>
+            <div class='test'>
+                Testing
+                <Select class="shaped" variant="outlined" bind:value={metric} on:change={() => updateMetricLayer(metric)}>
+                    {#each metrics as opt}
+                        <Option value={opt}>{opt}</Option>
+                    {/each}
+                </Select>
+                of
+                <Select class="shaped" variant="outlined" bind:value={clade}>
+                    {#each clades as opt}
+                        <Option value={opt}>{opt}</Option>
+                    {/each}
+                </Select>
+            </div>
             <div class="close">
                 <button on:click={() => updateData(null)}>x</button>
             </div>
@@ -109,6 +121,13 @@
             background: $theme-500;
             padding: 1rem;
             box-shadow: 0px 2px 6px #00000055;
+
+            .test {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 1rem;
+            }
 
             h1 {
                 margin-block: 0;

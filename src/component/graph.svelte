@@ -108,14 +108,14 @@
 
         <!-- <path class="area above" fill={scale[scale.length - 1]} stroke="currentColor" stroke-width="0" d={areaAbove(interval)} />
         <path class="area below" fill={scale[1]} stroke="currentColor" stroke-width="0" d={areaBelow(interval)} /> -->
-        <path class="area ci" fill={getBrandColors()['500']} stroke="currentColor" stroke-width="0" d={area(interval)} />
+        <path class="area ci" fill={getBrandColors()['300']} stroke="currentColor" stroke-width="0" d={area(interval)} />
 
         <!-- <path class="line" fill="none" stroke="black" stroke-width="1" d={ciLow(interval)} />
         <path class="line" fill="none" stroke="black" stroke-width="1" d={ciHigh(interval)} /> -->
 
-        <g class="point" fill="white" stroke="currentColor" stroke-width="1.5">
+        <g class="point" fill={getBrandColors['700']} stroke="currentColor" stroke-width="1.5">
             {#each point as p, i}
-                <circle key={i} cx={x(p[0])} cy={y(p[1])} r="5" fill={"white"} class="anim-point" />
+                <circle key={i} cx={x(p[0])} cy={y(p[1])} r="5" fill={getBrandColors['700']} class="anim-point" />
             {/each}
         </g>
 
@@ -160,10 +160,10 @@
                 font-weight: 500;
             }
             g.point circle {
-                fill: white;
+                fill: $theme-500;
                 stroke: black;
                 &.anim-point {
-                    transition: all $anim-med-long ease;
+                    transition: all $anim-med ease;
                 }
             }
             g.path.point-line {

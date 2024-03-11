@@ -64,11 +64,11 @@
 
 <main>
     <Map built={isNullBuilt} finishBuilding={finishBuilding} update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
-    <Modal isBuilt={isNullBuilt} isFinishedBuilding={isFinishedBuilding} build={runBuild} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData} clade={clade} clades={clades} updateClade={updateClade}/>
+    <Modal isBuilt={isNullBuilt} isFinishedBuilding={isFinishedBuilding} updateMetricLayer={updateMetricLayer} build={runBuild} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData} clade={clade} clades={clades} updateClade={updateClade}/>
 </main>
 {#if isNullBuilt}
 <div class='control-container'>
-    <Controls updateMetricLayer={updateMetricLayer} updateColorScheme={updateColorScheme} updateShowCounties={updateShowCounties} updateShowEcoregions={updateShowEcoregions} updateDrawing={updateDrawing} drawing={drawing} updateDrawnPath={updatePath}/>
+    <Controls updateColorScheme={updateColorScheme} updateShowCounties={updateShowCounties} updateShowEcoregions={updateShowEcoregions} updateDrawing={updateDrawing} drawing={drawing} updateDrawnPath={updatePath}/>
     <Legend colorScheme={colorScheme} metric={metricLayer}/>
 </div>
 {/if}
