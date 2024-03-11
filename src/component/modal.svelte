@@ -8,6 +8,7 @@
 	import Phylo from "./phylo.svelte";
 	import Builder from './builder.svelte';
 	import Loader from './loader.svelte';
+	import Summary from './summary.svelte';
 
     export let selectionData;
     export let metric;
@@ -47,11 +48,7 @@
                 <span>Value: {selectionData.properties[metric]}, Tree Size: {selectionData.properties['tree_sizes']}, Rel: {generateRelativeMetric(metric, selectionData.properties[metric], selectionData.properties['tree_sizes'])}</span>
             </div>
             {/if} -->
-            {#if !showSummary}
-            <div>
-                <span>No data for this hexagon!</span>
-            </div>
-            {/if}
+            
         </div>
 
         
@@ -61,7 +58,14 @@
             </div>
         {/if}
 
+        {#if !showSummary}
+            <div>
+                <p>Click on a hexagon to see phylogenetic statistics.</p>
+            </div>
+        {/if}
+
         {#if showSummary}
+            <Summary data={selectionData} />
             <Graph colorScheme={colorScheme} metric={metric} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
             <Phylo clade={clade} newick={selectionData.properties.tree} hex_id={selectionData.properties.id}/>
         {/if}

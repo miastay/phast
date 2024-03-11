@@ -112,10 +112,12 @@
                 border: solid 1px black;
                 h2 {
                     margin-block: 0;
+                    font-size: 1.5rem;
                     &::before {
                         content: counter(number)". ";
                         margin-right: 1rem;
                     }
+                    font-family: 'SF Pro', sans-serif;
                 }
                 &.grayed {
                     opacity: 0.35;

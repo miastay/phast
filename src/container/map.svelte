@@ -6,11 +6,15 @@
     import * as h3 from 'h3-js';
     import * as turf from '@turf/turf';
     import * as polyclip from "polyclip-ts";
+    import * as maplibregl from 'maplibre-gl';
 
     import { objToDict, populateFeatures } from '../util/populate_hexbins';
     import { getPalette, getDiscretePalette } from '../util/colors';
 
     import { metrics } from "../util/model";
+
+    import { map } from "../store";
+
 
     let hexagonFetchResolution = 6;
     const centerOfCalifornia = [-119.449444, 37.166111];
@@ -36,46 +40,44 @@
 
     const layerTransitionTime = 500;
 
-    let map;//: maplibregl.Map | undefined;
     let loaded = false//: boolean;
     let textLayers;//: maplibregl.LayerSpecification[] = [];
     let firstSymbolId;
     let marker;
     let selectedLngLat = [-119.449444, 37.166111];
 
-    $: if (map && loaded) {
-        textLayers = map.getStyle().layers.filter((layer) => layer['source-layer'] === 'place');
+    $: if ($map && loaded) {
+        textLayers = $map.getStyle().layers.filter((layer) => layer['source-layer'] === 'place');
         console.log(textLayers)
     }
-    $: if(map && loaded) updateMetricPaintLayer(metric, clade)
-    $: if(map && loaded) updateLayerPalettes(colorScheme)
-    $: if(map && loaded) updateShowCounties(showCounties)
-    $: if(map && loaded) updateShowEcoregions(showEcoregions);
-    $: if(map && loaded) pathToHexagons(drawnPath)
+    $: updateMetricPaintLayer(metric, clade)
+    $: updateLayerPalettes(colorScheme)
+    $: updateShowCounties(showCounties)
+    //$: if(map && loaded) updateShowEcoregions(showEcoregions);
+    $: updateShowEcoregions(showEcoregions);
+    $: pathToHexagons(drawnPath)
     //$: if(map && loaded) drawHexagons(clade, hexagonFetchResolution);
-    $: if(map && loaded) updateCladeOpacity(clade);
+    $: updateCladeOpacity(clade);
 
     export let built;
-    $: if(map && loaded) buildMap(built);
+    $: buildMap(built);
 
     function updateCladeOpacity(clade) {
-        if(!map.getStyle()) return;
-        console.log(map.getStyle().layers)
-        let layersToClear = map.getStyle().layers.filter((layer) => { let spl = layer.source?.split('-'); return (spl && spl[0] === 'hexlayer' && spl[1] !== clade); })
+        if(!$map.getStyle) return;
+        console.log($map.getStyle().layers)
+        let layersToClear = $map.getStyle().layers.filter((layer) => { let spl = layer.source?.split('-'); return (spl && spl[0] === 'hexlayer' && spl[1] !== clade); })
         for(let layer of layersToClear) {
-            map.setPaintProperty(layer.id, 'fill-opacity', 0)
+            $map.setPaintProperty(layer.id, 'fill-opacity', 0)
         }
     }
 
     async function pathToHexagons(drawnPath) {
-        if(!hexagons) return;
-        console.log(drawnPath);
-
+        if(!hexagons || !$map.getLayer) return;
         if(drawnPath === null) {
-            if(map.getLayer('drawLayer')) {
+            if($map.getLayer('drawLayer')) {
                 map.removeLayer('drawnPolygon');
             }
-            if(map.getSource('drawnPolygon')) {
+            if($map.getSource('drawnPolygon')) {
                 map.removeSource('drawnPolygon');
             }
             return;
@@ -84,14 +86,14 @@
         // for(let segment of drawnPath._segments) {
         //     console.log(segment._point);
         // }
-        console.log(map.transform);
+        console.log($map.transform);
         console.log(drawnPath[0])
-        console.log(map.transform.pointLocation({x: 10, y: 10}))
-        console.log(map.transform.pointLocation(drawnPath[0]))
+        console.log($map.transform.pointLocation({x: 10, y: 10}))
+        console.log($map.transform.pointLocation(drawnPath[0]))
 
         let latLngs = [];
         for(let point of drawnPath) {
-            let lngLat = map.transform.pointLocation(point);
+            let lngLat = $map.transform.pointLocation(point);
             latLngs.push([lngLat.lat, lngLat.lng])
             //console.log(h3.latLngToCell(lngLat.lat, lngLat.lng, hexagonFetchResolution))
         }
@@ -121,16 +123,16 @@
         };
 
         try {
-            map.removeLayer('drawLayer');
-            map.removeSource('drawnPolygon');
+            $map.removeLayer('drawLayer');
+            $map.removeSource('drawnPolygon');
         } catch(err) {
             console.log(err)
         }
-        map.addSource('drawnPolygon', {
+        $map.addSource('drawnPolygon', {
                         'type': 'geojson',
                         'data': newGeoJson
         });
-        map.addLayer({
+        $map.addLayer({
             'id': 'drawLayer',
             'type': 'fill',
             'source': 'drawnPolygon',
@@ -150,61 +152,67 @@
 
     function updateMetricPaintLayer(met, clade) {
 
+        if(!$map.moveLayer) return;
+
         let id = `hex-${met}-${clade}`
 
         console.log(met)
         // we try to find a workaround to transitions not firing on feature-state changes, see: https://github.com/mapbox/mapbox-gl-js/issues/11748
-        map.moveLayer(id, 'place_hamlet');
+        $map.moveLayer(id, 'place_hamlet');
 
         setTimeout(() => {
             clearHexLayers([id])
         }, layerTransitionTime / 4);
 
-        map.setPaintProperty(id, 'fill-opacity', 1)
+        $map.setPaintProperty(id, 'fill-opacity', 1)
     }
 
     function clearHexLayers(exclude = []) {
-        let layersToClear = map.getStyle().layers.filter((layer) => layer.source?.includes(`hexlayer`) && !(exclude.includes(layer.id)))
+        if(!$map.getStyle) return;
+        let layersToClear = $map.getStyle().layers.filter((layer) => layer.source?.includes(`hexlayer`) && !(exclude.includes(layer.id)))
         for(let layer of layersToClear) {
-            map.setPaintProperty(layer.id, 'fill-opacity', 0)
+            $map.setPaintProperty(layer.id, 'fill-opacity', 0)
         }
     }
     function updateLayerPalettes(colors) {
-        let hexLayers = map.getStyle().layers.filter((layer) => layer.source === `hexlayer-${clade}`)
+        if(!$map.getStyle) return;
+        let hexLayers = $map.getStyle().layers.filter((layer) => layer.source === `hexlayer-${clade}`)
         for(let layer of hexLayers) {
             let layerMetric = layer.id.split('-')[1]
             let pal = generatePalette(layerMetric, colors, true)
             console.log("palette:", pal)
-            map.setPaintProperty(layer.id, 'fill-color', pal)
+            $map.setPaintProperty(layer.id, 'fill-color', pal)
         }
     }
 
     function updateShowCounties(shown) {
+        if(!$map.setPaintProperty) return;
         if(shown) {
-            map.setPaintProperty('counties', 'line-opacity', 1)
+            $map.setPaintProperty('counties', 'line-opacity', 1)
         } else {
-            map.setPaintProperty('counties', 'line-opacity', 0)
+            $map.setPaintProperty('counties', 'line-opacity', 0)
         }
     }
 
     export function updateShowEcoregions(shown) {
+        if(!$map.setPaintProperty) return;
         console.log('ecoregions', shown)
         if(shown) {
-            map.setPaintProperty('ecoregions-line', 'line-opacity', 1)
-            map.setPaintProperty('ecoregions-fill', 'fill-opacity', 0.75)
+            $map.setPaintProperty('ecoregions-line', 'line-opacity', 1)
+            $map.setPaintProperty('ecoregions-fill', 'fill-opacity', 0.75)
         } else {
-            map.setPaintProperty('ecoregions-line', 'line-opacity', 0)
-            map.setPaintProperty('ecoregions-fill', 'fill-opacity', 0)
+            $map.setPaintProperty('ecoregions-line', 'line-opacity', 0)
+            $map.setPaintProperty('ecoregions-fill', 'fill-opacity', 0)
         }
     }
 
     export function updateShowCalifornia(shown) {
         if(shown) {
-            map.setPaintProperty('california-line', 'line-opacity', 1)
-            map.setPaintProperty('california-fill', 'fill-opacity', 0.75)
+            $map.setPaintProperty('california-line', 'line-opacity', 1)
+            $map.setPaintProperty('california-fill', 'fill-opacity', 0.75)
         } else {
-            map.setPaintProperty('california-line', 'line-opacity', 0)
-            map.setPaintProperty('california-fill', 'fill-opacity', 0)
+            $map.setPaintProperty('california-line', 'line-opacity', 0)
+            $map.setPaintProperty('california-fill', 'fill-opacity', 0)
         }
     }
 
@@ -256,8 +264,7 @@
     async function drawHexagons(clade, resolution) {
         console.log(clade)
 
-        console.log(map?.getStyle()?.sources)
-        if(map && map?.getStyle()?.sources[`hexlayer-${clade}`]) return;
+        if($map && $map?.getStyle()?.sources[`hexlayer-${clade}`]) return;
 
         return fetch(`/phast/${clade}_hex.json`)
         .then((data) => data.json())
@@ -267,18 +274,18 @@
             maxes = hexagons.properties?.maxes
             mins = hexagons.properties?.mins
 
-            const layers = map.getStyle().layers;
+            const layers = $map.getStyle().layers;
             let firstSymbolId = layers[71].id;
 
-            if(!map.getSource(`hexlayer-${clade}`))
-                map.addSource(`hexlayer-${clade}`, {
+            if(!$map.getSource(`hexlayer-${clade}`))
+                $map.addSource(`hexlayer-${clade}`, {
                     'type': 'geojson',
                     'data': hexagons
                 });
 
             for(let mt of metrics) {
                 let id = `hex-${mt}-${clade}`
-                map.addLayer({
+                $map.addLayer({
                     'id': id,
                     'type': 'fill',
                     'source': `hexlayer-${clade}`,
@@ -296,16 +303,16 @@
             }
 
             let firstMetricId = `hex-${metrics[0]}-${clade}`;
-            map.on('click', firstMetricId, (e) => {
+            $map.on('click', firstMetricId, (e) => {
                 console.log(e)
                 let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, resolution)
-                zoomToHexagon(cell, map)
+                zoomToHexagon(cell)
                 if(cell === selectionData?.hex) {
                     update(null)
                     return;
                 }
 
-                console.log(map.getStyle().layers)
+                console.log($map.getStyle().layers)
 
                 let newLatLng = h3.cellToLatLng(cell);
                 selectedLngLat = {lng: newLatLng[1], lat: newLatLng[0]}
@@ -318,59 +325,36 @@
                 })
                 
             });
-            map.on('mouseenter', firstMetricId, () => {
-                map.getCanvas().style.cursor = 'pointer';
+            $map.on('mouseenter', firstMetricId, () => {
+                $map.getCanvas().style.cursor = 'pointer';
             });
-            map.on('mouseleave', firstMetricId, () => {
-                map.getCanvas().style.cursor = '';
+            $map.on('mouseleave', firstMetricId, () => {
+                $map.getCanvas().style.cursor = '';
             });
-            map.on('dragstart', firstMetricId, () => {
-                map.getCanvas().style.cursor = 'grabbing';
+            $map.on('dragstart', firstMetricId, () => {
+                $map.getCanvas().style.cursor = 'grabbing';
             });
-            map.on('dragend', firstMetricId, () => {
-                map.getCanvas().style.cursor = 'pointer';
+            $map.on('dragend', firstMetricId, () => {
+                $map.getCanvas().style.cursor = 'pointer';
             });
             return true;
         });
     }
 
     async function drawEcoregions() {
-        if(!map) return;
+        //if(!$map) return;
         fetch(`/phast/data/ecoregions.geojson`)
         .then((data) => data.json())
         .then((shape) => {
             console.log(shape)
 
-            map.addSource('ecoregions', {
+            $map.addSource('ecoregions', {
                 'type': 'geojson',
                 'data': shape,
                 'generateId': true
             });
 
-            // generate individual sources per ecoregion
-            // let numEcoregions = 0;
-            // let filledShape = {
-            //     "type": "FeatureCollection",
-            //     "features": []
-            // }
-            // for(let surface of shape.features) {
-            //     surface.properties.id = `ecoregion-${numEcoregions}`;
-            //     filledShape.features.push({
-            //         ...surface
-            //     })
-            //     console.log(filledShape)
-            //     numEcoregions++;
-            // }
-
-            // map.addSource('ecoregion-fills', {
-            //     'type': 'geojson',
-            //     'data': filledShape
-            // });
-
-            // console.log(shape)
-            // console.log(filledShape)
-
-            map.addLayer({
+            $map.addLayer({
                 'id': 'ecoregions-fill',
                 'type': 'fill',
                 'source': 'ecoregions',
@@ -391,7 +375,7 @@
             });
 
             // generate one line source for ecoregion
-            map.addLayer({
+            $map.addLayer({
                 'id': 'ecoregions-line',
                 'type': 'line',
                 'source': 'ecoregions',
@@ -403,24 +387,24 @@
                 },
             });
 
-            map.on('mousemove', 'ecoregions-fill', (e) => {
+            $map.on('mousemove', 'ecoregions-fill', (e) => {
                 if (e.features.length > 0) {
                     if (hoveredEcoregion) {
-                        map.setFeatureState(
+                        $map.setFeatureState(
                             { source: 'ecoregions', id: hoveredEcoregion },
                             { hover: false }
                         );
                     }
                     hoveredEcoregion = e.features[0].id;
-                    map.setFeatureState(
+                    $map.setFeatureState(
                         { source: 'ecoregions', id: hoveredEcoregion },
                         { hover: true }
                     );
                 }
             });
-            map.on('mouseleave', 'ecoregions-fill', () => {
+            $map.on('mouseleave', 'ecoregions-fill', () => {
                 if (hoveredEcoregion) {
-                    map.setFeatureState(
+                    $map.setFeatureState(
                         { source: 'ecoregions', id: hoveredEcoregion },
                         { hover: false }
                     );
@@ -437,12 +421,12 @@
         .then((data) => data.json())
         .then((shape) => {
             console.log(shape)
-            map.addSource('california', {
+            $map.addSource('california', {
                 'type': 'geojson',
                 'data': shape,
                 'generateId': true
             });
-            map.addLayer({
+            $map.addLayer({
                 'id': 'california-fill',
                 'type': 'fill',
                 'source': 'california',
@@ -461,7 +445,7 @@
                     },
                 },
             });
-            map.addLayer({
+            $map.addLayer({
                 'id': 'california-line',
                 'type': 'line',
                 'source': 'california',
@@ -493,11 +477,18 @@
 
     onMount(() => {
 
+        $map = new maplibregl.Map({
+            container: 'map',
+            style: `https://basemaps.cartocdn.com/gl/${source}-gl-style/style.json`,
+            center: centerOfCalifornia, // starting position [lng, lat]
+            zoom: 4 // starting zoom
+        });
+
         drawEcoregions();
         drawCalifornia();
         //loadLineFeatures('California_County_Boundaries.geojson', 'counties', map);
 
-        map.on('load', () => {
+        $map.on('load', () => {
             console.log("loaded")
             zoomFitAnim();
         })
@@ -505,7 +496,7 @@
         // backup in case the load event doesn't fire properly
         setTimeout(() => {
             console.log("no load on timeout")
-            map._canvas.style.filter = "none";
+            $map._canvas.style.filter = "none";
             if(!loaded) {
                 zoomFitAnim();
             }
@@ -518,42 +509,45 @@
         rightPadding = (window.innerWidth) / 3;
 
         //map.setMaxBounds([[-130, 30], [-100, 45]])
-        map.fitBounds(hexBounds, {
+        $map.fitBounds(hexBounds, {
             padding: { top: 50, left: 10, bottom: 50, right: rightPadding }
         })
 
-        map._canvas.style.filter = "none";
+        $map._canvas.style.filter = "none";
     }
 
     function zoomFitCenter() {
         let hexBounds = geojsonExtent(hexagons)
-        map.fitBounds(hexBounds, {
+        $map.fitBounds(hexBounds, {
             padding: { top: 50, left: 10, bottom: 50, right: 50 }
         })
     }
 
-    function zoomToHexagon(index, map) {
+    function zoomToHexagon(index) {
+
+        if(!marker) createHexMarker();
 
         let center = h3.cellToLatLng(index);
         console.log(center)
 
         rightPadding = (2 * (window.innerWidth)) / 5;
 
-        map.flyTo({center: [center[1], center[0]], essential: true,
+        updateHexMarker([center[1], center[0]]);
+        $map.flyTo({center: [center[1], center[0]], essential: true,
             padding: { right: rightPadding},
             duration: 750
         })
     }
 
-    async function loadLineFeatures(path, id, map) {
+    async function loadLineFeatures(path, id) {
         fetch(`/phast/${path}`)
         .then((data) => data.json())
         .then((surface) => {
-            map.addSource(path, {
+            $map.addSource(path, {
                 'type': 'geojson',
                 'data': surface
             });
-            map.addLayer({
+            $map.addLayer({
                 'id': id,
                 'type': 'line',
                 'source': path,
@@ -568,16 +562,16 @@
         })
     }
 
-    function generateReserveSurfaces(map) {
+    function generateReserveSurfaces() {
         fetch(`/phast/surfaces/Angelo_Boundary.geojson`)
         .then((data) => data.json())
         .then((surface) => {
             console.log(surface)
-            map.addSource('angelo_reserve', {
+            $map.addSource('angelo_reserve', {
                 'type': 'geojson',
                 'data': surface
             });
-            map.addLayer({
+            $map.addLayer({
                 'id': 'angelo',
                 'type': 'fill',
                 'source': 'angelo_reserve',
@@ -590,6 +584,17 @@
         })
     }
 
+    function createHexMarker() {
+        let marker_el = document.getElementById("marker-template")
+        marker = new maplibregl.Marker({element: marker_el})
+            .setLngLat(selectedLngLat)
+            .addTo($map);
+    }
+
+    function updateHexMarker(lngLat) {
+        marker.setLngLat(lngLat);
+    }
+
     const darkMode = false;
     let source = darkMode ? 'dark-matter' : 'positron';
 
@@ -598,42 +603,28 @@
 
 </script>
 
-<MapLibre
-    bind:map
-    bind:loaded
-    style="https://basemaps.cartocdn.com/gl/{source}-gl-style/style.json"  
-    standardControls
-    center={centerOfCalifornia}
-    zoom={4}
->
-{#if selectionData?.hex}
-    <Marker
-        bind:this={marker}
-        lngLat={selectedLngLat}
-        class="hex-marker" 
-    >
-        <svg class="marker-svg" id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70.46 62.88">
-            <defs>
-            <style>
-                .fill {
-                    fill: #000;
-                    stroke: solid 1px red;
-                }
-                .stroke {
-                    stroke: #fff;
-                }
-            </style>
-            </defs>
-            <g id="Layer_1-2" data-name="Layer 1">
-            <g>
-                <path class="fill" d="m35.23,60.88c-1.81,0-3.43-.93-4.33-2.5L2.68,9.5c-.9-1.57-.9-3.44,0-5,.9-1.57,2.52-2.5,4.33-2.5h56.44c1.81,0,3.43.93,4.33,2.5.9,1.56.9,3.43,0,5l-28.22,48.88c-.9,1.57-2.52,2.5-4.33,2.5Z"/>
-                <path d="m63.45,4c1.56,0,2.34,1.05,2.6,1.5.26.45.78,1.65,0,3l-28.22,48.88c-.78,1.35-2.08,1.5-2.6,1.5s-1.82-.15-2.6-1.5L4.41,8.5c-.78-1.35-.26-2.55,0-3,.26-.45,1.03-1.5,2.6-1.5h56.44m0-4H7.01C1.62,0-1.75,5.83.95,10.5l28.22,48.88c1.35,2.33,3.7,3.5,6.06,3.5s4.72-1.17,6.06-3.5l28.22-48.88c2.69-4.67-.67-10.5-6.06-10.5h0Z"/>
-            </g>
-            </g>
-        </svg>
-    </Marker>
-{/if}
-</MapLibre>
+<div id="map" class="map" />
+<div id="marker-template" class="hex-marker" >
+    <svg class="marker-svg" id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70.46 62.88">
+        <defs>
+        <style>
+            .fill {
+                fill: #000;
+                stroke: solid 1px red;
+            }
+            .stroke {
+                stroke: #fff;
+            }
+        </style>
+        </defs>
+        <g id="Layer_1-2" data-name="Layer 1">
+        <g>
+            <path class="fill" d="m35.23,60.88c-1.81,0-3.43-.93-4.33-2.5L2.68,9.5c-.9-1.57-.9-3.44,0-5,.9-1.57,2.52-2.5,4.33-2.5h56.44c1.81,0,3.43.93,4.33,2.5.9,1.56.9,3.43,0,5l-28.22,48.88c-.9,1.57-2.52,2.5-4.33,2.5Z"/>
+            <path d="m63.45,4c1.56,0,2.34,1.05,2.6,1.5.26.45.78,1.65,0,3l-28.22,48.88c-.78,1.35-2.08,1.5-2.6,1.5s-1.82-.15-2.6-1.5L4.41,8.5c-.78-1.35-.26-2.55,0-3,.26-.45,1.03-1.5,2.6-1.5h56.44m0-4H7.01C1.62,0-1.75,5.83.95,10.5l28.22,48.88c1.35,2.33,3.7,3.5,6.06,3.5s4.72-1.17,6.06-3.5l28.22-48.88c2.69-4.67-.67-10.5-6.06-10.5h0Z"/>
+        </g>
+        </g>
+    </svg>
+</div>
 
 <style lang="scss">
     :global(.map) {
