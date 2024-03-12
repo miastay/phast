@@ -4,6 +4,17 @@ export function getPalette(min, max, scheme = "*ibm_flip") {
     return palette
 }
 
+export function getRelPdPalette(min, max, exp, scheme = "*ibm_flip") {
+    return [
+        [-1, "#ddddddcc"],
+        [min, "#FFB000cc", "Very low"],
+        //[getQuant(min, max, 0.25), "#FE6100cc"],
+        [exp, "#DC267Fcc", "Expected"],
+        //[getQuant(min, max, 0.75), "#785EF0cc"],
+        [max, "#648FFFcc", "Very high"],
+    ];
+}
+
 export function getColorList(scheme = "*ibm_flip") {
     let palette = schemes[scheme](0, 1)
     let colors = []

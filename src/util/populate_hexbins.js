@@ -12,7 +12,7 @@ export async function populateFeatures(geo, res) {
         mpd: Number.MIN_VALUE,
         mntd: Number.MIN_VALUE,
         tree_sizes: Number.MIN_VALUE,
-        rel_pd: Number.MIN_VALUE,
+        rel_pd: 1,
         rel_mpd: Number.MIN_VALUE,
         rel_mntd: Number.MIN_VALUE,
     }
@@ -21,15 +21,16 @@ export async function populateFeatures(geo, res) {
         mpd: Number.MAX_VALUE,
         mntd: Number.MAX_VALUE,
         tree_sizes: Number.MAX_VALUE,
-        rel_pd: Number.MAX_VALUE,
+        rel_pd: 0,
         rel_mpd: Number.MAX_VALUE,
         rel_mntd: Number.MAX_VALUE,
     }
 
     //fetch feature data in dict format
-    let data = await fetch('/phast/data/poly_plant_data.json').then((raw) => raw.json());
-    let trees = await fetch('/phast/data/plant_trees.json').then((raw) => raw.json());
+    let data = await fetch('/phast/data/initial_poly_plants_data.json').then((raw) => raw.json()).then((jsondata) => objToDict(jsondata));
+    let trees = await fetch('/phast/data/Plants_trees.json').then((raw) => raw.json());
     trees = treeToDict(trees);
+
 
     //iterate through polygons
     let multipolygon = geo.geometry.coordinates;
@@ -67,14 +68,27 @@ export async function populateFeatures(geo, res) {
             if(val > maxes[key]) maxes[key] = val
             else if(val < mins[key]) mins[key] = val
         }
-        for(let key of relatives) {
-            let absolute = data[index][key.substring(4)]
-            let relative = generateRelativeMetric(key, absolute, data[index]["tree_sizes"])
-            feature['properties'][key] = relative
-            if(relative > maxes[key]) maxes[key] = relative
-            else if(relative < mins[key]) mins[key] = relative
-        }
+
+        let absolute = Number.parseFloat(data[index]['pd']);
+        let minadj = absolute + Number.parseFloat(mins['pd']);
+        let relative = generateRelativeMetric('pd', minadj, data[index]["tree_sizes"])
+        relative = relative / maxes['pd']
+        relative = Math.round(relative * 10000) / 10000;
+        relative ? feature['properties']['rel_pd'] = relative : -1;
+
+        // for(let key of relatives) {
+        //     let absolute = data[index][key.substring(4)]
+        //     let relative = generateRelativeMetric(key, absolute, data[index]["tree_sizes"])
+        //     feature['properties'][key] = relative
+        //     if(relative > maxes[key]) maxes[key] = relative
+        //     else if(relative < mins[key]) mins[key] = relative
+        // }
         feature['properties']['tree'] = (trees[index][0] ?? "");
+
+
+        if(!feature.properties.pd) feature.properties.pd = -1;
+        if(!feature.properties.mpd) feature.properties.mpd = -1;
+        if(!feature.properties.mntd) feature.properties.mntd = -1;
 
         // if(data[index].pd) {
         //     feature['properties']['pd'] = data[index].pd
@@ -92,19 +106,23 @@ export async function populateFeatures(geo, res) {
         polygons.push(feature)
         i++;
     }
+
+    let rel_pd_exp = Math.round((Number.parseFloat(mins['pd']) / maxes['pd']) * 10000) / 10000;
+
     let object = {
         "type": "FeatureCollection",
         "features": polygons,
         "properties": {
             maxes: maxes,
-            mins: mins
+            mins: mins,
+            'rel_pd_exp': rel_pd_exp
         }
     }
     return object;
 }
 
 export function objToDict(obj) {
-    let dictionary = Object.fromEntries(obj.map(x => [x.id, {"pd": x.pd, "mpd": x.mpd, "mntd": x.mntd, "tree_sizes": x.tree_sizes}]));
+    let dictionary = Object.fromEntries(obj.map(x => [x.id, {"pd": x.pd, "mpd": x.mpd, "mntd": x.mntd, "tree_sizes": x.retrieved_taxa}]));
     return dictionary;
 }
 

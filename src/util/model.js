@@ -2,7 +2,7 @@
 const LL4 = ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))));
 const MM3 = ({x,c,d,e}) => c + ((d-c) / (1 + (e/x)));
 
-export const metrics = ["pd", "mpd", "mntd", "tree_sizes"]
+export const metrics = ["pd", "mpd", "mntd", "tree_sizes", "rel_pd"]
 export const descs = {
     "pd": "phylodiversity",
     "mpd": "mean pairwise phylogenetic distance",
@@ -143,7 +143,11 @@ const models = {
 
 export function generateRelativeMetric(type, value, x) {
 
-    if(value == -1) return 0;
+    if(value === -1 || value == NaN) return -1;
+
+
+    console.log(value)
+
 
     let data;
     switch(type) {
@@ -159,6 +163,7 @@ export function generateRelativeMetric(type, value, x) {
         case "pd":
             data = models.pd;
     }
+    console.log(`data: ${JSON.stringify(data)}`)
     let d = data.d;
     let b = data.b;
     let e = data.e;
@@ -184,6 +189,8 @@ export function generateRelativeMetric(type, value, x) {
     // console.log("10:", modelLow({x: 10, b: b.low, c: c.low, d: d.low, e: e.low}))
     // console.log("50:", modelLow({x: 50, b: b.low, c: c.low, d: d.low, e: e.low}))
     // console.log("200:", modelLow({x: 200, b: b.low, c: c.low, d: d.low, e: e.low}))
+
+    console.log(`lowerbound: ${lowerBound}`)
 
     return (value - lowerBound);
 }

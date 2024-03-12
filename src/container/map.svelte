@@ -9,7 +9,7 @@
     import * as maplibregl from 'maplibre-gl';
 
     import { objToDict, populateFeatures } from '../util/populate_hexbins';
-    import { getPalette, getDiscretePalette } from '../util/colors';
+    import { getPalette, getDiscretePalette, getRelPdPalette } from '../util/colors';
 
     import { metrics } from "../util/model";
 
@@ -225,6 +225,7 @@
     let hexdata = {};
 
     let maxes, mins;
+    let rel_pd_exp;
     let mapPalette = getPalette(0, 5000, colorScheme);
 
     function generatePalette(m, scheme, interp = true) {
@@ -233,6 +234,9 @@
         if(interp) {
 
             mapPalette = getPalette(mins[m], maxes[m], scheme);
+            if(m === "rel_pd") {
+                mapPalette = getRelPdPalette(0, 1, rel_pd_exp, scheme);
+            }
             console.log(mapPalette)
             const len = mapPalette.length
             let colors = mapPalette.map((color, i) => [color[0], color[1]])
@@ -275,6 +279,8 @@
 
             maxes = hexagons.properties?.maxes
             mins = hexagons.properties?.mins
+
+            if(hexagons.properties?.rel_pd_exp) rel_pd_exp = hexagons.properties.rel_pd_exp
 
             const layers = $map.getStyle().layers;
             let firstSymbolId = layers[71].id;
@@ -461,6 +467,15 @@
         });
     }
 
+    async function generateHexMapping() {
+        return fetch(`/phast/CA_hexbinned@6.json`)
+        .then((data) => data.json())
+        .then((hex) => {
+            console.log(hex)
+            populateFeatures(hex, 6).then((res) => console.log(res))
+        });
+    }
+
     function buildMap(built) {
         if(!built) return;
         
@@ -468,6 +483,7 @@
         let t = Date.now()
 
         drawHexagons("Birds", hexagonFetchResolution)
+        .then(() => drawHexagons("Plants", hexagonFetchResolution))
         .then(() => {
             finishBuilding();
             updateMetricPaintLayer(metric, clade)
@@ -495,6 +511,7 @@
             drawCalifornia();
             console.log("loaded")
             zoomFitAnim();
+            //more generateHexMapping();
         })
 
         // backup in case the load event doesn't fire properly
