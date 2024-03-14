@@ -27,9 +27,12 @@ export async function populateFeatures(geo, res) {
     }
 
     //fetch feature data in dict format
-    let data = await fetch('/phast/data/initial_poly_plants_data.json').then((raw) => raw.json()).then((jsondata) => objToDict(jsondata));
+    let data = await fetch('/phast/data/range_hex_data_statistics.json').then((raw) => raw.json())//.then((jsondata) => objToDict(jsondata));
     let trees = await fetch('/phast/data/Plants_trees.json').then((raw) => raw.json());
     trees = treeToDict(trees);
+
+
+    console.log(data);
 
 
     //iterate through polygons
@@ -63,18 +66,11 @@ export async function populateFeatures(geo, res) {
         feature['properties']['id'] = index;
 
         for(let key of Object.keys(data[index])) {
-            let val = data[index][key]//generateRelativeMetric(key, data[index][key], data[index]["tree_sizes"])
+            let val = data[index][key][0]//generateRelativeMetric(key, data[index][key], data[index]["tree_sizes"])
             feature['properties'][key] = val
             if(val > maxes[key]) maxes[key] = val
             else if(val < mins[key]) mins[key] = val
         }
-
-        let absolute = Number.parseFloat(data[index]['pd']);
-        let minadj = absolute + Number.parseFloat(mins['pd']);
-        let relative = generateRelativeMetric('pd', minadj, data[index]["tree_sizes"])
-        relative = relative / maxes['pd']
-        relative = Math.round(relative * 10000) / 10000;
-        relative ? feature['properties']['rel_pd'] = relative : -1;
 
         // for(let key of relatives) {
         //     let absolute = data[index][key.substring(4)]
@@ -89,6 +85,10 @@ export async function populateFeatures(geo, res) {
         if(!feature.properties.pd) feature.properties.pd = -1;
         if(!feature.properties.mpd) feature.properties.mpd = -1;
         if(!feature.properties.mntd) feature.properties.mntd = -1;
+
+        feature.properties.tree_sizes = data[index].present_species_rds?.length ?? 0;
+
+        feature.properties.quartile = Number.parseFloat(data[index].quartile ?? -1);
 
         // if(data[index].pd) {
         //     feature['properties']['pd'] = data[index].pd
@@ -107,15 +107,13 @@ export async function populateFeatures(geo, res) {
         i++;
     }
 
-    let rel_pd_exp = Math.round((Number.parseFloat(mins['pd']) / maxes['pd']) * 10000) / 10000;
-
     let object = {
         "type": "FeatureCollection",
         "features": polygons,
         "properties": {
             maxes: maxes,
             mins: mins,
-            'rel_pd_exp': rel_pd_exp
+            'rel_pd_exp': 0
         }
     }
     return object;

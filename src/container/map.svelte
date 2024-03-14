@@ -9,7 +9,7 @@
     import * as maplibregl from 'maplibre-gl';
 
     import { objToDict, populateFeatures } from '../util/populate_hexbins';
-    import { getPalette, getDiscretePalette, getRelPdPalette } from '../util/colors';
+    import { getPalette, getDiscretePalette, getRelPdPalette, getPdQuartilePalette } from '../util/colors';
 
     import { metrics } from "../util/model";
 
@@ -233,8 +233,8 @@
         if(interp) {
 
             mapPalette = getPalette(mins[m], maxes[m], scheme);
-            if(m === "rel_pd") {
-                mapPalette = getRelPdPalette(0, 1, rel_pd_exp, scheme);
+            if(m === "quartile") {
+                mapPalette = getPdQuartilePalette(scheme);
             }
             console.log(mapPalette)
             const len = mapPalette.length
@@ -271,7 +271,7 @@
 
         if($map && $map?.getStyle()?.sources[`hexlayer-${clade}`]) return;
 
-        return fetch(`/phast/${clade}_hex.json`)
+        return fetch(`/phast/${clade}_hex_new.json`)
         .then((data) => data.json())
         .then((hex) => hexagons = hex)
         .then(() => { 
@@ -482,7 +482,7 @@
         let t = Date.now()
 
         drawHexagons("Birds", hexagonFetchResolution)
-        .then(() => drawHexagons("Plants", hexagonFetchResolution))
+        //.then(() => drawHexagons("Plants", hexagonFetchResolution))
         .then(() => {
             finishBuilding();
             updateMetricPaintLayer(metric, clade)
@@ -512,6 +512,9 @@
             zoomFitAnim();
             //more generateHexMapping();
         })
+
+
+        generateHexMapping();
 
         // backup in case the load event doesn't fire properly
         setTimeout(() => {

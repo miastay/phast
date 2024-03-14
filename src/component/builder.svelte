@@ -56,13 +56,11 @@
     function buildEcoregions() {
         if(!$map.querySourceFeatures) return;
         let sourceFeatures = $map.querySourceFeatures('ecoregions');
-        console.log(sourceFeatures)
         let regions = []
         for(let feat of sourceFeatures) {
             if(regions.filter((x) => x.ids.includes(feat.id)).length == 0) {
                 let nm = `${feat.properties.US_L3NAME}`;
                 let existingName = regions.filter((x) => x.name === nm)[0];
-                console.log(existingName)
                 if(!existingName || existingName?.length == 0) {
                     regions.push({
                         ids: [feat.id],
@@ -78,7 +76,6 @@
 
         regions = regions.sort((a, b) => (a.name).localeCompare(b.name))
         //console.log(sourceFeatures.filter((x) => x.properties.US_L3NAME === "Central Basin and Range"));
-        console.log(regions)
         nullRegions[1].next.options = regions;
         ecoregionsBuilt = true;
     }
@@ -87,7 +84,6 @@
 
     function highlightEcoregion(subr) {
         if(!subr) return;
-        console.log(subr)
         // clear any selected regions
         let sourceFeatures = $map.querySourceFeatures('ecoregions');
         for(let feat of sourceFeatures) {
@@ -104,8 +100,17 @@
         }
     }
 
-    function build() {
+    async function build() {
+
+        let l3code = 0;
+
+        //fetch(`/phast/data/output_data_app/${}/`)
+
         nullModel.set({"type": nullRegion.type, "sub": subNullRegion});
+
+
+
+
     }
 
     onMount(() => {

@@ -2,7 +2,7 @@
 const LL4 = ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))));
 const MM3 = ({x,c,d,e}) => c + ((d-c) / (1 + (e/x)));
 
-export const metrics = ["pd", "mpd", "mntd", "tree_sizes", "rel_pd"]
+export const metrics = ["pd", "mpd", "mntd", "tree_sizes", "rel_pd", "quartile"]
 export const descs = {
     "pd": "phylodiversity",
     "mpd": "mean pairwise phylogenetic distance",
@@ -66,25 +66,25 @@ export function buildModel(type) {
     };
 }
 
-const xAxis = [0, 150]
+const xAxis = [0, 300]
 
 const models = {
     'pd': {
         "b": {
-            "low": -0.7043,
-            "high": -0.6657
+            "low": -0.7505,
+            "high": -0.6608
         },
         "c": {
-            "low": 23.0845,
-            "high": 240.3973
+            "low": 9.567,
+            "high": 123.1524
         },
          "d": {
-            "low": 19970.5549,
-            "high": 19686.1185
+            "low": 11690.7906,
+            "high": 10762.3392
         },
         "e": {
-            "low": 3792.2577,
-            "high": 4198.5041
+            "low": 1298.4931,
+            "high": 1308.4918
         },
         "minY": 100,
         "maxY": 5000,
@@ -94,20 +94,20 @@ const models = {
     },
     "mpd": {
         "b": {
-            "low": -0.6143,
-            "high": 0.4445
+            "low": -0.6495,
+            "high": 0.4117
         },
         "c": {
-            "low": 6.3176,
-            "high": 97.3052
+            "low": -39.3099,
+            "high": 93.617
         },
          "d": {
-            "low": 102.0496,
-            "high": 150.1521
+            "low": 102.1695,
+            "high": 152.3637
         },
         "e": {
-            "low": 1.9251,
-            "high": 2.2335
+            "low": 1.2904,
+            "high": 2.763
         },
         "minY": 0,
         "maxY": 200,
@@ -117,20 +117,20 @@ const models = {
     },
     "mntd": {
         "b": {
-            "low": 0.9954,
-            "high": 0.8694
+            "low": 1.2883,
+            "high": 0.9501
         },
         "c": {
-            "low": 6.0540,
-            "high": 5.1347
+            "low": 8.8277,
+            "high": 5.9462
         },
-         "d": {
-            "low": 33.1945,
-            "high": 185.9164
+        "d": {
+            "low": 33.4172,
+            "high": 156.3706
         },
         "e": {
-            "low": 52.3284,
-            "high": 7.0013
+            "low": 44.5908,
+            "high": 10.2206
         },
         "minY": 0,
         "maxY": 150,
@@ -144,9 +144,6 @@ const models = {
 export function generateRelativeMetric(type, value, x) {
 
     if(value === -1 || value == NaN) return -1;
-
-
-    console.log(value)
 
 
     let data;
@@ -163,7 +160,6 @@ export function generateRelativeMetric(type, value, x) {
         case "pd":
             data = models.pd;
     }
-    console.log(`data: ${JSON.stringify(data)}`)
     let d = data.d;
     let b = data.b;
     let e = data.e;
@@ -189,8 +185,6 @@ export function generateRelativeMetric(type, value, x) {
     // console.log("10:", modelLow({x: 10, b: b.low, c: c.low, d: d.low, e: e.low}))
     // console.log("50:", modelLow({x: 50, b: b.low, c: c.low, d: d.low, e: e.low}))
     // console.log("200:", modelLow({x: 200, b: b.low, c: c.low, d: d.low, e: e.low}))
-
-    console.log(`lowerbound: ${lowerBound}`)
 
     return (value - lowerBound);
 }
