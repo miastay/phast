@@ -3,19 +3,25 @@
     import Button, { Label } from '@smui/button';
 	import Logo from './logo.svelte';
 
-    import { map } from "../store";
+    import { map, nullModel } from "../store";
+	import { onMount } from 'svelte';
+	import Loader from './loader.svelte';
 
     export let showEcoregions;
-    export let build;
+
+    let ecoregionsBuilt = false;
+    $: $map && buildEcoregions();
 
     export let nullRegion;
     const nullRegions = [
         {
             "name": "All of California",
+            "type": "CALIFORNIA",
             "next": null
         },
         {
             "name": "By Ecoregion",
+            "type": "ECOREGION",
             "next": {
                 "name": "ecoregion",
                 "options": [
@@ -47,7 +53,8 @@
     export let altRegion;
     const altRegions = nullRegions;
 
-    function listLayers() {
+    function buildEcoregions() {
+        if(!$map.querySourceFeatures) return;
         let sourceFeatures = $map.querySourceFeatures('ecoregions');
         console.log(sourceFeatures)
         let regions = []
@@ -59,7 +66,9 @@
                 if(!existingName || existingName?.length == 0) {
                     regions.push({
                         ids: [feat.id],
-                        name: `${feat.properties.US_L3NAME}`
+                        name: `${feat.properties.US_L3NAME}`,
+                        type: `ECOREGION`,
+                        value: `${feat.properties.US_L3CODE}`
                     })
                 } else {
                     existingName.ids = [...existingName.ids, feat.id]
@@ -71,6 +80,7 @@
         //console.log(sourceFeatures.filter((x) => x.properties.US_L3NAME === "Central Basin and Range"));
         console.log(regions)
         nullRegions[1].next.options = regions;
+        ecoregionsBuilt = true;
     }
 
     $: highlightEcoregion(subNullRegion);
@@ -94,6 +104,14 @@
         }
     }
 
+    function build() {
+        nullModel.set({"type": nullRegion.type, "sub": subNullRegion});
+    }
+
+    onMount(() => {
+        buildEcoregions();
+    })
+
 </script>
 
 <div class="builder">
@@ -111,14 +129,18 @@
         </div>
     
         {#if nullRegion?.next}
-            <div class={`step ${!nullRegion?.next && 'grayed'}`}>
+            <div class={`step ${!nullRegion?.next || !ecoregionsBuilt && 'grayed'}`}>
                 <h2>Select which {nullRegion?.next?.name} to use</h2>
-                
-                <Select class="shaped" variant="filled" bind:value={subNullRegion}>
-                    {#each nullRegion?.next?.options as opt}
-                        <Option value={opt}>{opt.name}</Option>
-                    {/each}
-                </Select>
+                {#if nullRegion?.next?.options.length > 0}
+                    <Select class="shaped" variant="filled" bind:value={subNullRegion}>
+                        {#each nullRegion?.next?.options as opt}
+                            <Option value={opt}>{opt.name}</Option>
+                        {/each}
+                    </Select>
+                {/if}
+                {#if nullRegion?.next?.options.length == 0}
+                    <Loader />
+                {/if}
             </div>
         {/if}
     
@@ -130,10 +152,11 @@
                 {/each}
             </Select>
         </div>
-        <Button class="theme-button" variant="raised" on:click={() => build()}>
+        <Button class="theme-button" variant="raised" on:click={() => build(
+
+        )}>
             <Label>Build</Label>
         </Button>
-        <button on:click={() => listLayers()}>list layers</button>
     </div>
 </div>
 

@@ -10,6 +10,7 @@
 	import Loader from './loader.svelte';
 	import Summary from './summary.svelte';
     import { metrics } from "../util/model";
+	import { nullModel } from '../store';
 
     export let selectionData;
     export let metric;
@@ -23,7 +24,6 @@
 
     export let isBuilt;
     export let showEcoregions;
-    export let build;
 
     export let isFinishedBuilding;
 
@@ -36,7 +36,7 @@
 
 <div class={'modal'}>
 
-    {#if isBuilt}
+    {#if $nullModel}
         <div class='header'>
             <div class='test'>
                 Testing
@@ -62,11 +62,11 @@
             {/if} -->
             
         </div>
-
+        <button on:click={() => console.log(JSON.stringify($nullModel))}>null</button>
         
         {#if !isFinishedBuilding}
             <div class="load">
-                <Loader />
+                <Loader message="Building model..."/>
             </div>
         {/if}
 
@@ -83,8 +83,8 @@
         {/if}
     {/if}
 
-    {#if !isBuilt}
-        <Builder showEcoregions={showEcoregions} build={build}/>
+    {#if !$nullModel}
+        <Builder showEcoregions={showEcoregions}/>
     {/if}
 
 </div>
@@ -106,12 +106,15 @@
         right: 0;
         width: 35vw;
         height: 100%;
-
         padding: 0;
         box-sizing: border-box;
 
         .load {
-            height: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .header {

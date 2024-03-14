@@ -6,6 +6,8 @@
     import Modal from '../component/modal.svelte';
     import Map from "../container/map.svelte";
 
+    import { nullModel } from '../store';
+
     let selectionData = null
 
     function updateSelectionData(data) {
@@ -49,24 +51,21 @@
     }
     const clades = ['Birds', 'Plants'];
 
-
-    let isNullBuilt = false;
-    function runBuild() {
-        isNullBuilt = true;
-    }
-
     let isFinishedBuilding = false;
     function finishBuilding() {
         isFinishedBuilding = true;
     }
 
+    let isBuilt = false;
+    $: console.log($nullModel);
+
 </script>
 
 <main>
-    <Map built={isNullBuilt} finishBuilding={finishBuilding} update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
-    <Modal isBuilt={isNullBuilt} isFinishedBuilding={isFinishedBuilding} updateMetricLayer={updateMetricLayer} build={runBuild} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData} clade={clade} clades={clades} updateClade={updateClade}/>
+    <Map finishBuilding={finishBuilding} update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
+    <Modal isBuilt={isBuilt} isFinishedBuilding={isFinishedBuilding} updateMetricLayer={updateMetricLayer} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData} clade={clade} clades={clades} updateClade={updateClade}/>
 </main>
-{#if isNullBuilt}
+{#if $nullModel}
 <div class='control-container'>
     <Controls updateColorScheme={updateColorScheme} updateShowCounties={updateShowCounties} updateShowEcoregions={updateShowEcoregions} updateDrawing={updateDrawing} drawing={drawing} updateDrawnPath={updatePath}/>
     <Legend colorScheme={colorScheme} metric={metricLayer}/>

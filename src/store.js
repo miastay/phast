@@ -11,3 +11,14 @@ function createMap() {
         update
     }
 }
+
+export const nullModel = createNullModel()
+
+function createNullModel() {
+    const { subscribe, set, update } = writable(null);
+    return {
+        subscribe,
+        set,
+        update
+    }
+}

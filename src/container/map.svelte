@@ -13,7 +13,7 @@
 
     import { metrics } from "../util/model";
 
-    import { map } from "../store";
+    import { map, nullModel } from "../store";
 
 
     let hexagonFetchResolution = 6;
@@ -59,8 +59,7 @@
     //$: if(map && loaded) drawHexagons(clade, hexagonFetchResolution);
     $: updateCladeOpacity(clade);
 
-    export let built;
-    $: buildMap(built);
+    $: buildMap($nullModel);
 
     function updateCladeOpacity(clade) {
         if(!$map.getStyle) return;
@@ -476,8 +475,8 @@
         });
     }
 
-    function buildMap(built) {
-        if(!built) return;
+    function buildMap(nullModel) {
+        if(!nullModel) return;
         
         console.log('started building')
         let t = Date.now()
