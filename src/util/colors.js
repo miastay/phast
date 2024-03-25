@@ -18,11 +18,21 @@ export function getRelPdPalette(min, max, exp, scheme = "*ibm_flip") {
 export function getPdQuartilePalette(scheme = "*ibm_flip") {
     return [
         [-1, "#ddddddcc"],
-        [0, "#FFB000cc", "Very low"],
-        //[getQuant(min, max, 0.25), "#FE6100cc"],
-        [50, "#DC267Fcc", "Expected"],
-        //[getQuant(min, max, 0.75), "#785EF0cc"],
-        [100, "#648FFFcc", "Very high"],
+        [0.5, '#648FFFcc'], 
+        [1, '#7580ed'], 
+        [1.5, '#8671db'], 
+        [2, '#9762c9'], 
+        [2.5, '#a853b7'], 
+        [5, '#b944a5'], 
+        [10, '#ca3593'], 
+        [25, '#DC267Fcc'], 
+        [75, '#FFB000cc'], 
+        [90, '#e64c5a'], 
+        [97.5, '#eb6048'], 
+        [98, '#f07436'], 
+        [98.5, '#f58824'], 
+        [99, '#fa9c12'], 
+        [99.5, '#FFB000cc']
     ];
 }
 
