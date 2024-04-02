@@ -6,18 +6,18 @@ export function getPalette(min, max, scheme = "*ibm_flip") {
 
 export function getRelPdPalette(min, max, exp, scheme = "*ibm_flip") {
     return [
-        [-1, "#ddddddcc"],
-        [min, "#FFB000cc", "Very low"],
-        //[getQuant(min, max, 0.25), "#FE6100cc"],
-        [exp, "#DC267Fcc", "Expected"],
-        //[getQuant(min, max, 0.75), "#785EF0cc"],
-        [max, "#648FFFcc", "Very high"],
+        [-1, "#dddddd"],
+        [min, "#FFB000", "Very low"],
+        //[getQuant(min, max, 0.25), "#FE6100"],
+        [exp, "#DC267F", "Expected"],
+        //[getQuant(min, max, 0.75), "#785EF0"],
+        [max, "#648FFF", "Very high"],
     ];
 }
 
 export function getPdQuartilePalette(scheme = "*ibm_flip") {
     return [
-        [-1, "#ddddddcc"],
+        [-1, "#dddddd"],
         [0.5, '#648FFFcc'], 
         [1, '#7580ed'], 
         [1.5, '#8671db'], 
@@ -57,32 +57,32 @@ function getQuant(min, max, quant) {
 
 export const schemes = {
 
-    '*ibm_flip': function ibm(min, max) {
+    '*ibm_flip': function ibm_flip(min, max) {
         return [
-            [-1, "#ddddddcc"],
-            [min, "#FFB000cc", "Very low"],
-            [getQuant(min, max, 0.25), "#FE6100cc"],
-            [getQuant(min, max, 0.5), "#DC267Fcc", "Expected"],
-            [getQuant(min, max, 0.75), "#785EF0cc"],
-            [max, "#648FFFcc", "Very high"],
+            [-1, "#dddddd"],
+            [min, "#FFB000", "Very low"],
+            [getQuant(min, max, 0.25), "#FE6100"],
+            [getQuant(min, max, 0.5), "#DC267F", "Expected"],
+            [getQuant(min, max, 0.75), "#785EF0"],
+            [max, "#648FFF", "Very high"],
         ];
     },
 
     'orGrBlu': function orGrBlu(min, max) {
         return [
-            [-1, "#ddddddcc"],
-            [min, "#F9A825cc", "Very low"],
-            [getQuant(min, max, 0.35), "#e8f4c4cc"],
-            [getQuant(min, max, 0.5), "#00E676cc", "Expected"],
-            [getQuant(min, max, 0.75), "#3d9ab8cc"],
-            [getQuant(min, max, 0.85), "#318ab5cc"],
-            [max, "#2a4e9bcc", "Very high"],
+            [-1, "#dddddd"],
+            [min, "#F9A825", "Very low"],
+            [getQuant(min, max, 0.35), "#e8f4c4"],
+            [getQuant(min, max, 0.5), "#00E676", "Expected"],
+            [getQuant(min, max, 0.75), "#3d9ab8"],
+            [getQuant(min, max, 0.85), "#318ab5"],
+            [max, "#2a4e9b", "Very high"],
         ];
     },
     
     'blGr': function blGr(min, max) {
         return [
-            [-1, "#ddddddcc"],
+            [-1, "#dddddd"],
             [min, "#000000", "Very low"],
             [max, "#00ff00", "Very high"],
         ]
@@ -90,95 +90,95 @@ export const schemes = {
     
     'blBluCyWt': function blBluCyWt(min, max) {
         return [
-            [-1, "#ddddddcc", "Missing"],
-            [min, "#000000cc", "Very low"],
-            [getQuant(min, max, 0.5), "#0000ffcc", "Expected"],
-            [getQuant(min, max, 0.75), "#00ffffcc"],
-            [max, "#ffffffcc", "Very high"],
+            [-1, "#dddddd", "Missing"],
+            [min, "#000000", "Very low"],
+            [getQuant(min, max, 0.5), "#0000ff", "Expected"],
+            [getQuant(min, max, 0.75), "#00ffff"],
+            [max, "#ffffff", "Very high"],
         ]
     },
     
     
     'rdYlGr': function rdYlGr(min, max) {
         return [
-            [-1, "#ddddddcc", "Missing"],
-            [min, "#fd5533cc", "Very low"],
-            [getQuant(min, max, 0.5), "#f8f611cc", "Normal"],
-            [max, "#4eb87bcc", "Very high"],
+            [-1, "#dddddd", "Missing"],
+            [min, "#fd5533", "Very low"],
+            [getQuant(min, max, 0.5), "#f8f611", "Normal"],
+            [max, "#4eb87b", "Very high"],
         ]
     },
     
     
     '*mgYlGr': function mgYlGr(min, max) {
         return [
-            [-1, "#ddddddcc", "Missing"],
-            [min, "#F15C8Ecc", "Very low"],
-            [getQuant(min, max, 0.5), "#f8f611cc", "Normal"],
-            [max, "#4eb87bcc", "Very high"],
+            [-1, "#dddddd", "Missing"],
+            [min, "#F15C8E", "Very low"],
+            [getQuant(min, max, 0.5), "#f8f611", "Normal"],
+            [max, "#4eb87b", "Very high"],
         ]
     },
     
     'grYlRd': function grYlRd(min, max) {
         return [
-            [-1, "#ddddddcc", "Missing"],
-            [min, "#00ff33cc", "Very low biodiversity"],
-            [getQuant(min, max, 0.5), "#ffff33cc", "Normal biodiversity"],
-            [max, "#ff3300cc", "Very high biodiversity"],
+            [-1, "#dddddd", "Missing"],
+            [min, "#00ff33", "Very low biodiversity"],
+            [getQuant(min, max, 0.5), "#ffff33", "Normal biodiversity"],
+            [max, "#ff3300", "Very high biodiversity"],
         ]
     },
     
     '*census': function census(min, max) {
         return [
-            [-1, "#ddddddcc", "Missing"],
-            [min, "#efd100cc", "Very low biodiversity"],
-            [getQuant(min, max, 0.5), "#4eb87bcc", "Normal biodiversity"],
-            [max, "#007fc4cc", "Very high biodiversity"],
+            [-1, "#dddddd", "Missing"],
+            [min, "#efd100", "Very low biodiversity"],
+            [getQuant(min, max, 0.5), "#4eb87b", "Normal biodiversity"],
+            [max, "#007fc4", "Very high biodiversity"],
         ]
     },
     
     'seqseq': function seqseq(min, max) {
         return [
-            [-1, "#ddddddcc", "Missing"],
-            [min, "#de4fa6cc", "Very low biodiversity"],
-            [getQuant(min, max, 0.5), "#4fadd0cc", "Normal biodiversity"],
-            [max, "#2a1a8acc", "Very high biodiversity"],
+            [-1, "#dddddd", "Missing"],
+            [min, "#de4fa6", "Very low biodiversity"],
+            [getQuant(min, max, 0.5), "#4fadd0", "Normal biodiversity"],
+            [max, "#2a1a8a", "Very high biodiversity"],
         ]
     },
     
     '*parula': function parula(min, max) {
         return [
-            [-1, "#ddddddcc"],
-            [min, "#352a87cc", "Very low"],
-            [getQuant(min, max, 0.167), "#0469dfcc"],
-            [getQuant(min, max, 0.33), "#06a0cbcc"],
-            [getQuant(min, max, 0.5), "#1fb2accc", "Expected"],
-            [getQuant(min, max, 0.667), "#a3bd6acc"],
-            [getQuant(min, max, 0.833), "#fcc336cc"],
-            [max, "#f8f611cc", "Very high"],
+            [-1, "#dddddd"],
+            [min, "#352a87", "Very low"],
+            [getQuant(min, max, 0.167), "#0469df"],
+            [getQuant(min, max, 0.33), "#06a0cb"],
+            [getQuant(min, max, 0.5), "#1fb2ac", "Expected"],
+            [getQuant(min, max, 0.667), "#a3bd6a"],
+            [getQuant(min, max, 0.833), "#fcc336"],
+            [max, "#f8f611", "Very high"],
         ];
     },
     
     '*parula_flip': function parula_flip(min, max) {
         return [
-            [-1, "#ddddddcc"],
-            [min, "#f8f611cc", "Very low"],
-            [getQuant(min, max, 0.167), "#fcc336cc"],
-            [getQuant(min, max, 0.33), "#a3bd6acc"],
-            [getQuant(min, max, 0.5), "#1fb2accc", "Expected"],
-            [getQuant(min, max, 0.667), "#06a0cbcc"],
-            [getQuant(min, max, 0.833), "#0469dfcc"],
-            [max, "#352a87cc", "Very high"],
+            [-1, "#dddddd"],
+            [min, "#f8f611", "Very low"],
+            [getQuant(min, max, 0.167), "#fcc336"],
+            [getQuant(min, max, 0.33), "#a3bd6a"],
+            [getQuant(min, max, 0.5), "#1fb2ac", "Expected"],
+            [getQuant(min, max, 0.667), "#06a0cb"],
+            [getQuant(min, max, 0.833), "#0469df"],
+            [max, "#352a87", "Very high"],
         ];
     },
 
     '*ibm': function ibm(min, max) {
         return [
-            [-1, "#ddddddcc"],
-            [min, "#648FFFcc", "Very low"],
-            [getQuant(min, max, 0.25), "#785EF0cc"],
-            [getQuant(min, max, 0.5), "#DC267Fcc", "Expected"],
-            [getQuant(min, max, 0.75), "#FE6100cc"],
-            [max, "#FFB000cc", "Very high"],
+            [-1, "#dddddd"],
+            [min, "#648FFF", "Very low"],
+            [getQuant(min, max, 0.25), "#785EF0"],
+            [getQuant(min, max, 0.5), "#DC267F", "Expected"],
+            [getQuant(min, max, 0.75), "#FE6100"],
+            [max, "#FFB000", "Very high"],
         ];
     },
 

@@ -13,7 +13,7 @@
 
     import { metrics } from "../util/model";
 
-    import { map, nullModel, baseFillOpacity, baseLineOpacity } from "../store";
+    import { map, nullModel, baseFillOpacity, baseLineOpacity, currentMapPalette } from "../store";
 
 
     let hexagonFetchResolution = 6;
@@ -56,6 +56,7 @@
     $: updateMetricPaintLayer(metric, clade)
     $: $baseFillOpacity && updateMetricPaintLayer(metric, clade)
     $: updateLayerPalettes(colorScheme)
+    $: currentMapPalette.set(generatePalette(metric, colorScheme, true))
     $: updateShowCounties(showCounties)
     //$: if(map && loaded) updateShowEcoregions(showEcoregions);
     $: updateShowEcoregions(showEcoregions);
@@ -228,6 +229,7 @@
     function generatePalette(m, scheme, interp = true) {
         if(!maxes || !mins) return;
         console.log("generating for ", m)
+        
         if(interp) {
 
             mapPalette = getPalette(mins[m], maxes[m], scheme);
@@ -240,13 +242,19 @@
             //colors[colors.length - 1] = colors[colors.length - 1][0]
             colors = colors.flat()
             console.log(colors)
-            
-            return [
+
+            let pal = [
                 "interpolate",
                 ["linear"],
                 ["get", m],
                 ...colors
             ]
+            
+            if(!$currentMapPalette) {
+                currentMapPalette.set(pal)
+            }
+
+            return pal;
         }
         else {
 

@@ -17,6 +17,8 @@
     let colorScheme;
     let showCounties;
     let showEcoregions;
+
+    let mountBaseFillOpacity = $baseFillOpacity;
     
     const colors = Object.keys(schemes)
 
@@ -50,7 +52,7 @@
     </div>
     <div class="control-item">
         <h4>Fill Opacity</h4>
-        <input type="range" min="0" max="100" value="100" on:input={(e) => baseFillOpacity.set(Number.parseInt(e.target.value) / 100)}/>
+        <input type="range" min="0" max="100" value={mountBaseFillOpacity * 100} on:input={(e) => baseFillOpacity.set(Number.parseInt(e.target.value) / 100)}/>
     </div>
 </div>
 
