@@ -24,10 +24,11 @@
 
 @mixin graph-header {
     margin-block: 0;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: $theme-900;
     text-align: left !important;
+    line-height: 1.8rem !important;
     &:first-letter {
         text-transform: uppercase;
     }

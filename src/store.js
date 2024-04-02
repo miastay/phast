@@ -12,6 +12,9 @@ function createMap() {
     }
 }
 
+export const baseFillOpacity = writable(1.00);
+export const baseLineOpacity = writable(1.00);
+
 export const nullModel = createNullModel()
 
 function createNullModel() {

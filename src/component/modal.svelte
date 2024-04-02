@@ -62,7 +62,7 @@
             {/if} -->
             
         </div>
-        <button on:click={() => console.log(JSON.stringify($nullModel))}>null</button>
+        <!-- <button on:click={() => console.log(JSON.stringify($nullModel))}>null</button> -->
         
         {#if !isFinishedBuilding}
             <div class="load">

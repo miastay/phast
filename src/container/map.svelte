@@ -13,7 +13,7 @@
 
     import { metrics } from "../util/model";
 
-    import { map, nullModel } from "../store";
+    import { map, nullModel, baseFillOpacity, baseLineOpacity } from "../store";
 
 
     let hexagonFetchResolution = 6;
@@ -46,11 +46,15 @@
     let marker;
     let selectedLngLat = [-119.449444, 37.166111];
 
+    // let baseFillOpacity = 0.65;
+    // let baseLineOpacity = 1.00;
+
     $: if ($map && loaded) {
         textLayers = $map.getStyle().layers.filter((layer) => layer['source-layer'] === 'place');
         console.log(textLayers)
     }
     $: updateMetricPaintLayer(metric, clade)
+    $: $baseFillOpacity && updateMetricPaintLayer(metric, clade)
     $: updateLayerPalettes(colorScheme)
     $: updateShowCounties(showCounties)
     //$: if(map && loaded) updateShowEcoregions(showEcoregions);
@@ -74,10 +78,10 @@
         if(!hexagons || !$map.getLayer) return;
         if(drawnPath === null) {
             if($map.getLayer('drawLayer')) {
-                map.removeLayer('drawnPolygon');
+                $map.removeLayer('drawnPolygon');
             }
             if($map.getSource('drawnPolygon')) {
-                map.removeSource('drawnPolygon');
+                $map.removeSource('drawnPolygon');
             }
             return;
         }
@@ -121,12 +125,6 @@
             }
         };
 
-        try {
-            $map.removeLayer('drawLayer');
-            $map.removeSource('drawnPolygon');
-        } catch(err) {
-            console.log(err)
-        }
         $map.addSource('drawnPolygon', {
                         'type': 'geojson',
                         'data': newGeoJson
@@ -138,7 +136,7 @@
             'layout': {},
             'paint': {
                 "fill-color": '#00ffff',
-                "fill-opacity": 0.75,
+                "fill-opacity": $baseFillOpacity,
                 "fill-color-transition": {
                     "duration": 500,
                     "delay": 0
@@ -165,7 +163,7 @@
             clearHexLayers([id])
         }, layerTransitionTime / 4);
 
-        $map.setPaintProperty(id, 'fill-opacity', 1)
+        $map.setPaintProperty(id, 'fill-opacity', $baseFillOpacity)
     }
 
     function clearHexLayers(exclude = []) {
@@ -189,7 +187,7 @@
     function updateShowCounties(shown) {
         if(!$map.setPaintProperty) return;
         if(shown) {
-            $map.setPaintProperty('counties', 'line-opacity', 1)
+            $map.setPaintProperty('counties', 'line-opacity', $baseLineOpacity)
         } else {
             $map.setPaintProperty('counties', 'line-opacity', 0)
         }
@@ -199,8 +197,8 @@
         if(!$map.setPaintProperty) return;
         console.log('ecoregions', shown)
         if(shown) {
-            $map.setPaintProperty('ecoregions-line', 'line-opacity', 1)
-            $map.setPaintProperty('ecoregions-fill', 'fill-opacity', 0.75)
+            $map.setPaintProperty('ecoregions-line', 'line-opacity', $baseLineOpacity)
+            $map.setPaintProperty('ecoregions-fill', 'fill-opacity', $baseFillOpacity)
         } else {
             $map.setPaintProperty('ecoregions-line', 'line-opacity', 0)
             $map.setPaintProperty('ecoregions-fill', 'fill-opacity', 0)
@@ -209,8 +207,8 @@
 
     export function updateShowCalifornia(shown) {
         if(shown) {
-            $map.setPaintProperty('california-line', 'line-opacity', 1)
-            $map.setPaintProperty('california-fill', 'fill-opacity', 0.75)
+            $map.setPaintProperty('california-line', 'line-opacity', $baseLineOpacity)
+            $map.setPaintProperty('california-fill', 'fill-opacity', $baseFillOpacity)
         } else {
             $map.setPaintProperty('california-line', 'line-opacity', 0)
             $map.setPaintProperty('california-fill', 'fill-opacity', 0)
@@ -299,7 +297,7 @@
                     'layout': {},
                     'paint': {
                         "fill-color": generatePalette(mt, colorScheme, true),
-                        "fill-opacity": 0.75,
+                        "fill-opacity": $baseFillOpacity,
                         "fill-color-transition": {
                             "duration": 500,
                             "delay": 0
@@ -439,7 +437,7 @@
                 'source': 'california',
                 'layout': {},
                 'paint': {
-                    "fill-opacity": 0.75,
+                    "fill-opacity": $baseFillOpacity,
                     'fill-color': [
                         'case',
                         ['boolean', ['feature-state', 'hover'], false],
@@ -460,7 +458,7 @@
                 'paint': {
                     "line-color": "#555555",
                     "line-width": 0.25,
-                    "line-opacity": 1
+                    "line-opacity": $baseLineOpacity
                 },
             });
         });
@@ -609,6 +607,7 @@
 
     function createHexMarker() {
         let marker_el = document.getElementById("marker-template")
+        marker_el.style.display = "block";
         marker = new maplibregl.Marker({element: marker_el})
             .setLngLat(selectedLngLat)
             .addTo($map);
@@ -627,7 +626,7 @@
 </script>
 
 <div id="map" class="map" />
-<div id="marker-template" class="hex-marker" >
+<div id="marker-template" class="hex-marker" style="display: none">
     <svg class="marker-svg" id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70.46 62.88">
         <defs>
         <style>

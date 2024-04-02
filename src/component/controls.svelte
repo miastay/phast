@@ -4,6 +4,8 @@
 	import { Option } from "@smui/select";
     import { schemes } from '../util/colors';
 
+    import { baseFillOpacity } from '../store';
+
     export let updateColorScheme;
     export let updateShowCounties;
     export let updateShowEcoregions;
@@ -45,6 +47,10 @@
         <h4>Draw Mode?</h4>
         <button on:click={() => updateDrawing(true)}>Draw Polygon</button>
         <button on:click={() => updateDrawnPath(null)}>Reset</button>
+    </div>
+    <div class="control-item">
+        <h4>Fill Opacity</h4>
+        <input type="range" min="0" max="100" value="100" on:input={(e) => baseFillOpacity.set(Number.parseInt(e.target.value) / 100)}/>
     </div>
 </div>
 

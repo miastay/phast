@@ -157,10 +157,10 @@
                 {/each}
             </Select>
         </div>
-        <Button class="theme-button" variant="raised" on:click={() => build(
+        <Button class={`theme-button`} variant="raised" disabled={!nullRegion} on:click={() => build(
 
         )}>
-            <Label>Build</Label>
+            <Label>{nullRegion ? 'Build' : 'Select a null model'}</Label>
         </Button>
     </div>
 </div>
@@ -220,6 +220,9 @@
             letter-spacing: 0;
             font-size: 1rem;
             padding: 2rem 1rem;
+            &.disabled {
+                background: gray !important;
+            }
         }
 
     }

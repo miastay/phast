@@ -123,12 +123,11 @@
 
         tree_svg.addEventListener('mousemove', (e) => {
             console.log(e)
-            if(!e.target.localName === "svg") return;
-            tooltipX = e.offsetX;
-            tooltipY = e.offsetY;
+            if(e.target.localName !== "svg") return;
+            tooltipX = e.layerX;
+            tooltipY = e.layerY;
         })
 
-        //tree_svg.style = "fill: none; stroke: black;"
     }
 
     async function buildNodeMap(type) {
@@ -184,20 +183,21 @@
         padding: 0.5rem;
         padding-bottom: 0.6rem;
         transform-origin: bottom left;
-        transform: translate(25px, -45px);
+        transform: translateY(-4rem);
         clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 10% 90%, 0% 110%);
         border-radius: 0.5rem;
+        border-bottom-right-radius: 0.8rem;
         &.hidden {
             opacity: 0;
             z-index: -1000;
             //display: none;
-            //transform: scaleY(0.1);
+            //transform: inherit scaleY(0.1);
         }
         &.flip {
             transform-origin: top left;
-            transform: scaleX(-1) translateY(-100%);
+            transform: inherit scaleX(-1) translateY(-100%);
             > * {
-                transform: scaleX(-1);
+                transform: inherit scaleX(-1);
             }
             //clip-path: polygon(0% 0%, 100% 0%, 100% 110%, 90% 90%, 0% 90%);
             //text-align: right;

@@ -24,7 +24,7 @@
     <div class="label-container">
         {#each scale as color}
             {#if color[2]}
-                <span>{`${color[2]} ${descs[metric] ?? ""}`}</span>
+                <span>{`${color[2]} ${metric ?? ""}`}</span>
             {/if}
         {/each}
     </div>
