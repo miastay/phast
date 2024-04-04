@@ -28,7 +28,7 @@
     export let isFinishedBuilding;
 
     let showSummary;
-    $: if(selectionData) showSummary = selectionData.properties && selectionData.properties[metric] !== -1;
+    $: if(selectionData) { showSummary = selectionData.properties && selectionData.properties[metric] !== -1;}
     $: updateClade(clade);
     $: updateMetricLayer(metric);
 

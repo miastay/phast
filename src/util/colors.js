@@ -1,5 +1,5 @@
 
-export function getPalette(min, max, scheme = "*ibm_flip") {
+export function getPalette(min, max, scheme = "*ibm") {
     let palette = schemes[scheme](min, max)
     return palette
 }
@@ -56,6 +56,17 @@ function getQuant(min, max, quant) {
 }
 
 export const schemes = {
+
+    '*ibm': function ibm(min, max) {
+        return [
+            [-1, "#dddddd"],
+            [min, "#648FFF", "Very low"],
+            [getQuant(min, max, 0.25), "#785EF0"],
+            [getQuant(min, max, 0.5), "#DC267F", "Expected"],
+            [getQuant(min, max, 0.75), "#FE6100"],
+            [max, "#FFB000", "Very high"],
+        ];
+    },
 
     '*ibm_flip': function ibm_flip(min, max) {
         return [
@@ -171,16 +182,6 @@ export const schemes = {
         ];
     },
 
-    '*ibm': function ibm(min, max) {
-        return [
-            [-1, "#dddddd"],
-            [min, "#648FFF", "Very low"],
-            [getQuant(min, max, 0.25), "#785EF0"],
-            [getQuant(min, max, 0.5), "#DC267F", "Expected"],
-            [getQuant(min, max, 0.75), "#FE6100"],
-            [max, "#FFB000", "Very high"],
-        ];
-    },
 
 }
 

@@ -11,6 +11,7 @@
     let selectionData = null
 
     function updateSelectionData(data) {
+        if(!data) return;
         console.log("updating!!")
         selectionData = data
     }
@@ -20,7 +21,7 @@
         metricLayer = layer;
     }
 
-    let colorScheme = "*ibm_flip";
+    let colorScheme = "*ibm";
     function updateColorScheme(colors) {
         colorScheme = colors;
     }

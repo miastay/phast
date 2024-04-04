@@ -282,6 +282,10 @@
         .then((hex) => hexagons = hex)
         .then(() => { 
 
+            //console.log(buildHistogram(hexagons, "mpd"))
+            //console.log(buildHistogram(hexagons, "mntd"))
+            //console.log(buildHistogram(hexagons, "tree_sizes"))
+
             maxes = hexagons.properties?.maxes
             mins = hexagons.properties?.mins
 
@@ -352,6 +356,14 @@
             });
             return true;
         });
+    }
+
+    function buildHistogram(data, metric) {
+        let hist = []
+        for(let hex of data.features) {
+            hist.push(hex.properties[metric])
+        }
+        return hist;
     }
 
     async function drawEcoregions() {
