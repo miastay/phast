@@ -10,11 +10,10 @@
 	import Loader from './loader.svelte';
 	import Summary from './summary.svelte';
     import { metrics } from "../util/model";
-	import { nullModel } from '../store';
+	import { nullModel, selectionData } from '../store';
+	import About from './about.svelte';
 
-    export let selectionData;
     export let metric;
-    export let updateData;
     export let colorScheme;
     export let updateMetricLayer;
 
@@ -28,9 +27,13 @@
     export let isFinishedBuilding;
 
     let showSummary;
-    $: if(selectionData) { showSummary = selectionData.properties && selectionData.properties[metric] !== -1;}
+    $: updateSummary($selectionData);
     $: updateClade(clade);
     $: updateMetricLayer(metric);
+
+    const updateSummary = (selection) => {
+        showSummary = selection?.properties && selection?.properties[metric] !== -1;
+    }
 
 </script>
 
@@ -52,9 +55,11 @@
                     {/each}
                 </Select>
             </div>
-            <div class="close">
-                <button on:click={() => updateData(null)}>x</button>
-            </div>
+            {#if showSummary}
+                <div class="close">
+                    <button on:click={() => { updateSummary(null); selectionData.set(null); console.log($selectionData)}}>x</button>
+                </div>
+            {/if}
             <!-- {#if showSummary}
             <div>
                 <span>Value: {selectionData.properties[metric]}, Tree Size: {selectionData.properties['tree_sizes']}, Rel: {generateRelativeMetric(metric, selectionData.properties[metric], selectionData.properties['tree_sizes'])}</span>
@@ -71,15 +76,13 @@
         {/if}
 
         {#if !showSummary}
-            <div>
-                <p>Click on a hexagon to see phylogenetic statistics.</p>
-            </div>
+            <About />
         {/if}
 
         {#if showSummary}
-            <Summary data={selectionData} />
-            <Graph colorScheme={colorScheme} metric={metric} point={[[selectionData.properties.tree_sizes, selectionData.properties[metric]]]}/>
-            <Phylo clade={clade} newick={selectionData.properties.tree} hex_id={selectionData.properties.id}/>
+            <Summary data={$selectionData} />
+            <Graph colorScheme={colorScheme} metric={metric} point={[[$selectionData?.properties?.tree_sizes, $selectionData?.properties[metric]]]}/>
+            <Phylo clade={clade} newick={$selectionData?.properties?.tree} hex_id={$selectionData?.properties?.id}/>
         {/if}
     {/if}
 
@@ -104,7 +107,9 @@
 
         position: absolute;
         right: 0;
-        width: 35vw;
+        //width: 35vw;
+        width: min-content;
+        min-width: 450px;
         height: 100%;
         padding: 0;
         box-sizing: border-box;
@@ -118,6 +123,7 @@
         }
 
         .header {
+
             display: flex;
             flex-direction: row;
             justify-content: space-between;
@@ -168,17 +174,13 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                background: $theme-900;
+                background: transparent;
                 box-shadow: 0px 0px 1px #00000055;
-                border: solid 1px $theme-100;
+                border: solid 1px $theme-700;
                 border-radius: 5px;
-                color: $theme-100;
-                &:hover {
-                    box-shadow: 0px 0px 3px #00000055;
-                    border: solid 1px $theme-100;
-                }
+                color: $theme-700;
                 &:active {
-                    background: $light-gray;
+                    filter: brightness(0);
                 }
                 transition: all 0.1s ease;
             }
@@ -197,4 +199,9 @@
     .logo {
         width: 50px;
     }
+
+    :global(.mdc-select__anchor) {
+        width: auto;
+    }
+
 </style>

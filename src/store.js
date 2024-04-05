@@ -19,6 +19,8 @@ export const currentMapPalette = writable({});
 
 export const nullModel = createNullModel()
 
+export const selectionData = writable(null);
+
 function createNullModel() {
     const { subscribe, set, update } = writable(null);
     return {

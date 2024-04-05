@@ -13,7 +13,7 @@
 
     import { metrics } from "../util/model";
 
-    import { map, nullModel, baseFillOpacity, baseLineOpacity, currentMapPalette } from "../store";
+    import { map, nullModel, baseFillOpacity, baseLineOpacity, currentMapPalette, selectionData } from "../store";
 
 
     let hexagonFetchResolution = 6;
@@ -21,7 +21,6 @@
 
     export let metric;
     export let colorScheme;
-    export let selectionData;
     export let showCounties;
     export let showEcoregions;
     export let drawnPath;
@@ -44,6 +43,7 @@
     let textLayers;//: maplibregl.LayerSpecification[] = [];
     let firstSymbolId;
     let marker;
+    let showMarker = false;
     let selectedLngLat = [-119.449444, 37.166111];
 
     // let baseFillOpacity = 0.65;
@@ -63,6 +63,7 @@
     $: pathToHexagons(drawnPath)
     //$: if(map && loaded) drawHexagons(clade, hexagonFetchResolution);
     $: updateCladeOpacity(clade);
+    $: showHideMarker($selectionData);
 
     $: buildMap($nullModel);
 
@@ -72,6 +73,17 @@
         let layersToClear = $map.getStyle().layers.filter((layer) => { let spl = layer.source?.split('-'); return (spl && spl[0] === 'hexlayer' && spl[1] !== clade); })
         for(let layer of layersToClear) {
             $map.setPaintProperty(layer.id, 'fill-opacity', 0)
+        }
+    }
+
+    function showHideMarker(selectionData) {
+        showMarker = selectionData !== null;
+        if(!marker) return;
+        console.log('SHOW?', showMarker)
+        if(showMarker) {
+            marker.addTo($map)
+        } else {
+            marker.remove();
         }
     }
 
@@ -270,8 +282,6 @@
         }
     }
 
-    export let update;
-
     async function drawHexagons(clade, resolution) {
         console.log(clade)
 
@@ -324,8 +334,8 @@
                 console.log(e)
                 let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, resolution)
                 zoomToHexagon(cell)
-                if(cell === selectionData?.hex) {
-                    update(null)
+                if(cell === $selectionData?.hex) {
+                    selectionData.set(null)
                     return;
                 }
 
@@ -335,7 +345,7 @@
                 selectedLngLat = {lng: newLatLng[1], lat: newLatLng[0]}
 
                 console.log(cell)
-                update({
+                selectionData.set({
                     latlng: e.lngLat,
                     hex: cell,
                     properties: e.features[0].properties

@@ -63,8 +63,8 @@
 </script>
 
 <main>
-    <Map finishBuilding={finishBuilding} update={updateSelectionData} metric={metricLayer} colorScheme={colorScheme} selectionData={selectionData} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
-    <Modal isBuilt={isBuilt} isFinishedBuilding={isFinishedBuilding} updateMetricLayer={updateMetricLayer} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} selectionData={selectionData} metric={metricLayer} updateData={updateSelectionData} clade={clade} clades={clades} updateClade={updateClade}/>
+    <Map finishBuilding={finishBuilding} metric={metricLayer} colorScheme={colorScheme} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
+    <Modal isBuilt={isBuilt} isFinishedBuilding={isFinishedBuilding} updateMetricLayer={updateMetricLayer} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} metric={metricLayer} clade={clade} clades={clades} updateClade={updateClade}/>
 </main>
 {#if $nullModel}
 <div class='control-container'>
@@ -80,7 +80,7 @@
 
     main {
         display: grid;
-        grid-template-columns: 3fr 2fr;
+        //grid-template-columns: 3fr 2fr;
         overflow: hidden;
     }
 

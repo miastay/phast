@@ -1,5 +1,5 @@
 <script>
-    import { ProgressCircular, MaterialApp } from 'svelte-materialify';
+    import { ProgressCircular, MaterialAppMin } from 'svelte-materialify';
 	import { getBrandColors } from '../util/colors';
 
     export let message;
@@ -7,7 +7,9 @@
 </script>
 
 <div class="loading-container">
-    <ProgressCircular size={50} indeterminate color={getBrandColors()['500']} />
+    <MaterialAppMin>
+        <ProgressCircular size={50} indeterminate color={getBrandColors()['500']} />
+    </MaterialAppMin>
     {#if message}
         <h3>
             {message}
