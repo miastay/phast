@@ -60,7 +60,7 @@
     $: updateVisualLayer($visualLayer)
     $: $baseFillOpacity && updateMetricPaintLayer(metric, clade)
     $: updateLayerPalettes(colorScheme)
-    $: currentMapPalette.set(generatePalette(metric, colorScheme, true))
+    //$: currentMapPalette.set(generatePalette(metric, colorScheme, true))
     $: updateShowCounties(showCounties)
     //$: if(map && loaded) updateShowEcoregions(showEcoregions);
     $: updateShowEcoregions(showEcoregions);
@@ -198,7 +198,7 @@
         let layers = $map.getStyle().layers.filter((layer) => layer.source?.includes(`${$visualLayer}layer`)  && !(alwaysExcludeLayers.includes(layer.id)))
         for(let layer of layers) {
             let layerMetric = layer.id.split('-')[1]
-            let pal = generatePalette(layerMetric, colors, true)
+            let pal = generatePalette(layerMetric, colors, layerMetric.search("Sig") == -1 ? false : true)
             console.log("palette:", pal)
             $map.setPaintProperty(layer.id, 'fill-color', pal)
         }
@@ -255,8 +255,9 @@
 
     function generatePalette(m, scheme, interp = true) {
 
+
         if(!maxes || !mins) return;
-        console.log("generating for ", m)
+        console.log("generating for ", m, "interpolate: ", interp)
 
         if(interp) {
 
@@ -289,10 +290,10 @@
             return [
                 "step",
                 ["get", m],
-                "#ccc", 0,
-                "#fc4e2a", 600,
-                "#00E676", 1300,
-                "#2a4e9b"
+                "#ff00ff", -1,
+                "#0000ff", 0,
+                "#ffffff", 1,
+                "#FF7F11"
             ]
 
         }
@@ -334,7 +335,9 @@
 
         if($map && $map?.getStyle()?.sources[`hexlayer-${clade}`]) return;
 
-        return fetch(`/phast/${clade}_hex_new.json`)
+        //`/phast/${clade}_hex_new.json`
+
+        return fetch(`/phast/data/hex_data_sf/polygon_data.geojson`)
         .then((data) => data.json())
         .then((hex) => hexagons = hex)
         .then(() => { 
@@ -365,7 +368,7 @@
                     'source': `hexlayer-${clade}`,
                     'layout': {},
                     'paint': {
-                        "fill-color": generatePalette(mt, colorScheme, true),
+                        "fill-color": generatePalette(mt, colorScheme, (mt.search("Sig") == -1)),
                         "fill-opacity": $baseFillOpacity,
                         "fill-color-transition": {
                             "duration": 500,
@@ -559,7 +562,7 @@
         let t = Date.now()
 
         drawHexagons("Birds", hexagonFetchResolution)
-        .then(() => drawEcoregionsFilled("Birds"))
+        //.then(() => drawEcoregionsFilled("Birds"))
         //.then(() => drawHexagons("Plants", hexagonFetchResolution))
         .then(() => {
             finishBuilding();
