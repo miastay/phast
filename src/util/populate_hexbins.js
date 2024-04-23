@@ -119,13 +119,69 @@ export async function populateFeatures(geo, res) {
     return object;
 }
 
+export async function populateEcoregions() {
+
+    let geo = await fetch('/phast/data/ecoregions.geojson').then((raw) => raw.json());
+    let models = await fetch('/phast/data/range_ecoregions_data_statistics.json').then((raw) => raw.json());
+
+    console.log(models)
+
+    let maxes = {
+        pd: Number.MIN_VALUE,
+        mpd: Number.MIN_VALUE,
+        mntd: Number.MIN_VALUE,
+        tree_sizes: Number.MIN_VALUE,
+    }
+    let mins = {
+        pd: Number.MAX_VALUE,
+        mpd: Number.MAX_VALUE,
+        mntd: Number.MAX_VALUE,
+        tree_sizes: Number.MAX_VALUE,
+    }
+
+    let features = []
+
+    for(let region of geo["features"]) {
+        console.log(region)
+
+        let l3code = region["properties"]["US_L3CODE"]
+
+        models[l3code].tree_sizes = models[l3code]?.present_species.length ?? 0
+
+        for(let key of Object.keys(maxes)) {
+            let val = Number.parseFloat(models[l3code][key] ?? -1);
+            region.properties[key] = val;
+            if(val > maxes[key]) maxes[key] = val
+            else if(val < mins[key]) mins[key] = val
+        }
+
+        features.push(region)
+    }
+
+    let object = {
+        "type": "FeatureCollection",
+        "features": features,
+        "properties": {
+            maxes: maxes,
+            mins: mins,
+            'rel_pd_exp': 0
+        }
+    }
+
+    return object;
+
+}
+
+
+
+
 export function objToDict(obj) {
     let dictionary = Object.fromEntries(obj.map(x => [x.id, {"pd": x.pd, "mpd": x.mpd, "mntd": x.mntd, "tree_sizes": x.retrieved_taxa}]));
     return dictionary;
 }
 
 export function treeToDict(obj) {
-    console.log(obj)
+    //console.log(obj)
     let trees = JSON.parse(obj[0]);
     return trees;
 }

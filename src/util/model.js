@@ -2,7 +2,7 @@
 const LL4 = ({x,b,c,d,e}) => c + ((d - c) / (1 + Math.exp(b * (Math.log(x) - Math.log(e)))));
 const MM3 = ({x,c,d,e}) => c + ((d-c) / (1 + (e/x)));
 
-export const metrics = ["pd", "mpd", "mntd", "tree_sizes", "rel_pd", "quartile"]
+export const metrics = ["pd", "mpd", "mntd", "tree_sizes"]
 export const descs = {
     "pd": "phylodiversity",
     "mpd": "mean pairwise phylogenetic distance",
@@ -24,15 +24,15 @@ export function buildModel(type) {
     switch(type) {
         case "mntd":
         case "rel_mntd":
-            data = models.mntd;
+            data = californiaModels.mntd;
             break;
         case "mpd":
         case "rel_mpd":
-            data = models.mpd;
+            data = californiaModels.mpd;
             break;
         default:
         case "pd":
-            data = models.pd;
+            data = californiaModels.pd;
     }
 
     let d = data.d;
@@ -68,7 +68,7 @@ export function buildModel(type) {
 
 const xAxis = [0, 300]
 
-const models = {
+const californiaModels = {
     'pd': {
         "b": {
             "low": -0.7505,
@@ -150,15 +150,15 @@ export function generateRelativeMetric(type, value, x) {
     switch(type) {
         case "mntd":
         case "rel_mntd":
-            data = models.mntd;
+            data = californiaModels.mntd;
             break;
         case "mpd":
         case "rel_mpd":
-            data = models.mpd;
+            data = californiaModels.mpd;
             break;
         default:
         case "pd":
-            data = models.pd;
+            data = californiaModels.pd;
     }
     let d = data.d;
     let b = data.b;
