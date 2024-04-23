@@ -88,6 +88,9 @@ export async function populateFeatures(geo, res) {
 
         feature.properties.tree_sizes = data[index].present_species_rds?.length ?? 0;
 
+        feature.properties.present_species = data[index].present_species_rds ?? []
+        feature.properties.absent_species = data[index].absent_species_rds ?? []
+
         feature.properties.quartile = Number.parseFloat(data[index].quartile ?? -1);
 
         // if(data[index].pd) {

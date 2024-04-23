@@ -82,7 +82,7 @@
         {#if showSummary}
             <Summary data={$selectionData} />
             <Graph colorScheme={colorScheme} metric={metric} point={[[$selectionData?.properties?.tree_sizes, $selectionData?.properties[metric]]]}/>
-            <Phylo clade={clade} newick={$selectionData?.properties?.tree} hex_id={$selectionData?.properties?.id}/>
+            <Phylo clade={clade} present={$selectionData?.properties?.present} newick={$selectionData?.properties?.tree} hex_id={$selectionData?.properties?.id}/>
         {/if}
     {/if}
 

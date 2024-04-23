@@ -542,7 +542,7 @@
         })
 
 
-        generateHexMapping();
+        //generateHexMapping();
 
         // backup in case the load event doesn't fire properly
         setTimeout(() => {
