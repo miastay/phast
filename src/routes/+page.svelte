@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import Controls from '../component/controls.svelte';
 	import Drawer from '../component/drawer.svelte';
     import Legend from '../component/legend.svelte';
@@ -7,6 +8,7 @@
     import Map from "../container/map.svelte";
 
     import { nullModel } from '../store';
+	import { populateEcoregions } from '../util/populate_hexbins';
 
     let selectionData = null
 
@@ -52,6 +54,9 @@
     }
     const clades = ['Birds', 'Plants'];
 
+    const visualLayers = ["hex","eco"];
+
+
     let isFinishedBuilding = false;
     function finishBuilding() {
         isFinishedBuilding = true;
@@ -60,11 +65,13 @@
     let isBuilt = false;
     $: console.log($nullModel);
 
+    //onMount(async () => console.log(await populateEcoregions()) )
+
 </script>
 
 <main>
     <Map finishBuilding={finishBuilding} metric={metricLayer} colorScheme={colorScheme} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
-    <Modal isBuilt={isBuilt} isFinishedBuilding={isFinishedBuilding} updateMetricLayer={updateMetricLayer} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} metric={metricLayer} clade={clade} clades={clades} updateClade={updateClade}/>
+    <Modal isBuilt={isBuilt} isFinishedBuilding={isFinishedBuilding} visualLayers={visualLayers} updateMetricLayer={updateMetricLayer} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} metric={metricLayer} clade={clade} clades={clades} updateClade={updateClade}/>
 </main>
 {#if $nullModel}
 <div class='control-container'>

@@ -17,6 +17,10 @@ export const baseLineOpacity = writable(1.00);
 
 export const currentMapPalette = writable({});
 
+
+export const visualLayer = writable("hex");
+
+
 export const nullModel = createNullModel()
 
 export const selectionData = writable(null);

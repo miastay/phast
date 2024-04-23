@@ -13,7 +13,7 @@
 
     import { metrics } from "../util/model";
 
-    import { map, nullModel, baseFillOpacity, baseLineOpacity, currentMapPalette, selectionData } from "../store";
+    import { map, nullModel, baseFillOpacity, baseLineOpacity, currentMapPalette, selectionData, visualLayer } from "../store";
 
 
     let hexagonFetchResolution = 6;
@@ -46,6 +46,9 @@
     let showMarker = false;
     let selectedLngLat = [-119.449444, 37.166111];
 
+    let maxes = {"hex":{}, "eco":{}}
+    let mins = {"hex":{}, "eco":{}}
+
     // let baseFillOpacity = 0.65;
     // let baseLineOpacity = 1.00;
 
@@ -54,6 +57,7 @@
         console.log(textLayers)
     }
     $: updateMetricPaintLayer(metric, clade)
+    $: updateVisualLayer($visualLayer)
     $: $baseFillOpacity && updateMetricPaintLayer(metric, clade)
     $: updateLayerPalettes(colorScheme)
     $: currentMapPalette.set(generatePalette(metric, colorScheme, true))
@@ -70,7 +74,7 @@
     function updateCladeOpacity(clade) {
         if(!$map.getStyle) return;
         console.log($map.getStyle().layers)
-        let layersToClear = $map.getStyle().layers.filter((layer) => { let spl = layer.source?.split('-'); return (spl && spl[0] === 'hexlayer' && spl[1] !== clade); })
+        let layersToClear = $map.getStyle().layers.filter((layer) => { let spl = layer.source?.split('-'); return (spl && spl[0] === `${$visualLayer}layer` && spl[1] !== clade); })
         for(let layer of layersToClear) {
             $map.setPaintProperty(layer.id, 'fill-opacity', 0)
         }
@@ -160,42 +164,52 @@
         //console.log(MapLibre.Transform.pointLocation(drawnPath[0]));
     }
 
-    function updateMetricPaintLayer(met, clade) {
+    function updateMetricPaintLayer(met, clade, level=$visualLayer) {
 
         console.log(met)
 
         if(!$map.moveLayer) return;
 
-        let id = `hex-${met}-${clade}`
+        let id = `${level}-${met}-${clade}`
 
         console.log(met)
         // we try to find a workaround to transitions not firing on feature-state changes, see: https://github.com/mapbox/mapbox-gl-js/issues/11748
         $map.moveLayer(id, 'place_hamlet');
 
         setTimeout(() => {
-            clearHexLayers([id])
+            clearVisualLayers([id])
         }, layerTransitionTime / 4);
 
         $map.setPaintProperty(id, 'fill-opacity', $baseFillOpacity)
     }
 
-    function clearHexLayers(exclude = []) {
+    const alwaysExcludeLayers = ["ecoregions-fill", "ecoregions-line"]
+    function clearVisualLayers(exclude = []) {
         if(!$map.getStyle) return;
-        let layersToClear = $map.getStyle().layers.filter((layer) => layer.source?.includes(`hexlayer`) && !(exclude.includes(layer.id)))
+        
+        let layersToClear = $map.getStyle().layers.filter((layer) => layer.source?.includes(`${$visualLayer}layer`) && !(exclude.includes(layer.id) || alwaysExcludeLayers.includes(layer.id)))
+        console.log(layersToClear)
         for(let layer of layersToClear) {
             $map.setPaintProperty(layer.id, 'fill-opacity', 0)
         }
     }
     function updateLayerPalettes(colors) {
         if(!$map.getStyle) return;
-        let hexLayers = $map.getStyle().layers.filter((layer) => layer.source === `hexlayer-${clade}`)
-        for(let layer of hexLayers) {
+        let layers = $map.getStyle().layers.filter((layer) => layer.source?.includes(`${$visualLayer}layer`)  && !(alwaysExcludeLayers.includes(layer.id)))
+        for(let layer of layers) {
             let layerMetric = layer.id.split('-')[1]
             let pal = generatePalette(layerMetric, colors, true)
             console.log("palette:", pal)
             $map.setPaintProperty(layer.id, 'fill-color', pal)
         }
     }
+
+    function updateVisualLayer() {
+        updateMetricPaintLayer(metric, clade)
+        updateLayerPalettes(colorScheme)
+        //updateCladeOpacity(clade)
+    }
+
 
     function updateShowCounties(shown) {
         if(!$map.setPaintProperty) return;
@@ -234,17 +248,19 @@
     let hexagons;
     let hexdata = {};
 
-    let maxes, mins;
     let rel_pd_exp;
     let mapPalette = getPalette(0, 5000, colorScheme);
 
+    let ecoregions;
+
     function generatePalette(m, scheme, interp = true) {
+
         if(!maxes || !mins) return;
         console.log("generating for ", m)
-        
+
         if(interp) {
 
-            mapPalette = getPalette(mins[m], maxes[m], scheme);
+            mapPalette = getPalette(mins[$visualLayer][m], maxes[$visualLayer][m], scheme);
             if(m === "quartile") {
                 mapPalette = getPdQuartilePalette(scheme);
             }
@@ -282,6 +298,37 @@
         }
     }
 
+    async function drawEcoregionsFilled(clade) {
+
+        //if($map && $map?.getStyle()?.sources[`ecolayer`]) return;
+
+        maxes['eco'] = ecoregions.properties?.maxes
+        mins['eco'] = ecoregions.properties?.mins
+
+        const layers = $map.getStyle().layers;
+        let firstSymbolId = layers[71].id;
+
+        for(let mt of metrics) {
+            let id = `eco-${mt}-${clade}`
+            $map.addLayer({
+                'id': id,
+                'type': 'fill',
+                'source': `ecolayer`,
+                'layout': {},
+                'paint': {
+                    "fill-color": generatePalette(mt, colorScheme, true),
+                    "fill-opacity": $baseFillOpacity,
+                    "fill-color-transition": {
+                        "duration": 500,
+                        "delay": 0
+                    },
+                },
+            }, firstSymbolId);
+            console.log("added layer ", id)
+        }
+
+    }
+
     async function drawHexagons(clade, resolution) {
         console.log(clade)
 
@@ -296,8 +343,8 @@
             //console.log(buildHistogram(hexagons, "mntd"))
             //console.log(buildHistogram(hexagons, "tree_sizes"))
 
-            maxes = hexagons.properties?.maxes
-            mins = hexagons.properties?.mins
+            maxes["hex"] = hexagons.properties?.maxes
+            mins["hex"] = hexagons.properties?.mins
 
             if(hexagons.properties?.rel_pd_exp) rel_pd_exp = hexagons.properties.rel_pd_exp
 
@@ -381,9 +428,11 @@
         fetch(`/phast/data/ecoregions.geojson`)
         .then((data) => data.json())
         .then((shape) => {
+
+            ecoregions = shape;
             console.log(shape)
 
-            $map.addSource('ecoregions', {
+            $map.addSource('ecolayer', {
                 'type': 'geojson',
                 'data': shape,
                 'generateId': true
@@ -392,7 +441,7 @@
             $map.addLayer({
                 'id': 'ecoregions-fill',
                 'type': 'fill',
-                'source': 'ecoregions',
+                'source': 'ecolayer',
                 'layout': {},
                 'paint': {
                     "fill-opacity": 0,
@@ -413,7 +462,7 @@
             $map.addLayer({
                 'id': 'ecoregions-line',
                 'type': 'line',
-                'source': 'ecoregions',
+                'source': 'ecolayer',
                 'layout': {},
                 'paint': {
                     "line-color": "#555555",
@@ -510,6 +559,7 @@
         let t = Date.now()
 
         drawHexagons("Birds", hexagonFetchResolution)
+        .then(() => drawEcoregionsFilled("Birds"))
         //.then(() => drawHexagons("Plants", hexagonFetchResolution))
         .then(() => {
             finishBuilding();

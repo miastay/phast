@@ -10,7 +10,7 @@
 	import Loader from './loader.svelte';
 	import Summary from './summary.svelte';
     import { metrics } from "../util/model";
-	import { nullModel, selectionData } from '../store';
+	import { nullModel, selectionData, visualLayer } from '../store';
 	import About from './about.svelte';
 
     export let metric;
@@ -20,6 +20,9 @@
     export let clade;
     export let updateClade;
     export let clades;
+
+    export let visualLayers;
+
 
     export let isBuilt;
     export let showEcoregions;
@@ -54,6 +57,13 @@
                         <Option value={opt}>{opt}</Option>
                     {/each}
                 </Select>
+                at the
+                <Select class="shaped" variant="outlined" bind:value={$visualLayer}>
+                    {#each visualLayers as opt}
+                        <Option value={opt}>{opt}</Option>
+                    {/each}
+                </Select>
+                level
             </div>
             {#if showSummary}
                 <div class="close">
