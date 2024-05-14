@@ -12,6 +12,8 @@
     $: newick && treeref && rerender(newick, clade);
     $: if(present && !treemap) buildNodeMap(present);
 
+    export let header = true;
+
     let treeref;
     let treemap;
 
@@ -21,8 +23,8 @@
     let tooltipFlip = false;
 
     
-    let width = 2000;
-    let height = 2000;
+    let width = 1000;
+    let height = 1000;
 
     function rerender(tree_str) {
 
@@ -93,7 +95,7 @@
 
         tree_svg.setAttribute("width", width);
         tree_svg.setAttribute("height", height);
-        tree_svg.setAttribute("viewBox", `${0} ${0} ${width / 4} ${height / 4}`); 
+        tree_svg.setAttribute("viewBox", `${width / 16} ${width / 16} ${width / 3.3} ${height / 3.3}`); 
 
         console.log(tree_svg)
         treeref.appendChild(tree_svg)
@@ -147,7 +149,7 @@
 </script>
 
 <div class="phylo-container">
-    <h2>Taxa found in this area</h2>
+    {#if header}<h2>Taxa found in this area</h2>{/if}
     <div id="tree_container" bind:this={treeref}>
         <div class={`tree_tooltip ${showTooltip ? 'shown' : 'hidden'} ${tooltipFlip ? 'flip' : ''}`} style={`margin-top: calc(${tooltipY}px - 2rem); left: ${tooltipX}px;`}><span>{tooltipText}</span></div>
     </div>

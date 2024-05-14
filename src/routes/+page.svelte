@@ -9,6 +9,7 @@
 
     import { nullModel } from '../store';
 	import { populateEcoregions } from '../util/populate_hexbins';
+	import Floattree from '../component/floattree.svelte';
 
     let selectionData = null
 
@@ -65,13 +66,17 @@
     let isBuilt = false;
     $: console.log($nullModel);
 
+    // use this to bypass builder
+    //onMount(() => nullModel.set({"type": "CALIFORNIA", "sub": undefined}))
     //onMount(async () => console.log(await populateEcoregions()) )
 
 </script>
 
 <main>
     <Map finishBuilding={finishBuilding} metric={metricLayer} colorScheme={colorScheme} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
-    <Modal isBuilt={isBuilt} isFinishedBuilding={isFinishedBuilding} visualLayers={visualLayers} updateMetricLayer={updateMetricLayer} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} metric={metricLayer} clade={clade} clades={clades} updateClade={updateClade}/>
+    {#if !isFinishedBuilding}
+        <Modal isBuilt={isBuilt} isFinishedBuilding={isFinishedBuilding} visualLayers={visualLayers} updateMetricLayer={updateMetricLayer} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} metric={metricLayer} clade={clade} clades={clades} updateClade={updateClade}/>
+    {/if}
 </main>
 {#if $nullModel}
 <div class='control-container'>
@@ -81,6 +86,9 @@
 {/if}
 {#if drawing}
     <Drawer updatePath={updatePath} updateIsDrawing={updateDrawing} isDrawing={drawing}/>
+{/if}
+{#if $nullModel}
+    <Floattree clade={clade} />
 {/if}
 
 <style lang="scss">

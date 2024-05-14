@@ -562,7 +562,7 @@
         let t = Date.now()
 
         drawHexagons("Birds", hexagonFetchResolution)
-        //.then(() => drawEcoregionsFilled("Birds"))
+        .then(() => drawEcoregionsFilled("Birds"))
         //.then(() => drawHexagons("Plants", hexagonFetchResolution))
         .then(() => {
             finishBuilding();

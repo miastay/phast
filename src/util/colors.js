@@ -1,6 +1,16 @@
 
-export function getPalette(min, max, scheme = "*ibm") {
+export function getPalette(min, max, scheme = "*ibm", discrete = false) {
     let palette = schemes[scheme](min, max)
+    if(discrete) {
+        return [
+            "step",
+            ["get", m],
+            "#ff00ff", -1,
+            "#0000ff", 0,
+            "#ffffff", 1,
+            "#FF7F11"
+        ]
+    }
     return palette
 }
 
