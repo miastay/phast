@@ -5,7 +5,7 @@
 </script>
 
 <div class="float">
-    <Phylo header={false} clade={clade} present={$selectionData?.properties?.present} newick={$selectionData?.properties?.tree} hex_id={$selectionData?.properties?.id}/>
+    <Phylo header={false} clade={clade} present={$selectionData?.properties?.present} newick={$selectionData?.properties?.tree} id={$selectionData?.properties?.id}/>
 </div>
 
 <style lang="scss">

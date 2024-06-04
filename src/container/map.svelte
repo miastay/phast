@@ -333,6 +333,53 @@
             console.log("added layer ", id)
         }
 
+        let firstMetricId = `eco-${metrics[0]}-${clade}`;
+        $map.on('click', firstMetricId, (e) => {
+
+
+            if($visualLayer !== "eco") return;
+
+            console.log(e)
+            console.log(e.features)
+
+            let id = e.features[0].properties["US_L3CODE"]
+
+            // console.log("replace with latLngToRegion!")
+            // let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, resolution)
+            // zoomToHexagon(cell)
+
+            if(id === $selectionData?.id) {
+                selectionData.set(null)
+                return;
+            }
+
+            console.log($map.getStyle().layers)
+
+            selectedLngLat = e.lngLat;
+
+            console.log(id)
+            selectionData.set({
+                latlng: e.lngLat,
+                id: id,
+                type: "eco",
+                properties: e.features[0].properties
+            })
+            
+        });
+        $map.on('mouseenter', firstMetricId, () => {
+            $map.getCanvas().style.cursor = 'pointer';
+        });
+        $map.on('mouseleave', firstMetricId, () => {
+            $map.getCanvas().style.cursor = '';
+        });
+        $map.on('dragstart', firstMetricId, () => {
+            $map.getCanvas().style.cursor = 'grabbing';
+        });
+        $map.on('dragend', firstMetricId, () => {
+            $map.getCanvas().style.cursor = 'pointer';
+        });
+        return true;
+
     }
 
     async function drawHexagons(clade, resolution) {
@@ -386,10 +433,14 @@
 
             let firstMetricId = `hex-${metrics[0]}-${clade}`;
             $map.on('click', firstMetricId, (e) => {
+
+
+                if($visualLayer !== "hex") return;
+
                 console.log(e)
                 let cell = h3.latLngToCell(e.lngLat.lat, e.lngLat.lng, resolution)
                 zoomToHexagon(cell)
-                if(cell === $selectionData?.hex) {
+                if(cell === $selectionData?.id) {
                     selectionData.set(null)
                     return;
                 }
@@ -402,7 +453,8 @@
                 console.log(cell)
                 selectionData.set({
                     latlng: e.lngLat,
-                    hex: cell,
+                    id: cell,
+                    type: "hex",
                     properties: e.features[0].properties
                 })
                 

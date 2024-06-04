@@ -8,9 +8,9 @@
 
     export let newick;
     export let present;
-    export let hex_id;
+    export let id;
     export let clade;
-    $: $selectionData && rerender($selectionData.hex);
+    $: $selectionData && rerender($selectionData.id);
     $: if(present && !treemap) buildNodeMap(present);
 
     export let header = true;
@@ -28,6 +28,8 @@
     let height = 1000;
 
     function rerender(hex_id) {
+
+        if($selectionData?.type === "eco") return;
 
         console.log("attempting rerender")
         console.log($selectionData)
@@ -171,7 +173,7 @@
     }
 
     onMount(async () => {
-        buildNodeMap(clade).then((map) => rerender(hex_id)).then(() => console.log('built node map'))   
+        buildNodeMap(clade).then((map) => rerender(id)).then(() => console.log('built node map'))   
     })
 
 </script>
