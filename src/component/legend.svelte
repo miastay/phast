@@ -13,7 +13,7 @@
 
     $: scale = getPalette(0, 1, colorScheme).slice(1);
     $: gradient = createPaletteGradient(scale);
-    $: setTicks($currentMapPalette)
+    $: $currentMapPalette && setTicks($currentMapPalette)
 
     export function createPaletteGradient(scale) {
         console.log(scale)
@@ -28,6 +28,7 @@
         ticks[2] = Math.round(pal[max] ?? 1)
         ticks[1] = Math.round(pal[max - 2] ?? 0.5)
         ticks[0] = Math.round(pal[max - 4] ?? 0)
+        console.log(pal)
     }
 
 </script>

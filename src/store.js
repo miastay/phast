@@ -21,6 +21,7 @@ export const currentMapPalette = writable({});
 export const visualLayer = writable("hex");
 
 export const metric = writable("pd");
+export const pal = writable({});
 
 export const nullModel = createNullModel()
 

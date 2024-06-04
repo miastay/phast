@@ -13,7 +13,7 @@
 
     import { metrics } from "../util/model";
 
-    import { map, nullModel, baseFillOpacity, baseLineOpacity, currentMapPalette, selectionData, visualLayer } from "../store";
+    import { map, nullModel, baseFillOpacity, baseLineOpacity, currentMapPalette, selectionData, visualLayer} from "../store";
 
 
     let hexagonFetchResolution = 6;
@@ -74,7 +74,7 @@
     function updateCladeOpacity(clade) {
         if(!$map.getStyle) return;
         console.log($map.getStyle().layers)
-        let layersToClear = $map.getStyle().layers.filter((layer) => { let spl = layer.source?.split('-'); return (spl && spl[0] === `${$visualLayer}layer` && spl[1] !== clade); })
+        let layersToClear = $map.getStyle().layers.filter((layer) => { let spl = layer.source?.split('-'); return (spl && spl[1] !== clade); }) //spl[0] === `${$visualLayer}layer` && 
         for(let layer of layersToClear) {
             $map.setPaintProperty(layer.id, 'fill-opacity', 0)
         }
@@ -168,6 +168,7 @@
 
         console.log(met)
 
+
         if(!$map.moveLayer) return;
 
         let id = `${level}-${met}-${clade}`
@@ -181,13 +182,14 @@
         }, layerTransitionTime / 4);
 
         $map.setPaintProperty(id, 'fill-opacity', $baseFillOpacity)
+        $currentMapPalette = $map.getPaintProperty(id, 'fill-color');
     }
 
     const alwaysExcludeLayers = ["ecoregions-fill", "ecoregions-line"]
     function clearVisualLayers(exclude = []) {
         if(!$map.getStyle) return;
         
-        let layersToClear = $map.getStyle().layers.filter((layer) => layer.source?.includes(`${$visualLayer}layer`) && !(exclude.includes(layer.id) || alwaysExcludeLayers.includes(layer.id)))
+        let layersToClear = $map.getStyle().layers.filter((layer) => (layer.source?.includes(`ecolayer`) || layer.source?.includes(`hexlayer`)) && !(exclude.includes(layer.id) || alwaysExcludeLayers.includes(layer.id)))
         console.log(layersToClear)
         for(let layer of layersToClear) {
             $map.setPaintProperty(layer.id, 'fill-opacity', 0)
@@ -198,9 +200,12 @@
         let layers = $map.getStyle().layers.filter((layer) => layer.source?.includes(`${$visualLayer}layer`)  && !(alwaysExcludeLayers.includes(layer.id)))
         for(let layer of layers) {
             let layerMetric = layer.id.split('-')[1]
-            let pal = generatePalette(layerMetric, colors, layerMetric.search("Sig") == -1 ? false : true)
+            let pal = generatePalette(layerMetric, colors, true);
+            //let pal = generatePalette(layerMetric, colors, layerMetric.search("Sig") == -1 ? false : true)
             console.log("palette:", pal)
             $map.setPaintProperty(layer.id, 'fill-color', pal)
+            $currentMapPalette = pal;
+            console.log(layer.id, $map.getPaintProperty(layer.id, 'fill-color'))
         }
     }
 
@@ -562,7 +567,7 @@
         let t = Date.now()
 
         drawHexagons("Birds", hexagonFetchResolution)
-        //.then(() => drawEcoregionsFilled("Birds"))
+        .then(() => drawEcoregionsFilled("Birds"))
         //.then(() => drawHexagons("Plants", hexagonFetchResolution))
         .then(() => {
             finishBuilding();
