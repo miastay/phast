@@ -61,7 +61,7 @@
 
         flex-direction: row;
         gap: 0.75rem;
-        min-height: 8vh;
+        min-height: 10vh;
         background-color: #ffffffaa;
         backdrop-filter: blur(50px);
         cursor: default;
