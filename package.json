@@ -52,6 +52,7 @@
 		"sass": "^1.70.0",
 		"shapely": "^0.2.3",
 		"svelte-maplibre": "^0.7.7",
+		"svelte-materialify": "^0.3.11",
 		"svelte-preprocess": "^5.1.3"
 	}
 }
