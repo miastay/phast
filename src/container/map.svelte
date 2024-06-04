@@ -172,7 +172,7 @@
 
         let id = `${level}-${met}-${clade}`
 
-        console.log(met)
+        console.log(id)
         // we try to find a workaround to transitions not firing on feature-state changes, see: https://github.com/mapbox/mapbox-gl-js/issues/11748
         $map.moveLayer(id, 'place_hamlet');
 
@@ -562,7 +562,7 @@
         let t = Date.now()
 
         drawHexagons("Birds", hexagonFetchResolution)
-        .then(() => drawEcoregionsFilled("Birds"))
+        //.then(() => drawEcoregionsFilled("Birds"))
         //.then(() => drawHexagons("Plants", hexagonFetchResolution))
         .then(() => {
             finishBuilding();

@@ -4,9 +4,11 @@
     export let clade = "Birds";
 </script>
 
+{#if selectionData?.properties}
 <div class="float">
     <Phylo header={false} clade={clade} present={$selectionData?.properties?.present} newick={$selectionData?.properties?.tree} hex_id={$selectionData?.properties?.id}/>
 </div>
+{/if}
 
 <style lang="scss">
     $wid: 30vw;

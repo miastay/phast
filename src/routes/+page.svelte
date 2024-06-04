@@ -7,9 +7,10 @@
     import Modal from '../component/modal.svelte';
     import Map from "../container/map.svelte";
 
-    import { nullModel } from '../store';
+    import { metric, nullModel } from '../store';
 	import { populateEcoregions } from '../util/populate_hexbins';
 	import Floattree from '../component/floattree.svelte';
+	import Menu from '../component/menu.svelte';
 
     let selectionData = null
 
@@ -19,10 +20,7 @@
         selectionData = data
     }
 
-    let metricLayer = "pd";
-    function updateMetricLayer(layer) {
-        metricLayer = layer;
-    }
+    //$metric = "pd"
 
     let colorScheme = "*ibm";
     function updateColorScheme(colors) {
@@ -73,21 +71,22 @@
 </script>
 
 <main>
-    <Map finishBuilding={finishBuilding} metric={metricLayer} colorScheme={colorScheme} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
+    <Map finishBuilding={finishBuilding} metric={$metric} colorScheme={colorScheme} showCounties={showCounties} showEcoregions={showEcoregions} drawnPath={path} clade={clade} clades={clades}/>
     {#if !isFinishedBuilding}
-        <Modal isBuilt={isBuilt} isFinishedBuilding={isFinishedBuilding} visualLayers={visualLayers} updateMetricLayer={updateMetricLayer} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} metric={metricLayer} clade={clade} clades={clades} updateClade={updateClade}/>
+        <Modal isBuilt={isBuilt} isFinishedBuilding={isFinishedBuilding} visualLayers={visualLayers} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} metric={$metric} clade={clade} clades={clades} updateClade={updateClade}/>
     {/if}
 </main>
 {#if $nullModel}
 <div class='control-container'>
     <Controls updateColorScheme={updateColorScheme} updateShowCounties={updateShowCounties} updateShowEcoregions={updateShowEcoregions} updateDrawing={updateDrawing} drawing={drawing} updateDrawnPath={updatePath}/>
-    <Legend colorScheme={colorScheme} metric={metricLayer}/>
+    <Legend colorScheme={colorScheme} metric={$metric}/>
 </div>
 {/if}
 {#if drawing}
     <Drawer updatePath={updatePath} updateIsDrawing={updateDrawing} isDrawing={drawing}/>
 {/if}
 {#if $nullModel}
+    <Menu visualLayers={visualLayers} showEcoregions={updateShowEcoregions} colorScheme={colorScheme} metric={$metric} clade={clade} clades={clades} updateClade={updateClade}/>
     <Floattree clade={clade} />
 {/if}
 

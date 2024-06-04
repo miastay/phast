@@ -10,12 +10,10 @@
 	import Loader from './loader.svelte';
 	import Summary from './summary.svelte';
     import { metrics } from "../util/model";
-	import { nullModel, selectionData, visualLayer } from '../store';
+	import { nullModel, selectionData, visualLayer, metric } from '../store';
 	import About from './about.svelte';
 
-    export let metric;
     export let colorScheme;
-    export let updateMetricLayer;
 
     export let clade;
     export let updateClade;
@@ -32,7 +30,6 @@
     let showSummary;
     $: updateSummary($selectionData);
     $: updateClade(clade);
-    $: updateMetricLayer(metric);
 
     const updateSummary = (selection) => {
         showSummary = selection?.properties && selection?.properties[metric] !== -1;
@@ -46,7 +43,7 @@
         <div class='header'>
             <div class='test'>
                 Testing
-                <Select class="shaped" variant="outlined" bind:value={metric} on:change={() => updateMetricLayer(metric)}>
+                <Select class="shaped" variant="outlined" bind:value={$metric}>
                     {#each metrics as opt}
                         <Option value={opt}>{opt}</Option>
                     {/each}
