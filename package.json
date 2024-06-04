@@ -26,6 +26,8 @@
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
+		"flowbite": "^2.3.0",
+		"flowbite-svelte": "^0.46.1",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"smui-theme": "^7.0.0-beta.16",
@@ -50,7 +52,6 @@
 		"sass": "^1.70.0",
 		"shapely": "^0.2.3",
 		"svelte-maplibre": "^0.7.7",
-		"svelte-materialify": "^0.3.11",
 		"svelte-preprocess": "^5.1.3"
 	}
 }
